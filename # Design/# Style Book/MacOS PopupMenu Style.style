@@ -1,0 +1,275 @@
+object TLayout
+  Align = alClient
+  Height = 1122.000000000000000000
+  Position.Y = 33.000000000000000000
+  Width = 1533.000000000000000000
+  object TLayout
+    StyleName = 'menuitemstyle'
+    DesignVisible = False
+    Height = 50.000000000000000000
+    Position.X = 742.000000000000000000
+    Position.Y = 536.000000000000000000
+    Width = 50.000000000000000000
+    object TSubImage
+      Align = alContents
+      BitmapMargins.Left = 5.000000000000000000
+      BitmapMargins.Top = 5.000000000000000000
+      BitmapMargins.Right = 5.000000000000000000
+      BitmapMargins.Bottom = 5.000000000000000000
+      Height = 50.000000000000000000
+      HitTest = False
+      Opacity = 0.000000000000000000
+      SourceLookup = 'OSX Lionstyle.png'
+      SourceRect.Left = 166.000000000000000000
+      SourceRect.Top = 38.000000000000000000
+      SourceRect.Right = 235.000000000000000000
+      SourceRect.Bottom = 60.000000000000000000
+      Width = 50.000000000000000000
+      WrapMode = iwStretch
+      object TFloatAnimation
+        Duration = 0.000200000009499490
+        PropertyName = 'Opacity'
+        StopValue = 1.000000000000000000
+        Trigger = 'IsSelected=true'
+        TriggerInverse = 'IsSelected=false'
+      end
+    end
+    object TSubImage
+      StyleName = 'background'
+      Align = alContents
+      BitmapMargins.Left = 5.000000000000000000
+      BitmapMargins.Top = 5.000000000000000000
+      BitmapMargins.Right = 5.000000000000000000
+      BitmapMargins.Bottom = 5.000000000000000000
+      Height = 50.000000000000000000
+      HitTest = False
+      Opacity = 0.000000000000000000
+      SourceLookup = 'OSX Lionstyle.png'
+      SourceRect.Left = 166.000000000000000000
+      SourceRect.Top = 38.000000000000000000
+      SourceRect.Right = 235.000000000000000000
+      SourceRect.Bottom = 60.000000000000000000
+      Width = 50.000000000000000000
+      WrapMode = iwStretch
+      object TFloatAnimation
+        Duration = 0.000200000009499490
+        PropertyName = 'Opacity'
+        StopValue = 1.000000000000000000
+        Trigger = 'IsMouseOver=true'
+        TriggerInverse = 'IsMouseOver=false'
+      end
+    end
+    object TLayout
+      StyleName = 'glyph'
+      Align = alLeft
+      Height = 50.000000000000000000
+      Width = 25.000000000000000000
+      object TLayout
+        StyleName = 'checkmark'
+        Align = alContents
+        Height = 50.000000000000000000
+        Opacity = 0.001000000047497451
+        Width = 25.000000000000000000
+        object TPath
+          Align = alCenter
+          Data.Path = {
+            070000000000000056D9524391AE2C4301000000927666436502164301000000
+            9F3983432B7C3C43010000009E9AA64382D2B442010000006F1CB04375A4D142
+            0100000026DF8243263F67430300000056D9524391AE2C43}
+          Fill.Color = claBlack
+          Height = 11.000000000000000000
+          HitTest = False
+          Position.X = 7.000000000000000000
+          Position.Y = 19.000000000000000000
+          Stroke.Kind = bkNone
+          Width = 11.000000000000000000
+          object TColorAnimation
+            Duration = 0.000200000009499490
+            PropertyName = 'Fill.Color'
+            StartValue = claBlack
+            StopValue = claWhite
+            Trigger = 'IsMouseOver=true'
+            TriggerInverse = 'IsMouseOver=false;IsSelected=false'
+          end
+        end
+        object TFloatAnimation
+          Duration = 0.100000001490116100
+          PropertyName = 'Opacity'
+          StopValue = 1.000000000000000000
+          Trigger = 'IsChecked=true'
+          TriggerInverse = 'IsChecked=false'
+        end
+      end
+      object TImage
+        StyleName = 'bitmap'
+        Align = alContents
+        Height = 46.000000000000000000
+        Padding.Left = 2.000000000000000000
+        Padding.Top = 2.000000000000000000
+        Padding.Right = 2.000000000000000000
+        Padding.Bottom = 2.000000000000000000
+        Position.X = 2.000000000000000000
+        Position.Y = 2.000000000000000000
+        Width = 21.000000000000000000
+      end
+    end
+    object TText
+      StyleName = 'text'
+      Align = alLeft
+      Color = claBlack
+      Font.Family = 'Helvetica'
+      Font.Size = 14.000000000000000000
+      Font.Style = [fsBold]
+      Locked = True
+      Height = 50.000000000000000000
+      HitTest = False
+      HorzTextAlign = taLeading
+      Padding.Left = 8.000000000000000000
+      Padding.Right = 8.000000000000000000
+      Position.X = 33.000000000000000000
+      Width = 50.000000000000000000
+      object TColorAnimation
+        Duration = 0.000200000009499490
+        PropertyName = 'Color'
+        StartValue = claBlack
+        StopValue = claWhite
+        Trigger = 'IsMouseOver=true'
+        TriggerInverse = 'IsMouseOver=false;IsSelected=false'
+      end
+      object TColorAnimation
+        StyleName = 'disabledcoloranimation'
+        Duration = 0.000199999994947575
+        PropertyName = 'Color'
+        StartValue = claBlack
+        StopValue = claGray
+        Trigger = 'Enabled=false'
+        TriggerInverse = 'Enabled=true'
+      end
+    end
+    object TText
+      StyleName = 'shortcut'
+      Align = alRight
+      Color = claBlack
+      Font.Family = 'Helvetica'
+      Font.Size = 14.000000000000000000
+      Locked = True
+      Height = 50.000000000000000000
+      HitTest = False
+      HorzTextAlign = taLeading
+      Padding.Left = 12.000000000000000000
+      Padding.Right = 6.000000000000000000
+      Position.X = -26.000000000000000000
+      Width = 50.000000000000000000
+      object TColorAnimation
+        Duration = 0.000200000009499490
+        PropertyName = 'Color'
+        StartValue = claBlack
+        StopValue = claWhite
+        Trigger = 'IsMouseOver=true'
+        TriggerInverse = 'IsMouseOver=false;IsSelected=false'
+      end
+      object TColorAnimation
+        StyleName = 'disabledcoloranimation'
+        Duration = 0.000199999994947575
+        PropertyName = 'Color'
+        StartValue = claBlack
+        StopValue = claGray
+        Trigger = 'Enabled=false'
+        TriggerInverse = 'Enabled=true'
+      end
+    end
+    object TLayout
+      StyleName = 'submark'
+      Align = alRight
+      Height = 50.000000000000000000
+      Position.X = 30.000000000000000000
+      Width = 20.000000000000000000
+      object TPath
+        Align = alCenter
+        Data.Path = {
+          0400000000000000000000000000000001000000000000000000803F01000000
+          0000803F0000003F030000000000000000000000}
+        Fill.Color = claBlack
+        Locked = True
+        Height = 8.000000000000000000
+        HitTest = False
+        Position.X = 6.000000000000000000
+        Position.Y = 21.000000000000000000
+        Stroke.Kind = bkNone
+        Width = 7.000000000000000000
+        object TColorAnimation
+          Duration = 0.000200000009499490
+          PropertyName = 'Fill.Color'
+          StartValue = claBlack
+          StopValue = claWhite
+          Trigger = 'IsMouseOver=true'
+          TriggerInverse = 'IsMouseOver=false'
+        end
+      end
+    end
+  end
+  object TLayout
+    StyleName = 'menuviewstyle'
+    DesignVisible = False
+    Height = 239.000000000000000000
+    Position.X = 678.000000000000000000
+    Position.Y = 442.000000000000000000
+    Width = 196.000000000000000000
+    object TRectangle
+      StyleName = 'background'
+      Align = alClient
+      Fill.Color = claWhite
+      Height = 226.000000000000000000
+      Opacity = 0.990000009536743200
+      Padding.Left = 5.000000000000000000
+      Padding.Top = 5.000000000000000000
+      Padding.Right = 8.000000000000000000
+      Padding.Bottom = 8.000000000000000000
+      Position.X = 5.000000000000000000
+      Position.Y = 5.000000000000000000
+      Stroke.Color = claSilver
+      XRadius = 5.000000000000000000
+      YRadius = 5.000000000000000000
+      Width = 183.000000000000000000
+      object TLayout
+        StyleName = 'content'
+        Align = alClient
+        Height = 214.000000000000000000
+        Padding.Top = 6.000000000000000000
+        Padding.Bottom = 6.000000000000000000
+        Position.Y = 6.000000000000000000
+        Width = 183.000000000000000000
+      end
+      object TShadowEffect
+        StyleName = 'ShadowEffect1'
+        Distance = 3.000000000000000000
+        Direction = 45.000000000000000000
+        Softness = 0.300000011920929000
+        Opacity = 0.600000023841857900
+        ShadowColor = claBlack
+      end
+    end
+  end
+  object TLayout
+    StyleName = 'menuseparatorstyle'
+    DesignVisible = False
+    Height = 50.000000000000000000
+    Padding.Top = 3.000000000000000000
+    Padding.Bottom = 3.000000000000000000
+    Position.X = 752.000000000000000000
+    Position.Y = 536.000000000000000000
+    Width = 50.000000000000000000
+    object TSubImage
+      Align = alTop
+      Height = 1.000000000000000000
+      MarginWrapMode = iwTile
+      SourceLookup = 'OSX Lionstyle.png'
+      SourceRect.Left = 166.000000000000000000
+      SourceRect.Top = 66.000000000000000000
+      SourceRect.Right = 235.000000000000000000
+      SourceRect.Bottom = 68.000000000000000000
+      Width = 50.000000000000000000
+      WrapMode = iwTile
+    end
+  end
+end
