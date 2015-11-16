@@ -144,7 +144,7 @@ constructor TServerPanel.Create(const Parent: TFMXObject;
 begin
   FNumber := Number;
 
-  // Подложка:
+  // РџРѕРґР»РѕР¶РєР°:
   FContent.ServerPanel := TPanel.Create(Parent);
   FContent.ServerPanel.Parent := Parent;
   FContent.ServerPanel.BeginUpdate;
@@ -156,7 +156,7 @@ begin
   FContent.ServerPanel.OnMouseDown := OnPanelMouseDown;
   FContent.ServerPanel.OnMouseUp := OnPanelMouseUp;
 
-  // Анимация подложки:
+  // РђРЅРёРјР°С†РёСЏ РїРѕРґР»РѕР¶РєРё:
   FContent.BackgroundOpacityAnimation := TFloatAnimation.Create(FContent.ServerPanel);
   FContent.BackgroundOpacityAnimation.Parent := FContent.ServerPanel;
   FContent.BackgroundOpacityAnimation.Duration := BackgroundAnimationDuration;
@@ -166,48 +166,48 @@ begin
   FContent.BackgroundOpacityAnimation.Trigger        := 'IsMouseOver=true';
   FContent.BackgroundOpacityAnimation.TriggerInverse := 'IsMouseOver=false';
 
-  // Имя сервера:
+  // РРјСЏ СЃРµСЂРІРµСЂР°:
   FContent.NameLabel := TLabel.Create(FContent.ServerPanel);
   FContent.NameLabel.Parent := FContent.ServerPanel;
   CopyLabel(Sample.NameLabel, FContent.NameLabel);
 
-  // Информация о сервере:
+  // РРЅС„РѕСЂРјР°С†РёСЏ Рѕ СЃРµСЂРІРµСЂРµ:
   FContent.InfoLabel := TLabel.Create(FContent.ServerPanel);
   FContent.InfoLabel.Parent := FContent.ServerPanel;
   CopyLabel(Sample.InfoLabel, FContent.InfoLabel);
 
-  // Прогрессбар:
+  // РџСЂРѕРіСЂРµСЃСЃР±Р°СЂ:
   FContent.ProgressBar := TProgressBar.Create(FContent.ServerPanel);
   FContent.ProgressBar.Parent := FContent.ServerPanel;
   CopyProgressBar(Sample.ProgressBar, FContent.ProgressBar);
 
-  // Превью:
+  // РџСЂРµРІСЊСЋ:
   FContent.PreviewImage := TImage.Create(FContent.ServerPanel);
   FContent.PreviewImage.Parent := FContent.ServerPanel;
   CopyImage(Sample.PreviewImage, FContent.PreviewImage);
 
-  // Тень от превью:
+  // РўРµРЅСЊ РѕС‚ РїСЂРµРІСЊСЋ:
   FContent.PreviewShadowEffect := TShadowEffect.Create(FContent.PreviewImage);
   FContent.PreviewShadowEffect.Parent := FContent.PreviewImage;
   CopyShadowEffect(Sample.PreviewShadowEffect, FContent.PreviewShadowEffect);
 
-  // Лампочка:
+  // Р›Р°РјРїРѕС‡РєР°:
   FContent.MonitoringLamp := TCircle.Create(FContent.ServerPanel);
   FContent.MonitoringLamp.Parent := FContent.ServerPanel;
   CopyShape(Sample.MonitoringLamp, FContent.MonitoringLamp);
 
-  // Свечение от лампочки:
+  // РЎРІРµС‡РµРЅРёРµ РѕС‚ Р»Р°РјРїРѕС‡РєРё:
   FContent.LampGlowEffect := TGlowEffect.Create(FContent.MonitoringLamp);
   FContent.LampGlowEffect.Parent := FContent.MonitoringLamp;
   CopyGlowEffect(Sample.LampGlowEffect, FContent.LampGlowEffect);
 
-  // Анимация смены цвета:
+  // РђРЅРёРјР°С†РёСЏ СЃРјРµРЅС‹ С†РІРµС‚Р°:
   FContent.LampColorAnimation := TColorAnimation.Create(FContent.MonitoringLamp);
   FContent.LampColorAnimation.Parent := FContent.MonitoringLamp;
   FContent.LampColorAnimation.Duration := LightBlinkDuration;
   FContent.LampColorAnimation.PropertyName := 'Fill.Color';
 
-  // Анимация свечения:
+  // РђРЅРёРјР°С†РёСЏ СЃРІРµС‡РµРЅРёСЏ:
   FContent.LampOpacityAnimation := TFloatAnimation.Create(FContent.LampGlowEffect);
   FContent.LampOpacityAnimation.Parent := FContent.LampGlowEffect;
   FContent.LampOpacityAnimation.Duration := LightBlinkDuration;
@@ -215,12 +215,12 @@ begin
   FContent.LampOpacityAnimation.StopValue := LampBrightnessStop;
   FContent.LampOpacityAnimation.PropertyName := 'Opacity';
 
-  // Информация мониторинга:
+  // РРЅС„РѕСЂРјР°С†РёСЏ РјРѕРЅРёС‚РѕСЂРёРЅРіР°:
   FContent.MonitoringInfo := TLabel.Create(FContent.ServerPanel);
   FContent.MonitoringInfo.Parent := FContent.ServerPanel;
   CopyLabel(Sample.MonitoringInfo, FContent.MonitoringInfo);
 
-  // Кнопка паузы:
+  // РљРЅРѕРїРєР° РїР°СѓР·С‹:
   FContent.PauseButton := TPath.Create(FContent.ServerPanel);
   FContent.PauseButton.Parent := FContent.ServerPanel;
   CopyShape(Sample.PauseButton, FContent.PauseButton);
@@ -229,12 +229,12 @@ begin
   FContent.PauseButton.Cursor := crHandPoint;
   FContent.PauseButton.HitTest := False;
 
-  // Свечение кнопки паузы:
+  // РЎРІРµС‡РµРЅРёРµ РєРЅРѕРїРєРё РїР°СѓР·С‹:
   FContent.PauseButtonGlowEffect := TGlowEffect.Create(FContent.PauseButton);
   FContent.PauseButtonGlowEffect.Parent := FContent.PauseButton;
   CopyGlowEffect(Sample.PauseButtonGlowEffect, FContent.PauseButtonGlowEffect);
 
-  // Кнопка стопа:
+  // РљРЅРѕРїРєР° СЃС‚РѕРїР°:
   FContent.StopButton := TRectangle.Create(FContent.ServerPanel);
   FContent.StopButton.Parent := FContent.ServerPanel;
   CopyShape(Sample.StopButton, FContent.StopButton);
@@ -242,7 +242,7 @@ begin
   FContent.StopButton.Cursor := crHandPoint;
   FContent.StopButton.HitTest := False;
 
-  // Свечение кнопки стопа:
+  // РЎРІРµС‡РµРЅРёРµ РєРЅРѕРїРєРё СЃС‚РѕРїР°:
   FContent.StopButtonGlowEffect := TGlowEffect.Create(FContent.StopButton);
   FContent.StopButtonGlowEffect.Parent := FContent.StopButton;
   CopyGlowEffect(Sample.StopButtonGlowEffect, FContent.StopButtonGlowEffect);

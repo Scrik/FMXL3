@@ -107,7 +107,7 @@ end;
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
-// Включаем технологию nVidia Optimus:
+// Р’РєР»СЋС‡Р°РµРј С‚РµС…РЅРѕР»РѕРіРёСЋ nVidia Optimus:
 function NvOptimusEnablement: LongWord; export;
 begin
   Result := $00000001;

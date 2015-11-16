@@ -6,9 +6,9 @@ type
   TStringArray = array of string;
 
 const
-  METHOD_SIMPLE    = 0; // Простая замена
-  METHOD_SELECTIVE = 1; // Замена, если параметр не содержится в строке,
-                        // образующей заменяющую последовательность
+  METHOD_SIMPLE    = 0; // РџСЂРѕСЃС‚Р°СЏ Р·Р°РјРµРЅР°
+  METHOD_SELECTIVE = 1; // Р—Р°РјРµРЅР°, РµСЃР»Рё РїР°СЂР°РјРµС‚СЂ РЅРµ СЃРѕРґРµСЂР¶РёС‚СЃСЏ РІ СЃС‚СЂРѕРєРµ,
+                        // РѕР±СЂР°Р·СѓСЋС‰РµР№ Р·Р°РјРµРЅСЏСЋС‰СѓСЋ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ
 
 function SimpleReplaceParam(var Source: string; const Param, ReplacingString: string): Boolean; inline;
 function SelectiveReplaceParam(var Source: string; const Param, ReplacingString: string): Boolean; inline;
@@ -18,7 +18,7 @@ function ReplaceParam(const Source, Param, ReplacingString: string; out WasRepla
 {
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  * Simple - простой метод:
+  * Simple - РїСЂРѕСЃС‚РѕР№ РјРµС‚РѕРґ:
   Source          = aFFabFFabc
   Param           = ab
   ReplacingString = abc
@@ -27,13 +27,13 @@ function ReplaceParam(const Source, Param, ReplacingString: string; out WasRepla
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-  * Selective - избирательный метод:
+  * Selective - РёР·Р±РёСЂР°С‚РµР»СЊРЅС‹Р№ РјРµС‚РѕРґ:
   Source          = aFFabFFabc
   Param           = ab
   ReplacingString = abc
 
-  Result = aFFabcFFabc - крайняя последовательность такая же, как
-                         заменяющая строка (abc), поэтому её не трогаем
+  Result = aFFabcFFabc - РєСЂР°Р№РЅСЏСЏ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ С‚Р°РєР°СЏ Р¶Рµ, РєР°Рє
+                         Р·Р°РјРµРЅСЏСЋС‰Р°СЏ СЃС‚СЂРѕРєР° (abc), РїРѕСЌС‚РѕРјСѓ РµС‘ РЅРµ С‚СЂРѕРіР°РµРј
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 }
@@ -118,8 +118,8 @@ begin
     LeftDelta := ParamPosInReplacingString - 1;
     RightDelta := ReplacingStrLength - ParamPosInReplacingString;
     {
-      Начало строки: Pos - LeftDelta
-      Конец строки: Pos + RightDelta
+      РќР°С‡Р°Р»Рѕ СЃС‚СЂРѕРєРё: Pos - LeftDelta
+      РљРѕРЅРµС† СЃС‚СЂРѕРєРё: Pos + RightDelta
     }
   end;
 
@@ -129,10 +129,10 @@ begin
   Result := StartPos <> 0;
   while StartPos <> 0 do
   begin
-    // Вычисляем абсолютное смещение:
+    // Р’С‹С‡РёСЃР»СЏРµРј Р°Р±СЃРѕР»СЋС‚РЅРѕРµ СЃРјРµС‰РµРЅРёРµ:
     StartPos := StartPos + NewPos - 1;
 
-    // Получаем окружение параметра:
+    // РџРѕР»СѓС‡Р°РµРј РѕРєСЂСѓР¶РµРЅРёРµ РїР°СЂР°РјРµС‚СЂР°:
     if (StartPos - LeftDelta > 0) and (StartPos + RightDelta <= SourceLength) then
     begin
       ParamEnvironment := Copy(Source, StartPos - LeftDelta, ReplacingStrLength);
@@ -310,7 +310,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Проверка на запрещённые символы:
+// РџСЂРѕРІРµСЂРєР° РЅР° Р·Р°РїСЂРµС‰С‘РЅРЅС‹Рµ СЃРёРјРІРѕР»С‹:
 function CheckSymbols(Input: string): Boolean;
 var
   C: Char;

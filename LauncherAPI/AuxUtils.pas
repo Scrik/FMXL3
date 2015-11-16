@@ -22,7 +22,7 @@ function OpenThread(
                      dwThreadId: LongWord
                     ): LongWord; stdcall; external 'kernel32.dll';
 
-// Заморозить все потоки процесса, кроме текущего:
+// Р—Р°РјРѕСЂРѕР·РёС‚СЊ РІСЃРµ РїРѕС‚РѕРєРё РїСЂРѕС†РµСЃСЃР°, РєСЂРѕРјРµ С‚РµРєСѓС‰РµРіРѕ:
 procedure StopThreads;
 var
   TlHelpHandle, CurrentThreadID, ThreadHandle, CurrentProcessID: LongWord;

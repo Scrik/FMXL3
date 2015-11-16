@@ -46,13 +46,13 @@ begin
 
   if ServersInfo = nil then Exit(False);
 
-  // Получаем из джейсона массив клиентов:
+  // РџРѕР»СѓС‡Р°РµРј РёР· РґР¶РµР№СЃРѕРЅР° РјР°СЃСЃРёРІ РєР»РёРµРЅС‚РѕРІ:
   if not GetJSONArrayValue(ServersInfo, 'servers', ClientsArray) then Exit(False);
 
   FClientsCount := ClientsArray.Count;
   if FClientsCount = 0 then Exit(False);
 
-  // Получаем информацию обо всех клиентах:
+  // РџРѕР»СѓС‡Р°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ РѕР±Рѕ РІСЃРµС… РєР»РёРµРЅС‚Р°С…:
   SetLength(FClients, FClientsCount);
   TParallel.&For(0, FClientsCount - 1, procedure(I: Integer)
   begin

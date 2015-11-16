@@ -10,31 +10,31 @@ type
   TAuthResponse = TJSONObject;
   PAuthResponse = ^TAuthResponse;
 
-  // Структура с даными пользователя, которую передаём потоку авторизации:
+  // РЎС‚СЂСѓРєС‚СѓСЂР° СЃ РґР°РЅС‹РјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, РєРѕС‚РѕСЂСѓСЋ РїРµСЂРµРґР°С‘Рј РїРѕС‚РѕРєСѓ Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   TAuthData = record
     Login    : string;
     Password : string;
     SendHWID : Boolean;
   end;
 
-  // Статусные коды авторизации:
+  // РЎС‚Р°С‚СѓСЃРЅС‹Рµ РєРѕРґС‹ Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   AUTH_STATUS_CODE = (
-    AUTH_STATUS_SUCCESS,          // Успешная авторизация
-    AUTH_STATUS_UNKNOWN_ERROR,    // Неизвестная ошибка
-    AUTH_STATUS_CONNECTION_ERROR, // Не удалось подключиться
-    AUTH_STATUS_BAD_RESPONSE      // Не удалось раздекодить ответ
+    AUTH_STATUS_SUCCESS,          // РЈСЃРїРµС€РЅР°СЏ Р°РІС‚РѕСЂРёР·Р°С†РёСЏ
+    AUTH_STATUS_UNKNOWN_ERROR,    // РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°
+    AUTH_STATUS_CONNECTION_ERROR, // РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ
+    AUTH_STATUS_BAD_RESPONSE      // РќРµ СѓРґР°Р»РѕСЃСЊ СЂР°Р·РґРµРєРѕРґРёС‚СЊ РѕС‚РІРµС‚
   );
 
-  // Структура с результатом авторизации, возвращаемая в каллбэк:
+  // РЎС‚СЂСѓРєС‚СѓСЂР° СЃ СЂРµР·СѓР»СЊС‚Р°С‚РѕРј Р°РІС‚РѕСЂРёР·Р°С†РёРё, РІРѕР·РІСЂР°С‰Р°РµРјР°СЏ РІ РєР°Р»Р»Р±СЌРє:
   AUTH_STATUS = record
     StatusCode   : AUTH_STATUS_CODE;
     StatusString : string;
   end;
 
-  // Событие авторизации:
+  // РЎРѕР±С‹С‚РёРµ Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   TOnAuth = reference to procedure(const AuthStatus: AUTH_STATUS);
 
-  // Поток авторизации:
+  // РџРѕС‚РѕРє Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   TAuthWorker = class(TThread)
     private
       FAuthStatus: AUTH_STATUS;
@@ -47,10 +47,10 @@ type
       property EncryptionKey: AnsiString read FEncryptionKey write FEncryptionKey;
 
       procedure Authorize(
-                           const AuthScriptAddress : string;        // Адрес скрипта авторизации
-                           const AuthData          : TAuthData;     // Данные, отправляемые скрипту
-                           out   AuthResponse      : TAuthResponse; // JSON-ответ от скрипта
-                           OnAuth                  : TOnAuth        // Событие завершения авторизации
+                           const AuthScriptAddress : string;        // РђРґСЂРµСЃ СЃРєСЂРёРїС‚Р° Р°РІС‚РѕСЂРёР·Р°С†РёРё
+                           const AuthData          : TAuthData;     // Р”Р°РЅРЅС‹Рµ, РѕС‚РїСЂР°РІР»СЏРµРјС‹Рµ СЃРєСЂРёРїС‚Сѓ
+                           out   AuthResponse      : TAuthResponse; // JSON-РѕС‚РІРµС‚ РѕС‚ СЃРєСЂРёРїС‚Р°
+                           OnAuth                  : TOnAuth        // РЎРѕР±С‹С‚РёРµ Р·Р°РІРµСЂС€РµРЅРёСЏ Р°РІС‚РѕСЂРёР·Р°С†РёРё
                           );
     protected
       procedure Execute; override;
@@ -63,13 +63,13 @@ implementation
 procedure TAuthWorker.Authorize(const AuthScriptAddress: string; const AuthData: TAuthData;
   out AuthResponse: TAuthResponse; OnAuth: TOnAuth);
 begin
-  // Параметры авторизации:
+  // РџР°СЂР°РјРµС‚СЂС‹ Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   FAuthScriptAddress := AuthScriptAddress;
   FAuthResponse      := @AuthResponse;
   FAuthData          := AuthData;
   FOnAuth            := OnAuth;
 
-  // Параметры потока:
+  // РџР°СЂР°РјРµС‚СЂС‹ РїРѕС‚РѕРєР°:
   FreeOnTerminate := True;
   Start;
 end;
@@ -83,66 +83,66 @@ var
 begin
   inherited;
 
-  // Формируем запрос:
+  // Р¤РѕСЂРјРёСЂСѓРµРј Р·Р°РїСЂРѕСЃ:
   Request := 'login=' + FAuthData.Login + '&password=' + FAuthData.Password;
   if FAuthData.SendHWID then Request := Request + '&hwid=' + GetHWID;
 
-  // Отправляем запрос на сервер:
+  // РћС‚РїСЂР°РІР»СЏРµРј Р·Р°РїСЂРѕСЃ РЅР° СЃРµСЂРІРµСЂ:
   HTTPSender := THTTPSender.Create;
   Response   := TStringStream.Create;
   HTTPSender.POST(FAuthScriptAddress, Request, Response);
 
   if  HTTPSender.Status then
   begin
-    // Расшифровываем запрос:
+    // Р Р°СЃС€РёС„СЂРѕРІС‹РІР°РµРј Р·Р°РїСЂРѕСЃ:
     EncryptDecryptVerrnam(Response.Memory, Response.Size, PAnsiChar(FEncryptionKey), Length(FEncryptionKey));
     UTF8Convert(Response);
 
-    // Преобразовываем запрос в JSON:
+    // РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµРј Р·Р°РїСЂРѕСЃ РІ JSON:
     FAuthResponse^ := JSONStringToJSONObject(Response.DataString);
     if FAuthResponse^ <> nil then
     begin
-      // Проверяем поле "status" в полученном JSON'е:
+      // РџСЂРѕРІРµСЂСЏРµРј РїРѕР»Рµ "status" РІ РїРѕР»СѓС‡РµРЅРЅРѕРј JSON'Рµ:
       if GetJSONStringValue(FAuthResponse^, 'status', Status) then
       begin
         Status := LowerCase(Status);
         if Status = 'success' then
         begin
           FAuthStatus.StatusCode := AUTH_STATUS_SUCCESS;
-          FauthStatus.StatusString := 'Успешная авторизация!';
+          FauthStatus.StatusString := 'РЈСЃРїРµС€РЅР°СЏ Р°РІС‚РѕСЂРёР·Р°С†РёСЏ!';
         end
         else
         begin
           FAuthStatus.StatusCode := AUTH_STATUS_UNKNOWN_ERROR;
 
-          // Получаем причину ошибки:
+          // РџРѕР»СѓС‡Р°РµРј РїСЂРёС‡РёРЅСѓ РѕС€РёР±РєРё:
           if not GetJSONStringValue(FAuthResponse^, 'reason', FAuthStatus.StatusString) then
-            FAuthStatus.StatusString := 'Неизвестная ошибка!';
+            FAuthStatus.StatusString := 'РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°!';
         end;
       end
       else
       begin
         FAuthStatus.StatusCode := AUTH_STATUS_UNKNOWN_ERROR;
-        FAuthStatus.StatusString := 'JSON неизвестного формата! Проверьте настройки веб-части!';
+        FAuthStatus.StatusString := 'JSON РЅРµРёР·РІРµСЃС‚РЅРѕРіРѕ С„РѕСЂРјР°С‚Р°! РџСЂРѕРІРµСЂСЊС‚Рµ РЅР°СЃС‚СЂРѕР№РєРё РІРµР±-С‡Р°СЃС‚Рё!';
       end;
     end
     else
     begin
       FAuthStatus.StatusCode := AUTH_STATUS_BAD_RESPONSE;
-      FAuthStatus.StatusString := 'Не удалось преобразовать ответ от скрипта в JSON!' + #13#10 +
-                                  'Проверьте правильность ключа шифрования!';
+      FAuthStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РѕС‚РІРµС‚ РѕС‚ СЃРєСЂРёРїС‚Р° РІ JSON!' + #13#10 +
+                                  'РџСЂРѕРІРµСЂСЊС‚Рµ РїСЂР°РІРёР»СЊРЅРѕСЃС‚СЊ РєР»СЋС‡Р° С€РёС„СЂРѕРІР°РЅРёСЏ!';
     end;
   end
   else
   begin
     FAuthStatus.StatusCode := AUTH_STATUS_CONNECTION_ERROR;
-    FAuthStatus.StatusString := 'Не удалось подключиться к серверу!';
+    FAuthStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє СЃРµСЂРІРµСЂСѓ!';
   end;
 
   FreeAndNil(Response);
   FreeAndNil(HTTPSender);
 
-  // Возвращаем результат:
+  // Р’РѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚:
   Synchronize(procedure()
   begin
     FOnAuth(FAuthStatus);

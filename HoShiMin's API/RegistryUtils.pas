@@ -7,12 +7,12 @@ uses
 
 function GetCurrentJavaInfo(out JavaHome, RuntimeLib, CurrentVersion: string): Boolean;
 
-// Запись параметров:
+// Р—Р°РїРёСЃСЊ РїР°СЂР°РјРµС‚СЂРѕРІ:
 procedure SaveStringToRegistry (const Path, Name, Value: string         ; Access: LongWord = KEY_WRITE);
 procedure SaveBooleanToRegistry(const Path, Name: string; Value: Boolean; Access: LongWord = KEY_WRITE);
 procedure SaveNumberToRegistry (const Path, Name: string; Value: Integer; Access: LongWord = KEY_WRITE);
 
-// Чтение параметров:
+// Р§С‚РµРЅРёРµ РїР°СЂР°РјРµС‚СЂРѕРІ:
 function ReadStringFromRegistry (const Path, Name: string; DefaultValue: string  = ''   ; Access: LongWord = KEY_READ): string;
 function ReadBooleanFromRegistry(const Path, Name: string; DefaultValue: Boolean = False; Access: LongWord = KEY_READ): Boolean;
 function ReadNumberFromRegistry (const Path, Name: string; DefaultValue: Integer = 0    ; Access: LongWord = KEY_READ): Integer;

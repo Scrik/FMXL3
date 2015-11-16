@@ -8,16 +8,16 @@ uses
 function NtQueryPerformanceCounter(Counter, Frequency: PInt64): LongWord; stdcall; external 'ntdll.dll';
 function NtDelayExecution(Alertable: Boolean; Delay: PInt64): LongWord; stdcall; external 'ntdll.dll';
 
-{$DEFINE USE_ASM_SLEEP} // Использовать ассемблерные реализации MicroSleep [TSC]
+{$DEFINE USE_ASM_SLEEP} // РСЃРїРѕР»СЊР·РѕРІР°С‚СЊ Р°СЃСЃРµРјР±Р»РµСЂРЅС‹Рµ СЂРµР°Р»РёР·Р°С†РёРё MicroSleep [TSC]
 
-procedure DelayExecution(Delay: Int64); stdcall; // NtDelayExecution, 100-наносекундные интервалы
-procedure MicroSleep(Delay: Int64); overload; // Вариант на NtQueryPerformanceCounter (задержка в микросекундах)
-procedure MicroSleep(Delay: Double); overload; // Вариант на TSC (задержка в секундах)
+procedure DelayExecution(Delay: Int64); stdcall; // NtDelayExecution, 100-РЅР°РЅРѕСЃРµРєСѓРЅРґРЅС‹Рµ РёРЅС‚РµСЂРІР°Р»С‹
+procedure MicroSleep(Delay: Int64); overload; // Р’Р°СЂРёР°РЅС‚ РЅР° NtQueryPerformanceCounter (Р·Р°РґРµСЂР¶РєР° РІ РјРёРєСЂРѕСЃРµРєСѓРЅРґР°С…)
+procedure MicroSleep(Delay: Double); overload; // Р’Р°СЂРёР°РЅС‚ РЅР° TSC (Р·Р°РґРµСЂР¶РєР° РІ СЃРµРєСѓРЅРґР°С…)
 
 var RDTSC      : function: UInt64; register;
 var GetLowTSC  : function: LongWord;
 var GetHighTSC : function: LongWord;
-var GetTimer   : function: Double; // Возвращает время с момента последнего сброса ЦП в секундах
+var GetTimer   : function: Double; // Р’РѕР·РІСЂР°С‰Р°РµС‚ РІСЂРµРјСЏ СЃ РјРѕРјРµРЅС‚Р° РїРѕСЃР»РµРґРЅРµРіРѕ СЃР±СЂРѕСЃР° Р¦Рџ РІ СЃРµРєСѓРЅРґР°С…
 
 function GetTSCBasedFrequency(Delay: Int64 = 10000): Double;
 procedure UpdateTSCFrequency(AveragingCoeff: Integer = 1);
@@ -25,7 +25,7 @@ procedure UpdateTSCFrequency(AveragingCoeff: Integer = 1);
 implementation
 
 var
-  WorkingFrequency: Double = 0; // Частота TSC
+  WorkingFrequency: Double = 0; // Р§Р°СЃС‚РѕС‚Р° TSC
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -37,7 +37,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Delay в микросекундах:
+// Delay РІ РјРёРєСЂРѕСЃРµРєСѓРЅРґР°С…:
 procedure MicroSleep(Delay: Int64); overload;
 var
   Counter, Frequency: Int64;
@@ -51,7 +51,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Delay в секундах:
+// Delay РІ СЃРµРєСѓРЅРґР°С…:
 procedure MicroSleep(Delay: Double); overload;
 {$IFNDEF USE_ASM_SLEEP}
 var
@@ -63,7 +63,7 @@ end;
 {$ELSE}
 asm
 {$IFDEF CPUX64}
-  movsd xmm1, xmm0 // Delay передаётся в XMM0
+  movsd xmm1, xmm0 // Delay РїРµСЂРµРґР°С‘С‚СЃСЏ РІ XMM0
 
   call GetTimer
   movsd xmm2, xmm0 // InitialValue (XMM2) := GetTimer (XMM0);
@@ -75,7 +75,7 @@ asm
   jb @SleepingLoop
 
 {$ELSE}
-  // Заносим в стек InitialValue:
+  // Р—Р°РЅРѕСЃРёРј РІ СЃС‚РµРє InitialValue:
   call GetTimer
 
 @SleepingLoop:
@@ -87,7 +87,7 @@ asm
   fsub st(0), st(1)       // --+--> while (GetTimer - InitialValue) < Delay do
   fcomp qword ptr [esp+8] // --+
 
-  // Взводим флаги сравнения:
+  // Р’Р·РІРѕРґРёРј С„Р»Р°РіРё СЃСЂР°РІРЅРµРЅРёСЏ:
   fstsw ax
   sahf
 
@@ -160,7 +160,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-function _GetTimerTSC: Double; // Результат в st(0) для х32 и в XMM0 для х64
+function _GetTimerTSC: Double; // Р РµР·СѓР»СЊС‚Р°С‚ РІ st(0) РґР»СЏ С…32 Рё РІ XMM0 РґР»СЏ С…64
 asm
 {$IFDEF CPUX64}
   rdtsc
@@ -184,7 +184,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-function _GetTimerTSCP: Double; // Результат в st(0) для х32 и в XMM0 для х64
+function _GetTimerTSCP: Double; // Р РµР·СѓР»СЊС‚Р°С‚ РІ st(0) РґР»СЏ С…32 Рё РІ XMM0 РґР»СЏ С…64
 asm
 {$IFDEF CPUX64}
   db $0F, $01, $F9 // rdtscp
@@ -237,7 +237,7 @@ var
 begin
   if AveragingCoeff < 1 then Exit;
 
-// Усредняем частоту - берём среднее арифметическое:
+// РЈСЃСЂРµРґРЅСЏРµРј С‡Р°СЃС‚РѕС‚Сѓ - Р±РµСЂС‘Рј СЃСЂРµРґРЅРµРµ Р°СЂРёС„РјРµС‚РёС‡РµСЃРєРѕРµ:
   WorkingFrequency := 0.0;
   for I := 0 to AveragingCoeff - 1 do
     WorkingFrequency := WorkingFrequency + GetTscBasedFrequency;
@@ -269,7 +269,7 @@ var
   CPUIDValue: UInt64;
 begin
   CPUIDValue := CPUID($80000001);
-  Result := (CPUIDValue and $800000000000000) <> 0; // 27й бит в старшей части EDX:EAX
+  Result := (CPUIDValue and $800000000000000) <> 0; // 27Р№ Р±РёС‚ РІ СЃС‚Р°СЂС€РµР№ С‡Р°СЃС‚Рё EDX:EAX
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

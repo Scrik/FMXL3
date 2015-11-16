@@ -1,4 +1,4 @@
-﻿unit ServerQuery;
+unit ServerQuery;
 
 interface
 

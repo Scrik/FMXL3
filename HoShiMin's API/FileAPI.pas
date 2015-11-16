@@ -13,38 +13,38 @@ function CreateFile(
                      CreatePathIfNotExists : Boolean  = True
                     ): THandle; overload;
 {
-  Создаёт или открывает файл и возвращает хэндл на него.
+  РЎРѕР·РґР°С‘С‚ РёР»Рё РѕС‚РєСЂС‹РІР°РµС‚ С„Р°Р№Р» Рё РІРѕР·РІСЂР°С‰Р°РµС‚ С…СЌРЅРґР» РЅР° РЅРµРіРѕ.
 
   CreatingFlag:
-    CREATE_ALWAYS - всегда создавать файл
-    CREATE_NEW - создавать, только если файл не существует, а если существует - возвращать ошибку
-    OPEN_ALWAYS - если файл существует - открывает, если нет - создаёт и открывает
-    OPEN_EXISTING - открывает, только если файл существует
-    TRUNCATE_EXISTING - открывает и стирает содержимое
+    CREATE_ALWAYS - РІСЃРµРіРґР° СЃРѕР·РґР°РІР°С‚СЊ С„Р°Р№Р»
+    CREATE_NEW - СЃРѕР·РґР°РІР°С‚СЊ, С‚РѕР»СЊРєРѕ РµСЃР»Рё С„Р°Р№Р» РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р° РµСЃР»Рё СЃСѓС‰РµСЃС‚РІСѓРµС‚ - РІРѕР·РІСЂР°С‰Р°С‚СЊ РѕС€РёР±РєСѓ
+    OPEN_ALWAYS - РµСЃР»Рё С„Р°Р№Р» СЃСѓС‰РµСЃС‚РІСѓРµС‚ - РѕС‚РєСЂС‹РІР°РµС‚, РµСЃР»Рё РЅРµС‚ - СЃРѕР·РґР°С‘С‚ Рё РѕС‚РєСЂС‹РІР°РµС‚
+    OPEN_EXISTING - РѕС‚РєСЂС‹РІР°РµС‚, С‚РѕР»СЊРєРѕ РµСЃР»Рё С„Р°Р№Р» СЃСѓС‰РµСЃС‚РІСѓРµС‚
+    TRUNCATE_EXISTING - РѕС‚РєСЂС‹РІР°РµС‚ Рё СЃС‚РёСЂР°РµС‚ СЃРѕРґРµСЂР¶РёРјРѕРµ
 	
   CreatePathIfNotExists:
-    True - создавать иерархию каталогов пути к файлу
-	False - не создавать папки 
+    True - СЃРѕР·РґР°РІР°С‚СЊ РёРµСЂР°СЂС…РёСЋ РєР°С‚Р°Р»РѕРіРѕРІ РїСѓС‚Рё Рє С„Р°Р№Р»Сѓ
+	False - РЅРµ СЃРѕР·РґР°РІР°С‚СЊ РїР°РїРєРё 
 }
 
 function FileExists(const FileName: string): Boolean;
 {
-  Проверяет существование файла
+  РџСЂРѕРІРµСЂСЏРµС‚ СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёРµ С„Р°Р№Р»Р°
 }
 
 function GetFileSize(const FileName: string): LongWord; overload;
 {
-  Получает размер файла
+  РџРѕР»СѓС‡Р°РµС‚ СЂР°Р·РјРµСЂ С„Р°Р№Р»Р°
 }
 
 function LoadFileToMemory(const FileName: string): Pointer; overload;
 {
-  Загружает файл в память
+  Р—Р°РіСЂСѓР¶Р°РµС‚ С„Р°Р№Р» РІ РїР°РјСЏС‚СЊ
 }
 
 function LoadFileToMemory(const FileName: string; out FileSize: Integer): Pointer; overload;
 {
-  Загружает файл в память и возвращает размер загруженного файла
+  Р—Р°РіСЂСѓР¶Р°РµС‚ С„Р°Р№Р» РІ РїР°РјСЏС‚СЊ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ СЂР°Р·РјРµСЂ Р·Р°РіСЂСѓР¶РµРЅРЅРѕРіРѕ С„Р°Р№Р»Р°
 }
 
 const
@@ -54,40 +54,40 @@ const
 
 function ReadFromFile(hFile: THandle; Buffer: Pointer; Size: LongWord): Boolean; overload;
 {
-  Читает из файла в буфер заданное число байт
+  Р§РёС‚Р°РµС‚ РёР· С„Р°Р№Р»Р° РІ Р±СѓС„РµСЂ Р·Р°РґР°РЅРЅРѕРµ С‡РёСЃР»Рѕ Р±Р°Р№С‚
 }
 
 function ReadFromFile(hFile: THandle; Buffer: Pointer; Size: LongWord; Offset: Integer; OffsetType: Integer = FROM_CURRENT): Boolean; overload;
 {
-  Читает из файла в буфер заданное число байт со смещением
+  Р§РёС‚Р°РµС‚ РёР· С„Р°Р№Р»Р° РІ Р±СѓС„РµСЂ Р·Р°РґР°РЅРЅРѕРµ С‡РёСЃР»Рѕ Р±Р°Р№С‚ СЃРѕ СЃРјРµС‰РµРЅРёРµРј
 }
 
 function WriteToFile(hFile: THandle; Buffer: Pointer; Size: LongWord): Boolean; overload;
 {
-  Пишет в файл заданное число байт из буфера
+  РџРёС€РµС‚ РІ С„Р°Р№Р» Р·Р°РґР°РЅРЅРѕРµ С‡РёСЃР»Рѕ Р±Р°Р№С‚ РёР· Р±СѓС„РµСЂР°
 }
 
 function WriteToFile(hFile: THandle; Buffer: Pointer; Size: LongWord; Offset: Integer; OffsetType: Integer = FROM_CURRENT): Boolean; overload;
 {
-  Пишет в файл заданное число байт из буфера со смещением
+  РџРёС€РµС‚ РІ С„Р°Р№Р» Р·Р°РґР°РЅРЅРѕРµ С‡РёСЃР»Рѕ Р±Р°Р№С‚ РёР· Р±СѓС„РµСЂР° СЃРѕ СЃРјРµС‰РµРЅРёРµРј
 }
 
 function DeleteDirectory(const Directory: string; Silent: Boolean = False): Boolean;
 {
-  Удаляет папку вместе с файлами (поддерживаются маски, например *.exe)
+  РЈРґР°Р»СЏРµС‚ РїР°РїРєСѓ РІРјРµСЃС‚Рµ СЃ С„Р°Р№Р»Р°РјРё (РїРѕРґРґРµСЂР¶РёРІР°СЋС‚СЃСЏ РјР°СЃРєРё, РЅР°РїСЂРёРјРµСЂ *.exe)
 }
 
 function GetSpecialFolderPath(Folder: Integer): string;
 {
-  Получает пути, описанные в переменных среды (CSIDL_*)
+  РџРѕР»СѓС‡Р°РµС‚ РїСѓС‚Рё, РѕРїРёСЃР°РЅРЅС‹Рµ РІ РїРµСЂРµРјРµРЅРЅС‹С… СЃСЂРµРґС‹ (CSIDL_*)
 }
 
 const  
   CSIDL_APPDATA          = 26;
-  CSIDL_DRIVES           = 17; // Мой компьютер
+  CSIDL_DRIVES           = 17; // РњРѕР№ РєРѕРјРїСЊСЋС‚РµСЂ
   CSIDL_SYSTEM           = 37; // C:\Windows\System32
   CSIDL_WINDOWS          = 36; // C:\Windows
-  CSIDL_BITBUCKET        = 10; // Корзина
+  CSIDL_BITBUCKET        = 10; // РљРѕСЂР·РёРЅР°
 
   CSIDL_COOKIES          = 33;
   CSIDL_DESKTOP          = 0;
@@ -103,60 +103,60 @@ const
 
 function SetEnvironmentVariable(const VariableName, VariableValue: string): Integer;
 {
-  Задаёт значение переменной окружения
+  Р—Р°РґР°С‘С‚ Р·РЅР°С‡РµРЅРёРµ РїРµСЂРµРјРµРЅРЅРѕР№ РѕРєСЂСѓР¶РµРЅРёСЏ
 }
 
 function GetEnvironmentVariable(const VariableName: string): string;
 {
-  Получает значение переменной окружения
+  РџРѕР»СѓС‡Р°РµС‚ Р·РЅР°С‡РµРЅРёРµ РїРµСЂРµРјРµРЅРЅРѕР№ РѕРєСЂСѓР¶РµРЅРёСЏ
 }
 
 procedure GetFilesList(const Dir, Pattern, Delimiter: string; var FilesList: string; IncludeSubfolders: Boolean = True); overload;
 {
-  Получает список файлов в папке в строку через разделитель
+  РџРѕР»СѓС‡Р°РµС‚ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РІ РїР°РїРєРµ РІ СЃС‚СЂРѕРєСѓ С‡РµСЂРµР· СЂР°Р·РґРµР»РёС‚РµР»СЊ
 }
 
 procedure GetFilesList(const Dir, Pattern: string; const FilesList: TStringList; IncludeSubfolders: Boolean = True); overload;
 {
-  Получает список файлов в папке в TStringList
+  РџРѕР»СѓС‡Р°РµС‚ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РІ РїР°РїРєРµ РІ TStringList
 }
 
 type TStringArray = array of string;
 procedure GetFilesList(const Dir, Pattern: string; var FilesList: TStringArray; IncludeSubfolders: Boolean = True); overload;
 {
-  Получает список файлов в массив строк
+  РџРѕР»СѓС‡Р°РµС‚ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РІ РјР°СЃСЃРёРІ СЃС‚СЂРѕРє
 }
 
 procedure CreatePath(const EndDir: string);
 {
-  Создаёт иерархию каталогов до конечного каталога включительно.
-  Допускаются разделители: "\" и "/"
+  РЎРѕР·РґР°С‘С‚ РёРµСЂР°СЂС…РёСЋ РєР°С‚Р°Р»РѕРіРѕРІ РґРѕ РєРѕРЅРµС‡РЅРѕРіРѕ РєР°С‚Р°Р»РѕРіР° РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ.
+  Р”РѕРїСѓСЃРєР°СЋС‚СЃСЏ СЂР°Р·РґРµР»РёС‚РµР»Рё: "\" Рё "/"
 }
 
 function ExtractFileDir(Path: string): string;
 {
-  Получает каталог, в котором лежит файл, без слэша. Допускаются разделители: "\" и "/".
+  РџРѕР»СѓС‡Р°РµС‚ РєР°С‚Р°Р»РѕРі, РІ РєРѕС‚РѕСЂРѕРј Р»РµР¶РёС‚ С„Р°Р№Р», Р±РµР· СЃР»СЌС€Р°. Р”РѕРїСѓСЃРєР°СЋС‚СЃСЏ СЂР°Р·РґРµР»РёС‚РµР»Рё: "\" Рё "/".
 }
 
 function ExtractFilePath(Path: string): string;
 {
-  Извлекает путь к файлу. Допускаются разделители: "\" и "/"
+  РР·РІР»РµРєР°РµС‚ РїСѓС‚СЊ Рє С„Р°Р№Р»Сѓ. Р”РѕРїСѓСЃРєР°СЋС‚СЃСЏ СЂР°Р·РґРµР»РёС‚РµР»Рё: "\" Рё "/"
 }
 
 function ExtractFileName(Path: string): string;
 {
-  Извлекает имя файла. Допускаются разделители: "\" и "/"
+  РР·РІР»РµРєР°РµС‚ РёРјСЏ С„Р°Р№Р»Р°. Р”РѕРїСѓСЃРєР°СЋС‚СЃСЏ СЂР°Р·РґРµР»РёС‚РµР»Рё: "\" Рё "/"
 }
 
 function ExtractHost(Path: string): string;
 {
-  Извлекает имя хоста из сетевого адреса.
+  РР·РІР»РµРєР°РµС‚ РёРјСЏ С…РѕСЃС‚Р° РёР· СЃРµС‚РµРІРѕРіРѕ Р°РґСЂРµСЃР°.
   http://site.ru/folder/script.php  -->  site.ru
 }
 
 function ExtractObject(Path: string): string;
 {
-  Извлекает имя объекта из сетевого адреса:
+  РР·РІР»РµРєР°РµС‚ РёРјСЏ РѕР±СЉРµРєС‚Р° РёР· СЃРµС‚РµРІРѕРіРѕ Р°РґСЂРµСЃР°:
   http://site.ru/folder/script.php  -->  folder/script.php
 }
 
@@ -164,8 +164,8 @@ implementation
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Процедуры работы с файловой системой и адресами:
-// Допускаются разделители "\" и "/"
+// РџСЂРѕС†РµРґСѓСЂС‹ СЂР°Р±РѕС‚С‹ СЃ С„Р°Р№Р»РѕРІРѕР№ СЃРёСЃС‚РµРјРѕР№ Рё Р°РґСЂРµСЃР°РјРё:
+// Р”РѕРїСѓСЃРєР°СЋС‚СЃСЏ СЂР°Р·РґРµР»РёС‚РµР»Рё "\" Рё "/"
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -422,7 +422,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Создаёт иерархию папок до конечной указанной папки включительно:
+// РЎРѕР·РґР°С‘С‚ РёРµСЂР°СЂС…РёСЋ РїР°РїРѕРє РґРѕ РєРѕРЅРµС‡РЅРѕР№ СѓРєР°Р·Р°РЅРЅРѕР№ РїР°РїРєРё РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ:
 procedure CreatePath(const EndDir: string);
 var
   I: LongWord;
@@ -442,7 +442,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Получает каталог, в котором лежит файл:
+// РџРѕР»СѓС‡Р°РµС‚ РєР°С‚Р°Р»РѕРі, РІ РєРѕС‚РѕСЂРѕРј Р»РµР¶РёС‚ С„Р°Р№Р»:
 function ExtractFilePath(Path: string): string;
 var
   LastDelimiterPos: Integer;
@@ -456,7 +456,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Получает каталог, в котором лежит файл, без слэша:
+// РџРѕР»СѓС‡Р°РµС‚ РєР°С‚Р°Р»РѕРі, РІ РєРѕС‚РѕСЂРѕРј Р»РµР¶РёС‚ С„Р°Р№Р», Р±РµР· СЃР»СЌС€Р°:
 function ExtractFileDir(Path: string): string;
 var
   LastDelimiterPos: Integer;
@@ -478,7 +478,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Получает имя файла:
+// РџРѕР»СѓС‡Р°РµС‚ РёРјСЏ С„Р°Р№Р»Р°:
 function ExtractFileName(Path: string): string;
 var
   LastDelimiterPos: Integer;
@@ -491,7 +491,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Извлекает имя хоста:
+// РР·РІР»РµРєР°РµС‚ РёРјСЏ С…РѕСЃС‚Р°:
 // http://site.ru/folder/script.php  -->  site.ru
 function ExtractHost(Path: string): string;
 var
@@ -499,14 +499,14 @@ var
   PathLen: LongWord;
 begin
   PathLen := Length(Path);
-  I := 8; // Длина "http://"
+  I := 8; // Р”Р»РёРЅР° "http://"
   while (I <= PathLen) and (Path[I] <> '\') and (Path[I] <> '/') do Inc(I);
   Result := Copy(Path, 8, I - 8);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Извлекает имя объекта:
+// РР·РІР»РµРєР°РµС‚ РёРјСЏ РѕР±СЉРµРєС‚Р°:
 // http://site.ru/folder/script.php  -->  folder/script.php
 function ExtractObject(Path: string): string;
 var

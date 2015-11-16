@@ -1,4 +1,4 @@
-﻿unit HookAPI;
+unit HookAPI;
 
 interface
 

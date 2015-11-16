@@ -61,7 +61,7 @@ var
   UserObject: TJSONObject;
   SkinAddress, CloakAddress: string;
 
-  // Флажки окончания загрузки скина и плаща:
+  // Р¤Р»Р°Р¶РєРё РѕРєРѕРЅС‡Р°РЅРёСЏ Р·Р°РіСЂСѓР·РєРё СЃРєРёРЅР° Рё РїР»Р°С‰Р°:
   DownloadEvents: packed record
     SkinEvent: THandle;
     CloakEvent: THandle;
@@ -70,7 +70,7 @@ begin
   if AuthResponse = nil then Exit(False);
   if not GetJSONObjectValue(AuthResponse, 'user_info', UserObject) then Exit(False);
 
-  // Вытаскиваем информацию о пользователе:
+  // Р’С‹С‚Р°СЃРєРёРІР°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РїРѕР»СЊР·РѕРІР°С‚РµР»Рµ:
   with FUserLogonData do
   begin
     Login       := GetJSONStringValue(UserObject, 'login');
@@ -78,11 +78,11 @@ begin
     UUID        := GetJSONStringValue(UserObject, 'uuid');
   end;
 
-  // Создаём события ожидания загрузки:
+  // РЎРѕР·РґР°С‘Рј СЃРѕР±С‹С‚РёСЏ РѕР¶РёРґР°РЅРёСЏ Р·Р°РіСЂСѓР·РєРё:
   DownloadEvents.SkinEvent  := CreateEvent(nil, True, True, nil);
   DownloadEvents.CloakEvent := CreateEvent(nil, True, True, nil);
 
-  // Загружаем скин:
+  // Р—Р°РіСЂСѓР¶Р°РµРј СЃРєРёРЅ:
   if GetJSONStringValue(UserObject, 'skin', SkinAddress) then
   begin
     ResetEvent(DownloadEvents.SkinEvent);
@@ -103,7 +103,7 @@ begin
     end;
   end;
 
-  // Загружаем плащ:
+  // Р—Р°РіСЂСѓР¶Р°РµРј РїР»Р°С‰:
   if GetJSONStringValue(UserObject, 'cloak', CloakAddress) then
   begin
     ResetEvent(DownloadEvents.CloakEvent);
@@ -124,7 +124,7 @@ begin
     end;
   end;
 
-  // Ждём, пока все загрузятся:
+  // Р–РґС‘Рј, РїРѕРєР° РІСЃРµ Р·Р°РіСЂСѓР·СЏС‚СЃСЏ:
   WaitForMultipleObjects(2, @DownloadEvents, TRUE, INFINITE);
   CloseHandle(DownloadEvents.SkinEvent);
   CloseHandle(DownloadEvents.CloakEvent);
@@ -134,7 +134,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Загрузка скина из ресурсов:
+// Р—Р°РіСЂСѓР·РєР° СЃРєРёРЅР° РёР· СЂРµСЃСѓСЂСЃРѕРІ:
 procedure TUserInfo.LoadInternalSkin;
 var
   ResourceStream: TResourceStream;
@@ -152,7 +152,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Загрузка плаща из ресурсов:
+// Р—Р°РіСЂСѓР·РєР° РїР»Р°С‰Р° РёР· СЂРµСЃСѓСЂСЃРѕРІ:
 procedure TUserInfo.LoadInternalCloak;
 var
   ResourceStream: TResourceStream;
@@ -170,7 +170,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Очистка информации о пользователе:
+// РћС‡РёСЃС‚РєР° РёРЅС„РѕСЂРјР°С†РёРё Рѕ РїРѕР»СЊР·РѕРІР°С‚РµР»Рµ:
 procedure TUserInfo.Clear;
 begin
   with FUserLogonData do

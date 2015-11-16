@@ -9,31 +9,31 @@ type
   TRegResponse = TJSONObject;
   PRegResponse = ^TRegResponse;
 
-  // Структура с даными пользователя, которую передаём потоку регистрации:
+  // РЎС‚СЂСѓРєС‚СѓСЂР° СЃ РґР°РЅС‹РјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ, РєРѕС‚РѕСЂСѓСЋ РїРµСЂРµРґР°С‘Рј РїРѕС‚РѕРєСѓ СЂРµРіРёСЃС‚СЂР°С†РёРё:
   TRegData = record
     Login    : string;
     Password : string;
     SendHWID : Boolean;
   end;
 
-  // Статусные коды авторизации:
+  // РЎС‚Р°С‚СѓСЃРЅС‹Рµ РєРѕРґС‹ Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   REG_STATUS_CODE = (
-    REG_STATUS_SUCCESS,          // Успешная регистрация
-    REG_STATUS_UNKNOWN_ERROR,    // Неизвестная ошибка
-    REG_STATUS_CONNECTION_ERROR, // Не удалось подключиться
-    REG_STATUS_BAD_RESPONSE      // Не удалось раздекодить ответ
+    REG_STATUS_SUCCESS,          // РЈСЃРїРµС€РЅР°СЏ СЂРµРіРёСЃС‚СЂР°С†РёСЏ
+    REG_STATUS_UNKNOWN_ERROR,    // РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°
+    REG_STATUS_CONNECTION_ERROR, // РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ
+    REG_STATUS_BAD_RESPONSE      // РќРµ СѓРґР°Р»РѕСЃСЊ СЂР°Р·РґРµРєРѕРґРёС‚СЊ РѕС‚РІРµС‚
   );
 
-  // Структура с результатом авторизации, возвращаемая в каллбэк:
+  // РЎС‚СЂСѓРєС‚СѓСЂР° СЃ СЂРµР·СѓР»СЊС‚Р°С‚РѕРј Р°РІС‚РѕСЂРёР·Р°С†РёРё, РІРѕР·РІСЂР°С‰Р°РµРјР°СЏ РІ РєР°Р»Р»Р±СЌРє:
   REG_STATUS = record
     StatusCode   : REG_STATUS_CODE;
     StatusString : string;
   end;
 
-  // Событие авторизации:
+  // РЎРѕР±С‹С‚РёРµ Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   TOnReg = reference to procedure(const RegStatus: REG_STATUS);
 
-  // Поток авторизации:
+  // РџРѕС‚РѕРє Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   TRegWorker = class(TThread)
     private
       FRegStatus        : REG_STATUS;
@@ -46,10 +46,10 @@ type
       property EncryptionKey: AnsiString read FEncryptionKey write FEncryptionKey;
 
       procedure RegisterPlayer(
-                           const RegScriptAddress : string;       // Адрес скрипта авторизации
-                           const RegData          : TRegData;     // Данные, отправляемые скрипту
-                           out   RegResponse      : TRegResponse; // JSON-ответ от скрипта
-                           OnReg                  : TOnReg        // Событие завершения авторизации
+                           const RegScriptAddress : string;       // РђРґСЂРµСЃ СЃРєСЂРёРїС‚Р° Р°РІС‚РѕСЂРёР·Р°С†РёРё
+                           const RegData          : TRegData;     // Р”Р°РЅРЅС‹Рµ, РѕС‚РїСЂР°РІР»СЏРµРјС‹Рµ СЃРєСЂРёРїС‚Сѓ
+                           out   RegResponse      : TRegResponse; // JSON-РѕС‚РІРµС‚ РѕС‚ СЃРєСЂРёРїС‚Р°
+                           OnReg                  : TOnReg        // РЎРѕР±С‹С‚РёРµ Р·Р°РІРµСЂС€РµРЅРёСЏ Р°РІС‚РѕСЂРёР·Р°С†РёРё
                           );
     protected
       procedure Execute; override;
@@ -62,13 +62,13 @@ implementation
 procedure TRegWorker.RegisterPlayer(const RegScriptAddress: string; const RegData: TRegData;
   out RegResponse: TRegResponse; OnReg: TOnReg);
 begin
-  // Параметры авторизации:
+  // РџР°СЂР°РјРµС‚СЂС‹ Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   FRegScriptAddress := RegScriptAddress;
   FRegResponse      := @RegResponse;
   FRegData          := RegData;
   FOnReg            := OnReg;
 
-  // Параметры потока:
+  // РџР°СЂР°РјРµС‚СЂС‹ РїРѕС‚РѕРєР°:
   FreeOnTerminate := True;
   Start;
 end;
@@ -83,18 +83,18 @@ var
 begin
   inherited;
 
-  // Формируем запрос:
+  // Р¤РѕСЂРјРёСЂСѓРµРј Р·Р°РїСЂРѕСЃ:
   Request := 'login=' + FRegData.Login + '&password=' + FRegData.Password;
   if FRegData.SendHWID then Request := Request + '&hwid=' + GetHWID;
 
-  // Отправляем запрос на сервер:
+  // РћС‚РїСЂР°РІР»СЏРµРј Р·Р°РїСЂРѕСЃ РЅР° СЃРµСЂРІРµСЂ:
   HTTPSender := THTTPSender.Create;
   Response   := TStringStream.Create;
   HTTPSender.POST(FRegScriptAddress, Request, Response);
 
   if  HTTPSender.Status then
   begin
-    // Декодируем запрос:
+    // Р”РµРєРѕРґРёСЂСѓРµРј Р·Р°РїСЂРѕСЃ:
     DecodedResponse := Response.Encoding.Convert(
                                                   Response.Encoding.UTF8,
                                                   Response.Encoding.ANSI,
@@ -105,50 +105,50 @@ begin
     Response.Clear;
     Response.WriteData(DecodedResponse, Length(DecodedResponse));
 
-    // Преобразовываем запрос в JSON:
+    // РџСЂРµРѕР±СЂР°Р·РѕРІС‹РІР°РµРј Р·Р°РїСЂРѕСЃ РІ JSON:
     FRegResponse^ := JSONStringToJSONObject(Response.DataString);
     if FRegResponse^ <> nil then
     begin
-      // Проверяем поле "status" в полученном JSON'е:
+      // РџСЂРѕРІРµСЂСЏРµРј РїРѕР»Рµ "status" РІ РїРѕР»СѓС‡РµРЅРЅРѕРј JSON'Рµ:
       if GetJSONStringValue(FRegResponse^, 'status', Status) then
       begin
         Status := LowerCase(Status);
         if Status = 'success' then
         begin
           FRegStatus.StatusCode := REG_STATUS_SUCCESS;
-          FRegStatus.StatusString := 'Успешная регистрация!';
+          FRegStatus.StatusString := 'РЈСЃРїРµС€РЅР°СЏ СЂРµРіРёСЃС‚СЂР°С†РёСЏ!';
         end
         else
         begin
           FRegStatus.StatusCode := REG_STATUS_UNKNOWN_ERROR;
 
-          // Получаем причину ошибки:
+          // РџРѕР»СѓС‡Р°РµРј РїСЂРёС‡РёРЅСѓ РѕС€РёР±РєРё:
           if not GetJSONStringValue(FRegResponse^, 'reason', FRegStatus.StatusString) then
-            FRegStatus.StatusString := 'Неизвестная ошибка!';
+            FRegStatus.StatusString := 'РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°!';
         end;
       end
       else
       begin
         FRegStatus.StatusCode := REG_STATUS_UNKNOWN_ERROR;
-        FRegStatus.StatusString := 'JSON неизвестного формата! Проверьте настройки веб-части!';
+        FRegStatus.StatusString := 'JSON РЅРµРёР·РІРµСЃС‚РЅРѕРіРѕ С„РѕСЂРјР°С‚Р°! РџСЂРѕРІРµСЂСЊС‚Рµ РЅР°СЃС‚СЂРѕР№РєРё РІРµР±-С‡Р°СЃС‚Рё!';
       end;
     end
     else
     begin
       FRegStatus.StatusCode := REG_STATUS_BAD_RESPONSE;
-      FRegStatus.StatusString := 'Не удалось преобразовать ответ от скрипта в JSON!';
+      FRegStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ РѕС‚РІРµС‚ РѕС‚ СЃРєСЂРёРїС‚Р° РІ JSON!';
     end;
   end
   else
   begin
     FRegStatus.StatusCode := REG_STATUS_CONNECTION_ERROR;
-    FRegStatus.StatusString := 'Не удалось подключиться к серверу!';
+    FRegStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє СЃРµСЂРІРµСЂСѓ!';
   end;
 
   FreeAndNil(Response);
   FreeAndNil(HTTPSender);
 
-  // Возвращаем результат:
+  // Р’РѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚:
   Synchronize(procedure()
   begin
     FOnReg(FRegStatus);

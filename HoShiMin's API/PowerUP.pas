@@ -150,7 +150,7 @@ begin
     Exit(0);
   end;
 
-  // Усредняем:
+  // РЈСЃСЂРµРґРЅСЏРµРј:
   Result := 0;
   for I := 0 to TThread.ProcessorCount - 1 do
     Result := Result + ProcessorPowerInformation[I].CurrentMhz;

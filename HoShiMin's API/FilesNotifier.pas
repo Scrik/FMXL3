@@ -18,8 +18,8 @@ type
     FILE_ACTION_ADDED = 1,
     FILE_ACTION_REMOVED,
     FILE_ACTION_MODIFIED,
-    FILE_ACTION_RENAMED_OLD_NAME, // Â FileName - ñòàðîå èìÿ ôàéëà
-    FILE_ACTION_RENAMED_NEW_NAME  // Â FileName - íîâîå èìÿ ôàéëà
+    FILE_ACTION_RENAMED_OLD_NAME, // Ð’ FileName - ÑÑ‚Ð°Ñ€Ð¾Ðµ Ð¸Ð¼Ñ Ñ„Ð°Ð¹Ð»Ð°
+    FILE_ACTION_RENAMED_NEW_NAME  // Ð’ FileName - Ð½Ð¾Ð²Ð¾Ðµ Ð¸Ð¼Ñ Ñ„Ð°Ð¹Ð»Ð°
   );
 
   TFileChangesInfo = record
@@ -149,12 +149,12 @@ begin
           begin
             NeedToAdd := False;
 
-            // Ïðîâåðÿåì ìàñêó:
+            // ÐŸÑ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ Ð¼Ð°ÑÐºÑƒ:
             for I := 0 to FFilesTypesCount - 1 do if PathMatchSpec(PChar(FileName), PChar(FFilesTypes[I])) then
             begin
               NeedToAdd := True;
 
-              // Ïðîâåðÿåì èñêëþ÷åíèÿ:
+              // ÐŸÑ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ Ð¸ÑÐºÐ»ÑŽÑ‡ÐµÐ½Ð¸Ñ:
               if FExclusivesTypesCount > 0 then for J := 0 to FExclusivesTypesCount - 1 do
               begin
                 if PathMatchSpec(PChar(FileName), PChar(FExclusivesTypes[J])) then

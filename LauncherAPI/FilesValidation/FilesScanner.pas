@@ -25,10 +25,10 @@ type
   end;
 
   TFilesScannerStruct = record
-    Path       : string;  // Путь относительно BaseFolder
-    Mask       : string;  // Маска проверки (например, *.txt)
-    Recursive  : Boolean; // Проверять ли подпапки
-    Exclusives : TExclusivesHashmap; // Хэшмап "путь относительно Path" -> "исключение из проверки"
+    Path       : string;  // РџСѓС‚СЊ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ BaseFolder
+    Mask       : string;  // РњР°СЃРєР° РїСЂРѕРІРµСЂРєРё (РЅР°РїСЂРёРјРµСЂ, *.txt)
+    Recursive  : Boolean; // РџСЂРѕРІРµСЂСЏС‚СЊ Р»Рё РїРѕРґРїР°РїРєРё
+    Exclusives : TExclusivesHashmap; // РҐСЌС€РјР°Рї "РїСѓС‚СЊ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ Path" -> "РёСЃРєР»СЋС‡РµРЅРёРµ РёР· РїСЂРѕРІРµСЂРєРё"
   end;
 
 procedure ScanFiles(const BaseFolder: string; const FilesScannerStruct: TFilesScannerStruct; const FilesList: TStringList);
@@ -45,19 +45,19 @@ begin
 
   FilesList.Clear;
 
-// Получаем полный список в соответствии с маской:
+// РџРѕР»СѓС‡Р°РµРј РїРѕР»РЅС‹Р№ СЃРїРёСЃРѕРє РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ РјР°СЃРєРѕР№:
   GetFilesList(ScanPath, FilesScannerStruct.Mask, FilesList, FilesScannerStruct.Recursive);
   if FilesList.Count = 0 then Exit;
 
-  // Исправляем двойные слэши, если есть:
+  // РСЃРїСЂР°РІР»СЏРµРј РґРІРѕР№РЅС‹Рµ СЃР»СЌС€Рё, РµСЃР»Рё РµСЃС‚СЊ:
   FilesList.Text := FixSlashes(FilesList.Text);
 
-// Обрабатываем исключения:
+// РћР±СЂР°Р±Р°С‚С‹РІР°РµРј РёСЃРєР»СЋС‡РµРЅРёСЏ:
 
   if not Assigned(FilesScannerStruct.Exclusives) then Exit;
   if FilesScannerStruct.Exclusives.Count = 0 then Exit;
 
-  // Проходимся по всем файлам, исключаем необходимые:
+  // РџСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ РІСЃРµРј С„Р°Р№Р»Р°Рј, РёСЃРєР»СЋС‡Р°РµРј РЅРµРѕР±С…РѕРґРёРјС‹Рµ:
   I := 0;
   FixedBaseFolder := LowerCase(FixSlashes(BaseFolder));
   while I < FilesList.Count do

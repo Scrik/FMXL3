@@ -1,4 +1,4 @@
-﻿unit CodepageAPI;
+unit CodepageAPI;
 
 interface
 

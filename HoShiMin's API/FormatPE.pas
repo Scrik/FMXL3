@@ -29,13 +29,13 @@ type
     FileHeader: TFileHeader;
   end;
 
-// Получить NT-заголовок:
+// РџРѕР»СѓС‡РёС‚СЊ NT-Р·Р°РіРѕР»РѕРІРѕРє:
 procedure GetNTHeader(const FileName: string; out NTHeader: TNTHeader);
 
-// Получить тип PE-файла:
+// РџРѕР»СѓС‡РёС‚СЊ С‚РёРї PE-С„Р°Р№Р»Р°:
 function GetPEType(const FileName: string): TPEType;
 
-// Разрядность PE-файла:
+// Р Р°Р·СЂСЏРґРЅРѕСЃС‚СЊ PE-С„Р°Р№Р»Р°:
 function GetPEMachineType(const FileName: string): TMachineType;
 
 

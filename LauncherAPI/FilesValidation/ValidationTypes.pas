@@ -6,22 +6,22 @@ uses
   SysUtils, Generics.Collections, StringsAPI;
 
 type
-  // Информация о верном файле из JSON'а:
+  // В»РЅС„РѕСЂРјР°С†РёВ¤ Рѕ РІРµСЂРЅРѕРј С„Р°Р№Р»Рµ РёР· JSON'Р°:
   TValidFileInfo = record
     Size: Integer;
     Hash: string;
-    Link: string; // Путь относительно основных рабочих папок на сервере и на локальной машине
+    Link: string; // С•СѓС‚СЊ РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РѕСЃРЅРѕРІРЅС‹С… СЂР°Р±РѕС‡РёС… РїР°РїРѕРє РЅР° СЃРµСЂРІРµСЂРµ Рё РЅР° Р»РѕРєР°Р»СЊРЅРѕР№ РјР°С€РёРЅРµ
   end;
   TValidFilesHashmap = TDictionary<string, TValidFileInfo>;
 
-  // Информация о файле, который нужно обновить:
+  // В»РЅС„РѕСЂРјР°С†РёВ¤ Рѕ С„Р°Р№Р»Рµ, РєРѕС‚РѕСЂС‹Р№ РЅСѓР¶РЅРѕ РѕР±РЅРѕРІРёС‚СЊ:
   TAbsentFileInfo = record
     Size: Integer;
     Link: string;
   end;
   TAbsentFilesList = TList<TAbsentFileInfo>;
 
-  // Хэшмап верных файлов:
+  // вЂ™СЌС€РјР°Рї РІРµСЂРЅС‹С… С„Р°Р№Р»РѕРІ:
   TValidFiles = class
     private
       FValidFilesHashmap: TValidFilesHashmap;

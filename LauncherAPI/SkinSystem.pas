@@ -74,7 +74,7 @@ begin
   ResponseJSON := JSONStringToJSONObject(Response.DataString);
   if ResponseJSON = nil then
   begin
-    FErrorReason := 'Неизвестный формат, полученный от скрипта системы скинов!';
+    FErrorReason := 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С„РѕСЂРјР°С‚, РїРѕР»СѓС‡РµРЅРЅС‹Р№ РѕС‚ СЃРєСЂРёРїС‚Р° СЃРёСЃС‚РµРјС‹ СЃРєРёРЅРѕРІ!';
     Exit(SKIN_SYSTEM_UNKNOWN_RESPONSE_FORMAT);
   end;
 
@@ -82,7 +82,7 @@ begin
   if Status = 'success' then
   begin
     Result := SKIN_SYSTEM_SUCCESS;
-    FErrorReason := 'Успешно!';
+    FErrorReason := 'РЈСЃРїРµС€РЅРѕ!';
     if ImageStream = nil then Exit;
 
     ImageStream.Clear;
@@ -100,7 +100,7 @@ begin
   begin
     Result := SKIN_SYSTEM_UNKNOWN_ERROR;
     if not GetJSONStringValue(ResponseJSON, 'reason', FErrorReason) then
-      FErrorReason := 'Неизвестная ошибка!';
+      FErrorReason := 'РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР°!';
   end;
 
   FreeAndNil(ResponseJSON);
@@ -116,7 +116,7 @@ var
 begin
   if not FileExists(FileName) then
   begin
-    FErrorReason := 'Файл не найден!';
+    FErrorReason := 'Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ!';
     Exit(SKIN_SYSTEM_FILE_NOT_EXISTS);
   end;
 
@@ -125,7 +125,7 @@ begin
   if LongWord(ImageStream.Memory^) <> PNGSignature then
   begin
     FreeAndNil(ImageStream);
-    FErrorReason := 'Файл - не PNG!';
+    FErrorReason := 'Р¤Р°Р№Р» - РЅРµ PNG!';
     Exit(SKIN_SYSTEM_NOT_PNG);
   end;
 
@@ -147,7 +147,7 @@ begin
     FreeAndNil(HTTPSender);
     FreeAndNil(ImageStream);
     FreeAndNil(Response);
-    FErrorReason := 'Не удалось выполнить запрос! Проверьте доступность адреса!';
+    FErrorReason := 'РќРµ СѓРґР°Р»РѕСЃСЊ РІС‹РїРѕР»РЅРёС‚СЊ Р·Р°РїСЂРѕСЃ! РџСЂРѕРІРµСЂСЊС‚Рµ РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ Р°РґСЂРµСЃР°!';
     Exit(SKIN_SYSTEM_CONNECTION_ERROR);
   end;
 
@@ -182,7 +182,7 @@ begin
   begin
     FreeAndNil(HTTPSender);
     FreeAndNil(Response);
-    FErrorReason := 'Не удалось выполнить запрос! Проверьте доступность адреса!';
+    FErrorReason := 'РќРµ СѓРґР°Р»РѕСЃСЊ РІС‹РїРѕР»РЅРёС‚СЊ Р·Р°РїСЂРѕСЃ! РџСЂРѕРІРµСЂСЊС‚Рµ РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ Р°РґСЂРµСЃР°!';
     Exit(SKIN_SYSTEM_CONNECTION_ERROR);
   end;
 
@@ -204,7 +204,7 @@ begin
         IMAGE_CLOAK : UserInfo.LoadInternalCloak;
       end;
 
-      FErrorReason := 'Полученный файл - не PNG!';
+      FErrorReason := 'РџРѕР»СѓС‡РµРЅРЅС‹Р№ С„Р°Р№Р» - РЅРµ PNG!';
       Exit(SKIN_SYSTEM_NOT_PNG);
     end;
 
@@ -242,7 +242,7 @@ begin
   begin
     FreeAndNil(HTTPSender);
     FreeAndNil(Response);
-    FErrorReason := 'Не удалось выполнить запрос! Проверьте доступность адреса!';
+    FErrorReason := 'РќРµ СѓРґР°Р»РѕСЃСЊ РІС‹РїРѕР»РЅРёС‚СЊ Р·Р°РїСЂРѕСЃ! РџСЂРѕРІРµСЂСЊС‚Рµ РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ Р°РґСЂРµСЃР°!';
     Exit(SKIN_SYSTEM_CONNECTION_ERROR);
   end;
 

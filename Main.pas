@@ -324,9 +324,9 @@ procedure TMainForm.HardwareMonitoringTimer(Sender: TObject);
   begin
     MHz := Freq;
     if MHz >= 1024 then
-      Result := FormatFloat('0.0', MHz / 1024) + ' ГГц'
+      Result := FormatFloat('0.0', MHz / 1024) + ' Р“Р“С†'
     else
-      Result := FormatFloat('0.0', MHz) + ' МГц';
+      Result := FormatFloat('0.0', MHz) + ' РњР“С†';
   end;
 
   function GetMemString(Memory: ULONGLONG): string; inline;
@@ -335,9 +335,9 @@ procedure TMainForm.HardwareMonitoringTimer(Sender: TObject);
   begin
     MB := Memory / 1048576;
     if MB > 1024 then
-      Result := FormatFloat('0.0', MB / 1024) + ' Гб'
+      Result := FormatFloat('0.0', MB / 1024) + ' Р“Р±'
     else
-      Result := FormatFloat('0.0', MB) + ' Мб';
+      Result := FormatFloat('0.0', MB) + ' РњР±';
   end;
 var
   CurrentCPUTimes: TThread.TSystemTimes;
@@ -347,7 +347,7 @@ var
 begin
   if FSparsingCounter = SparsingCoeff then
   begin
-    // Загруженность ЦП:
+    // Р—Р°РіСЂСѓР¶РµРЅРЅРѕСЃС‚СЊ Р¦Рџ:
     TThread.GetSystemTimes(CurrentCPUTimes);
     CPUUsage := TThread.GetCPUUsage(FLastCPUTimes);
     FCPUStack.Add(CPUUsage);
@@ -359,7 +359,7 @@ begin
       76..100 : CPULoadingLabel.FontColor := $FFFF0000;
     end;
 
-    // Частота ЦП:
+    // Р§Р°СЃС‚РѕС‚Р° Р¦Рџ:
     CPUFrequencyLabel.BeginUpdate;
     CurrentFrequency := GetCPUFrequency;
     CPUFrequencyLabel.Text := GetFreqString(CurrentFrequency);
@@ -408,7 +408,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                        Вспомогательные функции
+//                        Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ С„СѓРЅРєС†РёРё
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 function GetFmxWND(const WindowHandle: TWindowHandle): THandle; inline;
@@ -420,28 +420,28 @@ end;
 
 procedure TMainForm.ShowNullErrorMessage(Text: string);
 begin
-  MessageBox(0, PChar(Text), 'Ошибка!', MB_ICONERROR);
+  MessageBox(0, PChar(Text), 'РћС€РёР±РєР°!', MB_ICONERROR);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 procedure TMainForm.ShowNullSuccessMessage(Text: string);
 begin
-  MessageBox(0, PChar(Text), 'Успешно!', MB_ICONASTERISK);
+  MessageBox(0, PChar(Text), 'РЈСЃРїРµС€РЅРѕ!', MB_ICONASTERISK);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 procedure TMainForm.ShowErrorMessage(Text: string);
 begin
-  MessageBox(GetFmxWND(Handle), PChar(Text), 'Ошибка!', MB_ICONERROR);
+  MessageBox(GetFmxWND(Handle), PChar(Text), 'РћС€РёР±РєР°!', MB_ICONERROR);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 procedure TMainForm.ShowSuccessMessage(Text: string);
 begin
-  MessageBox(GetFmxWND(Handle), PChar(Text), 'Успешно!', MB_ICONASTERISK);
+  MessageBox(GetFmxWND(Handle), PChar(Text), 'РЈСЃРїРµС€РЅРѕ!', MB_ICONASTERISK);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -503,7 +503,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                          Сохранение настроек
+//                          РЎРѕС…СЂР°РЅРµРЅРёРµ РЅР°СЃС‚СЂРѕРµРє
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.SaveSettings(AutoLogin, ExternalJava: Boolean);
@@ -570,7 +570,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                      Функционал панели заголовка
+//                      Р¤СѓРЅРєС†РёРѕРЅР°Р» РїР°РЅРµР»Рё Р·Р°РіРѕР»РѕРІРєР°
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.CloseImageClick(Sender: TObject);
@@ -605,7 +605,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                  Обработка переходов между вкладками
+//                  РћР±СЂР°Р±РѕС‚РєР° РїРµСЂРµС…РѕРґРѕРІ РјРµР¶РґСѓ РІРєР»Р°РґРєР°РјРё
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.SwitchTab(DesiredTab: TABS);
@@ -625,7 +625,7 @@ procedure TMainForm.DeauthLabelClick(Sender: TObject);
 var
   I, ServerPanelsCount: Integer;
 begin
-  // Сохраняем настройки:
+  // РЎРѕС…СЂР°РЅСЏРµРј РЅР°СЃС‚СЂРѕР№РєРё:
   FIsAutoLogin := False;
   AutoLoginCheckbox.IsChecked := FIsAutoLogin;
   SaveSettings(FIsAutoLogin, LauncherAPI.JavaInfo.ExternalJava);
@@ -635,7 +635,7 @@ begin
   DestroyMaterialSources;
   LauncherAPI.Deauthorize;
 
-  // Чистим список панелек серверов:
+  // Р§РёСЃС‚РёРј СЃРїРёСЃРѕРє РїР°РЅРµР»РµРє СЃРµСЂРІРµСЂРѕРІ:
   ServerPanelsCount := Length(FServerPanels);
   if ServerPanelsCount > 0 then for I := 0 to ServerPanelsCount - 1 do
   begin
@@ -643,7 +643,7 @@ begin
   end;
   SetLength(FServerPanels, 0);
 
-  // Показываем шаблон панельки сервера - для последующей генерации он нужен нам видимым:
+  // РџРѕРєР°Р·С‹РІР°РµРј С€Р°Р±Р»РѕРЅ РїР°РЅРµР»СЊРєРё СЃРµСЂРІРµСЂР° - РґР»СЏ РїРѕСЃР»РµРґСѓСЋС‰РµР№ РіРµРЅРµСЂР°С†РёРё РѕРЅ РЅСѓР¶РµРЅ РЅР°Рј РІРёРґРёРјС‹Рј:
   ServerPanelContainerSample.Visible := True;
 
   PlayButton.Enabled := True;
@@ -660,7 +660,7 @@ procedure TMainForm.SettingsImageClick(Sender: TObject);
 begin
   if not LauncherAPI.IsAuthorized then
   begin
-    ShowErrorMessage('Авторизуйтесь для доступа к настройкам!');
+    ShowErrorMessage('РђРІС‚РѕСЂРёР·СѓР№С‚РµСЃСЊ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє РЅР°СЃС‚СЂРѕР№РєР°Рј!');
     Exit;
   end;
 
@@ -684,37 +684,37 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  // Запускаем системный мониторинг:
+  // Р—Р°РїСѓСЃРєР°РµРј СЃРёСЃС‚РµРјРЅС‹Р№ РјРѕРЅРёС‚РѕСЂРёРЅРі:
   FCPUStack := TStackCapacitor<Single>.Create(StacksCapacity, 0);
   FRAMStack := TStackCapacitor<Single>.Create(StacksCapacity, 0);
   TThread.GetSystemTimes(FLastCPUTimes);
   HardwareMonitoring.Enabled := True;
 
-  // Готовим окружение:
+  // Р“РѕС‚РѕРІРёРј РѕРєСЂСѓР¶РµРЅРёРµ:
   FormatSettings.DecimalSeparator := '.';
   DeauthLabel.Visible := False;
   FIsRegPanel := False;
   SwitchTab(AUTH_TAB);
 
-  // Настраиваем камеру:
+  // РќР°СЃС‚СЂР°РёРІР°РµРј РєР°РјРµСЂСѓ:
 {
-  // Если камера вне контейнера ModelContainer:
+  // Р•СЃР»Рё РєР°РјРµСЂР° РІРЅРµ РєРѕРЅС‚РµР№РЅРµСЂР° ModelContainer:
   Camera.RotationCenter.X := ModelContainer.Position.X;
   Camera.RotationCenter.Y := ModelContainer.Position.Y;
   Camera.RotationCenter.Z := ModelContainer.Position.Z - Camera.Position.Z;
 }
 {
-  // Если камера внутри контейнера ModelContainer:
+  // Р•СЃР»Рё РєР°РјРµСЂР° РІРЅСѓС‚СЂРё РєРѕРЅС‚РµР№РЅРµСЂР° ModelContainer:
   Camera.RotationCenter.X := - Camera.Position.X;
   Camera.RotationCenter.Y := - Camera.Position.Y;
   Camera.RotationCenter.Z := - Camera.Position.Z;
 }
-  // Создаём объект LauncherAPI:
+  // РЎРѕР·РґР°С‘Рј РѕР±СЉРµРєС‚ LauncherAPI:
   LauncherAPI := TLauncherAPI.Create(GetSpecialFolderPath(CSIDL_APPDATA) + '\' + LocalWorkingFolder, ServerWorkingFolder);
   LauncherAPI.EncryptionKey := EncryptionKey;
   LauncherAPI.LauncherInfo.LauncherVersion := LauncherVersion;
 
-  // Загружаем настройки:
+  // Р—Р°РіСЂСѓР¶Р°РµРј РЅР°СЃС‚СЂРѕР№РєРё:
   LoadSettings;
   if FIsAutoLogin then
     AuthButton.OnClick(Self);
@@ -722,7 +722,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                         Авторизация/Регистрация
+//                         РђРІС‚РѕСЂРёР·Р°С†РёСЏ/Р РµРіРёСЃС‚СЂР°С†РёСЏ
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.SetAuthTabActiveState(State: Boolean);
@@ -744,13 +744,13 @@ begin
   FIsRegPanel := not FIsRegPanel;
   if FIsRegPanel then
   begin
-    AuthButton.Text := 'Зарегистрироваться';
-    RegLabel.Text   := 'Авторизация';
+    AuthButton.Text := 'Р—Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°С‚СЊСЃСЏ';
+    RegLabel.Text   := 'РђРІС‚РѕСЂРёР·Р°С†РёСЏ';
   end
   else
   begin
-    AuthButton.Text := 'Авторизоваться';
-    RegLabel.Text   := 'Регистрация';
+    AuthButton.Text := 'РђРІС‚РѕСЂРёР·РѕРІР°С‚СЊСЃСЏ';
+    RegLabel.Text   := 'Р РµРіРёСЃС‚СЂР°С†РёСЏ';
   end;
 end;
 
@@ -787,7 +787,7 @@ begin
       SetAuthTabActiveState(True);
       if RegStatus.StatusCode = REG_STATUS_SUCCESS then
       begin
-        ShowSuccessMessage('Успешная регистрация!');
+        ShowSuccessMessage('РЈСЃРїРµС€РЅР°СЏ СЂРµРіРёСЃС‚СЂР°С†РёСЏ!');
         RegLabel.OnClick(Self);
       end
       else
@@ -808,24 +808,24 @@ var
   PopupBinder: TPopupMenuBinder;
   I: Integer;
 begin
-  // Сохраняем настройки:
+  // РЎРѕС…СЂР°РЅСЏРµРј РЅР°СЃС‚СЂРѕР№РєРё:
   FIsAutoLogin := AutoLoginCheckbox.IsChecked;
   SaveSettings(FIsAutoLogin, LauncherAPI.JavaInfo.ExternalJava);
 
-  // Проверяем версию лаунчера:
+  // РџСЂРѕРІРµСЂСЏРµРј РІРµСЂСЃРёСЋ Р»Р°СѓРЅС‡РµСЂР°:
   if not LauncherAPI.LauncherInfo.IsLauncherValid(False) then
   begin
-    if MessageBox(GetFmxWND(MainForm.Handle), 'Требуется обновление лаунчера! Обновить сейчас?', 'Внимание!', MB_ICONQUESTION + MB_YESNO) = ID_YES then
+    if MessageBox(GetFmxWND(MainForm.Handle), 'РўСЂРµР±СѓРµС‚СЃСЏ РѕР±РЅРѕРІР»РµРЅРёРµ Р»Р°СѓРЅС‡РµСЂР°! РћР±РЅРѕРІРёС‚СЊ СЃРµР№С‡Р°СЃ?', 'Р’РЅРёРјР°РЅРёРµ!', MB_ICONQUESTION + MB_YESNO) = ID_YES then
     begin
       if not LauncherAPI.LauncherInfo.UpdateLauncher then
       begin
-        ShowErrorMessage('Не получилось обновить лаунчер!');
+        ShowErrorMessage('РќРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ РѕР±РЅРѕРІРёС‚СЊ Р»Р°СѓРЅС‡РµСЂ!');
         ExitProcess(0);
       end;
     end
     else
     begin
-      ShowErrorMessage('Обновите лаунчер для продолжения!');
+      ShowErrorMessage('РћР±РЅРѕРІРёС‚Рµ Р»Р°СѓРЅС‡РµСЂ РґР»СЏ РїСЂРѕРґРѕР»Р¶РµРЅРёСЏ!');
       ExitProcess(0);
     end;
   end;
@@ -837,7 +837,7 @@ begin
 
   DeauthLabel.Visible := True;
 
-  // Создаём шаблон записи в списке серверов:
+  // РЎРѕР·РґР°С‘Рј С€Р°Р±Р»РѕРЅ Р·Р°РїРёСЃРё РІ СЃРїРёСЃРєРµ СЃРµСЂРІРµСЂРѕРІ:
   ServerPanelSample.ServerPanel           := ServerPanelContainerSample;
   ServerPanelSample.NameLabel             := ServerNameSample;
   ServerPanelSample.InfoLabel             := ServerInfoSample;
@@ -853,10 +853,10 @@ begin
   ServerPanelSample.StopButtonGlowEffect  := StopButtonGlowSample;
 
   {$IFNDEF USE_MONITORING}
-    ServerPanelSample.MonitoringLamp.Visible := False; // Делаем невидимой лампочку мониторинга
+    ServerPanelSample.MonitoringLamp.Visible := False; // Р”РµР»Р°РµРј РЅРµРІРёРґРёРјРѕР№ Р»Р°РјРїРѕС‡РєСѓ РјРѕРЅРёС‚РѕСЂРёРЅРіР°
   {$ENDIF}
 
-  // Создаём список серверов, привязываем события:
+  // РЎРѕР·РґР°С‘Рј СЃРїРёСЃРѕРє СЃРµСЂРІРµСЂРѕРІ, РїСЂРёРІСЏР·С‹РІР°РµРј СЃРѕР±С‹С‚РёСЏ:
   if LauncherAPI.Clients.Count > 0 then
   begin
     SetLength(FServerPanels, LauncherAPI.Clients.Count);
@@ -864,7 +864,7 @@ begin
     begin
       Client := LauncherAPI.Clients.ClientsArray[I];
 
-      // Создаём панельку сервера:
+      // РЎРѕР·РґР°С‘Рј РїР°РЅРµР»СЊРєСѓ СЃРµСЂРІРµСЂР°:
       FServerPanels[I] := TServerPanel.Create(ScrollBox, ServerPanelSample, I);
       ServerPanel := FServerPanels[I];
       ServerPanel.Content.NameLabel.Text := Client.ServerInfo.Name;
@@ -894,7 +894,7 @@ begin
         begin
           LauncherAPI.Clients.ClientsArray[Sender.Number].MultiLoader.Pause;
           Sender.Content.ServerPanel.BeginUpdate;
-          Sender.Content.InfoLabel.Text := 'Загрузка приостановлена';
+          Sender.Content.InfoLabel.Text := 'Р—Р°РіСЂСѓР·РєР° РїСЂРёРѕСЃС‚Р°РЅРѕРІР»РµРЅР°';
           Sender.ShowResumeButton;
           Sender.Content.ServerPanel.EndUpdate;
           Sender.Content.ServerPanel.Repaint;
@@ -905,37 +905,37 @@ begin
       begin
         LauncherAPI.Clients.ClientsArray[Sender.Number].MultiLoader.Cancel;
         Sender.Content.ServerPanel.BeginUpdate;
-        Sender.Content.InfoLabel.Text := 'Остановка загрузки...';
+        Sender.Content.InfoLabel.Text := 'РћСЃС‚Р°РЅРѕРІРєР° Р·Р°РіСЂСѓР·РєРё...';
         Sender.ShowPauseButton;
         Sender.DisableDownloadButtons;
         Sender.Content.ServerPanel.EndUpdate;
         Sender.Content.ServerPanel.Repaint;
       end;
 
-      // Цепляем к серверу всплывающее меню:
+      // Р¦РµРїР»СЏРµРј Рє СЃРµСЂРІРµСЂСѓ РІСЃРїР»С‹РІР°СЋС‰РµРµ РјРµРЅСЋ:
       PopupBinder := TPopupMenuBinder.Create(ServersPopupMenu);
       PopupBinder.Bind(ServerPanel.Content.ServerPanel, I);
     end;
 
-    // Выделяем первый сервер в списке:
+    // Р’С‹РґРµР»СЏРµРј РїРµСЂРІС‹Р№ СЃРµСЂРІРµСЂ РІ СЃРїРёСЃРєРµ:
     SelectClient(0);
   end;
 
-  // Скрываем шаблон списка серверов, он нам больше не нужен:
+  // РЎРєСЂС‹РІР°РµРј С€Р°Р±Р»РѕРЅ СЃРїРёСЃРєР° СЃРµСЂРІРµСЂРѕРІ, РѕРЅ РЅР°Рј Р±РѕР»СЊС€Рµ РЅРµ РЅСѓР¶РµРЅ:
   ServerPanelContainerSample.Visible := False;
 
-  // Настраиваем углы поворота модельки:
+  // РќР°СЃС‚СЂР°РёРІР°РµРј СѓРіР»С‹ РїРѕРІРѕСЂРѕС‚Р° РјРѕРґРµР»СЊРєРё:
   ModelContainer.ResetRotationAngle;
   ModelContainer.RotationAngle.Y  := 25;
   CloakContainer.RotationCenter.Y := -3;
   CloakContainer.RotationAngle.X  := -7;
 
-  // Рисуем скин и плащ:
+  // Р РёСЃСѓРµРј СЃРєРёРЅ Рё РїР»Р°С‰:
   CreateMaterialSources;
   DrawSkin(LauncherAPI.UserInfo.SkinBitmap);
   DrawCloak(LauncherAPI.UserInfo.CloakBitmap);
 
-  // Выставляем панель настроек:
+  // Р’С‹СЃС‚Р°РІР»СЏРµРј РїР°РЅРµР»СЊ РЅР°СЃС‚СЂРѕРµРє:
   if not LauncherAPI.JavaInfo.ExternalJava then
   begin
     JVMPathEdit.Text     := LauncherAPI.LocalWorkingFolder + '\' + LauncherAPI.JavaInfo.JavaParameters.JavaFolder + '\' + LauncherAPI.JavaInfo.JavaParameters.JVMPath;
@@ -947,7 +947,7 @@ begin
   MainFormLayout.EndUpdate;
   MainFormLayout.Repaint;
 
-  // Запускаем мониторинг:
+  // Р—Р°РїСѓСЃРєР°РµРј РјРѕРЅРёС‚РѕСЂРёРЅРі:
   {$IFDEF USE_MONITORING}
     LauncherAPI.StartMonitoring(MonitoringInterval, OnMonitoring);
   {$ENDIF}
@@ -957,7 +957,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                   Проверка, обновление и запуск клиента
+//                   РџСЂРѕРІРµСЂРєР°, РѕР±РЅРѕРІР»РµРЅРёРµ Рё Р·Р°РїСѓСЃРє РєР»РёРµРЅС‚Р°
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.LaunchClient(ClientNumber: Integer);
@@ -967,7 +967,7 @@ var
 begin
   PlayButton.Enabled := True;
 
-  // Получаем путь к джаве:
+  // РџРѕР»СѓС‡Р°РµРј РїСѓС‚СЊ Рє РґР¶Р°РІРµ:
   if LauncherAPI.JavaInfo.ExternalJava then
   begin
     JVMPath := JVMPathEdit.Text;
@@ -980,41 +980,41 @@ begin
                LauncherAPI.JavaInfo.JavaParameters.JVMPath;
   end;
 
-  // Проверяем, что путь верный:
+  // РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РїСѓС‚СЊ РІРµСЂРЅС‹Р№:
   if not FileExists(JVMPath) then
   begin
-    ShowErrorMessage('Библиотека jvm.dll не найдена по расположению:' + #13#10 + JVMPath);
+    ShowErrorMessage('Р‘РёР±Р»РёРѕС‚РµРєР° jvm.dll РЅРµ РЅР°Р№РґРµРЅР° РїРѕ СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЋ:' + #13#10 + JVMPath);
     Exit;
   end;
 
-  // Убеждаемся, что указанный файл - библиотека:
+  // РЈР±РµР¶РґР°РµРјСЃСЏ, С‡С‚Рѕ СѓРєР°Р·Р°РЅРЅС‹Р№ С„Р°Р№Р» - Р±РёР±Р»РёРѕС‚РµРєР°:
   if GetPEType(JVMPath) <> peDll then
   begin
-    ShowErrorMessage('Указанный в настройках файл - не DLL!' + #13#10 + 'Укажите корректный путь к jvm.dll!');
+    ShowErrorMessage('РЈРєР°Р·Р°РЅРЅС‹Р№ РІ РЅР°СЃС‚СЂРѕР№РєР°С… С„Р°Р№Р» - РЅРµ DLL!' + #13#10 + 'РЈРєР°Р¶РёС‚Рµ РєРѕСЂСЂРµРєС‚РЅС‹Р№ РїСѓС‚СЊ Рє jvm.dll!');
     Exit;
   end;
 
-  // Убеждаемся, что разрядность библиотеки соответствует разрядности лаунчера:
+  // РЈР±РµР¶РґР°РµРјСЃСЏ, С‡С‚Рѕ СЂР°Р·СЂСЏРґРЅРѕСЃС‚СЊ Р±РёР±Р»РёРѕС‚РµРєРё СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ СЂР°Р·СЂСЏРґРЅРѕСЃС‚Рё Р»Р°СѓРЅС‡РµСЂР°:
   if GetPEMachineType(JVMPath) <> {$IFDEF CPUX64}mt64Bit{$ELSE}mt32Bit{$ENDIF} then
   begin
-    ShowErrorMessage('Неверная разрядность jvm.dll!' + #13#10 + 'Разрядность библиотеки должна соответствовать разрядности лаунчера!');
+    ShowErrorMessage('РќРµРІРµСЂРЅР°СЏ СЂР°Р·СЂСЏРґРЅРѕСЃС‚СЊ jvm.dll!' + #13#10 + 'Р Р°Р·СЂСЏРґРЅРѕСЃС‚СЊ Р±РёР±Р»РёРѕС‚РµРєРё РґРѕР»Р¶РЅР° СЃРѕРѕС‚РІРµС‚СЃС‚РІРѕРІР°С‚СЊ СЂР°Р·СЂСЏРґРЅРѕСЃС‚Рё Р»Р°СѓРЅС‡РµСЂР°!');
     Exit;
   end;
 
-  // Убеждаемся, что jvm ещё нет в процессе:
+  // РЈР±РµР¶РґР°РµРјСЃСЏ, С‡С‚Рѕ jvm РµС‰С‘ РЅРµС‚ РІ РїСЂРѕС†РµСЃСЃРµ:
   if GetModuleHandle('jvm.dll') <> 0 then
   begin
-    ShowErrorMessage('В процесс загружена неизвестная JVM!' + #13#10 + 'Продолжение невозможно!');
+    ShowErrorMessage('Р’ РїСЂРѕС†РµСЃСЃ Р·Р°РіСЂСѓР¶РµРЅР° РЅРµРёР·РІРµСЃС‚РЅР°СЏ JVM!' + #13#10 + 'РџСЂРѕРґРѕР»Р¶РµРЅРёРµ РЅРµРІРѕР·РјРѕР¶РЅРѕ!');
     Exit;
   end;
 
-  // Сохраняем настройки:
+  // РЎРѕС…СЂР°РЅСЏРµРј РЅР°СЃС‚СЂРѕР№РєРё:
   SaveSettings(FIsAutoLogin, LauncherAPI.JavaInfo.ExternalJava);
 
-  HardwareMonitoring.Enabled := False; // Отключаем системный мониторинг
-  LauncherAPI.StopMonitoring; // Отключаем мониторинг
+  HardwareMonitoring.Enabled := False; // РћС‚РєР»СЋС‡Р°РµРј СЃРёСЃС‚РµРјРЅС‹Р№ РјРѕРЅРёС‚РѕСЂРёРЅРі
+  LauncherAPI.StopMonitoring; // РћС‚РєР»СЋС‡Р°РµРј РјРѕРЅРёС‚РѕСЂРёРЅРі
 
-  // Скрываем форму лаунчера:
+  // РЎРєСЂС‹РІР°РµРј С„РѕСЂРјСѓ Р»Р°СѓРЅС‡РµСЂР°:
   ShowWindow(GetFmxWND(MainForm.Handle), SW_HIDE);
   ShowWindow(ApplicationHWND, SW_HIDE);
 
@@ -1023,16 +1023,16 @@ begin
     SetEnvironmentVariable('JAVA_TOOL_OPTIONS', '');
   {$ENDIF}
 
-  // Запускаем игру:
+  // Р—Р°РїСѓСЃРєР°РµРј РёРіСЂСѓ:
   Status := LauncherAPI.LaunchClient(ClientNumber, StrToInt(RAMEdit.Text));
   case Status of
-    JNIWRAPPER_UNKNOWN_ERROR       : ShowNullErrorMessage('Неизвестная ошибка в JVM!');
-    JNIWRAPPER_JNI_INVALID_VERSION : ShowNullErrorMessage('Неверная версия JNI!');
-    JNIWRAPPER_NOT_ENOUGH_MEMORY   : ShowNullErrorMessage('Недостаточно оперативной памяти для запуска JVM!');
-    JNIWRAPPER_JVM_ALREADY_EXISTS  : ShowNullErrorMessage('JVM уже существует! Нельзя запустить две и более JVM в одном процессе!');
-    JNIWRAPPER_INVALID_ARGUMENTS   : ShowNullErrorMessage('Неверные аргументы JVM!');
-    JNIWRAPPER_CLASS_NOT_FOUND     : ShowNullErrorMessage('Класс не найден!');
-    JNIWRAPPER_METHOD_NOT_FOUND    : ShowNullErrorMessage('Метод не найден!');
+    JNIWRAPPER_UNKNOWN_ERROR       : ShowNullErrorMessage('РќРµРёР·РІРµСЃС‚РЅР°СЏ РѕС€РёР±РєР° РІ JVM!');
+    JNIWRAPPER_JNI_INVALID_VERSION : ShowNullErrorMessage('РќРµРІРµСЂРЅР°СЏ РІРµСЂСЃРёСЏ JNI!');
+    JNIWRAPPER_NOT_ENOUGH_MEMORY   : ShowNullErrorMessage('РќРµРґРѕСЃС‚Р°С‚РѕС‡РЅРѕ РѕРїРµСЂР°С‚РёРІРЅРѕР№ РїР°РјСЏС‚Рё РґР»СЏ Р·Р°РїСѓСЃРєР° JVM!');
+    JNIWRAPPER_JVM_ALREADY_EXISTS  : ShowNullErrorMessage('JVM СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚! РќРµР»СЊР·СЏ Р·Р°РїСѓСЃС‚РёС‚СЊ РґРІРµ Рё Р±РѕР»РµРµ JVM РІ РѕРґРЅРѕРј РїСЂРѕС†РµСЃСЃРµ!');
+    JNIWRAPPER_INVALID_ARGUMENTS   : ShowNullErrorMessage('РќРµРІРµСЂРЅС‹Рµ Р°СЂРіСѓРјРµРЅС‚С‹ JVM!');
+    JNIWRAPPER_CLASS_NOT_FOUND     : ShowNullErrorMessage('РљР»Р°СЃСЃ РЅРµ РЅР°Р№РґРµРЅ!');
+    JNIWRAPPER_METHOD_NOT_FOUND    : ShowNullErrorMessage('РњРµС‚РѕРґ РЅРµ РЅР°Р№РґРµРЅ!');
   else
     {$IFDEF INGAME_FILES_MONITORING}
       LauncherAPI.StartInGameChecking(ClientNumber, procedure(const ErrorFiles: TStringList)
@@ -1041,10 +1041,10 @@ begin
         MessageBoxTimeout(
                            0,
                            PChar(
-                                  'Обнаружено изменение критичных файлов!' + #13#10 +
-                                  'Список файлов сохранён в ErrorFiles.txt'
+                                  'РћР±РЅР°СЂСѓР¶РµРЅРѕ РёР·РјРµРЅРµРЅРёРµ РєСЂРёС‚РёС‡РЅС‹С… С„Р°Р№Р»РѕРІ!' + #13#10 +
+                                  'РЎРїРёСЃРѕРє С„Р°Р№Р»РѕРІ СЃРѕС…СЂР°РЅС‘РЅ РІ ErrorFiles.txt'
                                  ),
-                           'Обнаружено изменение клиента!',
+                           'РћР±РЅР°СЂСѓР¶РµРЅРѕ РёР·РјРµРЅРµРЅРёРµ РєР»РёРµРЅС‚Р°!',
                            MB_ICONERROR,
                            0,
                            5000
@@ -1053,7 +1053,7 @@ begin
       end);
     {$ENDIF}
 
-    // Освобождаем ресурсы, они нам больше не понадобятся:
+    // РћСЃРІРѕР±РѕР¶РґР°РµРј СЂРµСЃСѓСЂСЃС‹, РѕРЅРё РЅР°Рј Р±РѕР»СЊС€Рµ РЅРµ РїРѕРЅР°РґРѕР±СЏС‚СЃСЏ:
     DestroyComponents;
     DestroyHandle;
     Self.Destroy;
@@ -1068,29 +1068,29 @@ procedure TMainForm.ValidateClient(ClientNumber: Integer;
 begin
   if (ClientNumber < 0) or (LauncherAPI.Clients.Count = 0) or (ClientNumber > LauncherAPI.Clients.Count - 1) then
   begin
-    ShowErrorMessage('Неверный выбранный клиент!');
+    ShowErrorMessage('РќРµРІРµСЂРЅС‹Р№ РІС‹Р±СЂР°РЅРЅС‹Р№ РєР»РёРµРЅС‚!');
     PlayButton.Enabled := True;
     Exit;
   end;
 
   if LauncherAPI.Clients.ClientsArray[ClientNumber].GetValidationStatus then
   begin
-    if not PlayAfterValidation then ShowErrorMessage('Клиент уже обновляется! Дождитесь завершения и попробуйте снова!');
+    if not PlayAfterValidation then ShowErrorMessage('РљР»РёРµРЅС‚ СѓР¶Рµ РѕР±РЅРѕРІР»СЏРµС‚СЃСЏ! Р”РѕР¶РґРёС‚РµСЃСЊ Р·Р°РІРµСЂС€РµРЅРёСЏ Рё РїРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°!');
     Exit;
   end;
 
-  FServerPanels[ClientNumber].Content.InfoLabel.Text := 'Получаем список файлов...';
+  FServerPanels[ClientNumber].Content.InfoLabel.Text := 'РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ...';
   LauncherAPI.GetValidFilesList(ClientNumber, procedure(ClientNumber: Integer; QueryStatus: QUERY_STATUS)
   begin
     if QueryStatus.StatusCode <> QUERY_STATUS_SUCCESS then
     begin
-      ShowErrorMessage('[Код ошибки ' + IntToStr(Integer(QueryStatus.StatusCode)) + '] ' + QueryStatus.StatusString);
+      ShowErrorMessage('[РљРѕРґ РѕС€РёР±РєРё ' + IntToStr(Integer(QueryStatus.StatusCode)) + '] ' + QueryStatus.StatusString);
       FServerPanels[ClientNumber].Content.InfoLabel.Text := LauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
       PlayButton.Enabled := True;
       Exit;
     end;
 
-    FServerPanels[ClientNumber].Content.InfoLabel.Text := 'Проверяем файлы...';
+    FServerPanels[ClientNumber].Content.InfoLabel.Text := 'РџСЂРѕРІРµСЂСЏРµРј С„Р°Р№Р»С‹...';
     LauncherAPI.ValidateClient(ClientNumber, True, procedure(ClientNumber: Integer; ClientValidationStatus, JavaValidationStatus: VALIDATION_STATUS)
     begin
       if (ClientValidationStatus = VALIDATION_STATUS_SUCCESS) and (JavaValidationStatus = VALIDATION_STATUS_SUCCESS) then
@@ -1103,7 +1103,7 @@ begin
       if (ClientValidationStatus = VALIDATION_STATUS_DELETION_ERROR) or (JavaValidationStatus = VALIDATION_STATUS_DELETION_ERROR) then
       begin
         ShowErrorMessage(
-                          'Не получилось удалить следующие файлы:' + #13#10 +
+                          'РќРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ СЃР»РµРґСѓСЋС‰РёРµ С„Р°Р№Р»С‹:' + #13#10 +
                           LauncherAPI.Clients.ClientsArray[ClientNumber].FilesValidator.ErrorFiles.Text + #13#10 +
                           LauncherAPI.JavaInfo.FilesValidator.ErrorFiles.Text
                          );
@@ -1114,7 +1114,7 @@ begin
 
       if (ClientValidationStatus = VALIDATION_STATUS_NEED_UPDATE) or (JavaValidationStatus = VALIDATION_STATUS_NEED_UPDATE) then
       begin
-        FServerPanels[ClientNumber].Content.InfoLabel.Text := 'Начинаем загрузку...';
+        FServerPanels[ClientNumber].Content.InfoLabel.Text := 'РќР°С‡РёРЅР°РµРј Р·Р°РіСЂСѓР·РєСѓ...';
         FServerPanels[ClientNumber].ShowDownloadPanel;
         LauncherAPI.UpdateClient(ClientNumber, {$IFDEF SINGLE_THREAD_DOWNLOADING}False{$ELSE}True{$ENDIF}, OnDownload);
       end;
@@ -1126,33 +1126,33 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                             Запуск игры
+//                             Р—Р°РїСѓСЃРє РёРіСЂС‹
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.AttemptToLaunchClient;
 var
   I: Integer;
 begin
-  // Проверяем валидность номера клиента:
+  // РџСЂРѕРІРµСЂСЏРµРј РІР°Р»РёРґРЅРѕСЃС‚СЊ РЅРѕРјРµСЂР° РєР»РёРµРЅС‚Р°:
   if (LauncherAPI.Clients.Count = 0) or (FSelectedClientNumber < 0) or (FSelectedClientNumber >= LauncherAPI.Clients.Count) then
   begin
-    ShowErrorMessage('Клиент не выбран!');
+    ShowErrorMessage('РљР»РёРµРЅС‚ РЅРµ РІС‹Р±СЂР°РЅ!');
     Exit;
   end;
 
   if Length(JavaVersionEdit.Text) = 0 then
   begin
-    ShowErrorMessage('Введите корректную версию Java!');
+    ShowErrorMessage('Р’РІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅСѓСЋ РІРµСЂСЃРёСЋ Java!');
     Exit;
   end;
 
   if Length(RAMEdit.Text) = 0 then
   begin
-    ShowErrorMessage('Введите корректную величину RAM!');
+    ShowErrorMessage('Р’РІРµРґРёС‚Рµ РєРѕСЂСЂРµРєС‚РЅСѓСЋ РІРµР»РёС‡РёРЅСѓ RAM!');
     Exit;
   end;
 
-  // Делаем все панельки, кроме выбранной, неактивными:
+  // Р”РµР»Р°РµРј РІСЃРµ РїР°РЅРµР»СЊРєРё, РєСЂРѕРјРµ РІС‹Р±СЂР°РЅРЅРѕР№, РЅРµР°РєС‚РёРІРЅС‹РјРё:
   ScrollBox.BeginUpdate;
   FSelectedToPlayClientNumber := FSelectedClientNumber;
   for I := 0 to LauncherAPI.Clients.Count - 1 do
@@ -1160,7 +1160,7 @@ begin
     if I <> FSelectedToPlayClientNumber then
     begin
       FServerPanels[I].SetDisabledView;
-      LauncherAPI.Clients.ClientsArray[I].MultiLoader.Cancel; // Останавливаем все загрузки
+      LauncherAPI.Clients.ClientsArray[I].MultiLoader.Cancel; // РћСЃС‚Р°РЅР°РІР»РёРІР°РµРј РІСЃРµ Р·Р°РіСЂСѓР·РєРё
     end;
   end;
   FServerPanels[FSelectedToPlayClientNumber].SetSelectedView;
@@ -1169,7 +1169,7 @@ begin
 
   PlayButton.Enabled := False;
 
-  // Запускаем проверку клиента:
+  // Р—Р°РїСѓСЃРєР°РµРј РїСЂРѕРІРµСЂРєСѓ РєР»РёРµРЅС‚Р°:
   ValidateClient(FSelectedClientNumber, True);
 end;
 
@@ -1183,7 +1183,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                        Обработка событий клиента
+//                        РћР±СЂР°Р±РѕС‚РєР° СЃРѕР±С‹С‚РёР№ РєР»РёРµРЅС‚Р°
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 {$IFDEF USE_MONITORING}
@@ -1216,7 +1216,7 @@ procedure TMainForm.OnDownload(ClientNumber: Integer;
     Kilobytes: Integer;
   begin
     Kilobytes := BytesCount div 1024;
-    if Kilobytes > 1024 then Result := FormatFloat('0.0', Kilobytes / 1024) + ' МБ' else Result := IntToStr(Kilobytes) + ' КБ';
+    if Kilobytes > 1024 then Result := FormatFloat('0.0', Kilobytes / 1024) + ' РњР‘' else Result := IntToStr(Kilobytes) + ' РљР‘';
   end;
 
   function GetSpeedString(const BytesPerSec: Single): string; inline;
@@ -1224,7 +1224,7 @@ procedure TMainForm.OnDownload(ClientNumber: Integer;
     KbPerSec: Single;
   begin
     KbPerSec := BytesPerSec / 1024;
-    if KbPerSec > 1024 then Result := FormatFloat('0.0', KbPerSec / 1024) + ' МБ/с.' else Result := FormatFloat('0.0', KbPerSec) + ' КБ/с.';
+    if KbPerSec > 1024 then Result := FormatFloat('0.0', KbPerSec / 1024) + ' РњР‘/СЃ.' else Result := FormatFloat('0.0', KbPerSec) + ' РљР‘/СЃ.';
   end;
 
 var
@@ -1259,7 +1259,7 @@ begin
       Time := DownloadInfo.SummaryDownloadInfo.RemainingTime;
       SpeedStr := GetSpeedString(DownloadInfo.SummaryDownloadInfo.Speed);
 
-      TimeStr := FormatFloat('0.0', Time) + ' сек.';
+      TimeStr := FormatFloat('0.0', Time) + ' СЃРµРє.';
 
       ServerPanel.Content.ServerPanel.BeginUpdate;
       ServerPanel.Content.ProgressBar.Value := 100 * DownloadInfo.SummaryDownloadInfo.Downloaded / DownloadInfo.SummaryDownloadInfo.FullSize;
@@ -1276,7 +1276,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                Обработка всплывающего меню списка серверов
+//                РћР±СЂР°Р±РѕС‚РєР° РІСЃРїР»С‹РІР°СЋС‰РµРіРѕ РјРµРЅСЋ СЃРїРёСЃРєР° СЃРµСЂРІРµСЂРѕРІ
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.ServersPopupMenuPopup(Sender: TObject);
@@ -1314,7 +1314,7 @@ var
 begin
   Client := LauncherAPI.Clients.ClientsArray[TControl(Sender).Tag];
   Path := LauncherAPI.LocalWorkingFolder + '\' + Client.ServerInfo.ClientFolder;
-  if MessageBox(GetFmxWND(Handle), 'Вы действительно хотите стереть все файлы из папки с клиентом?', 'Внимание!', MB_ICONQUESTION + MB_YESNO) = ID_YES then
+  if MessageBox(GetFmxWND(Handle), 'Р’С‹ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ С…РѕС‚РёС‚Рµ СЃС‚РµСЂРµС‚СЊ РІСЃРµ С„Р°Р№Р»С‹ РёР· РїР°РїРєРё СЃ РєР»РёРµРЅС‚РѕРј?', 'Р’РЅРёРјР°РЅРёРµ!', MB_ICONQUESTION + MB_YESNO) = ID_YES then
   begin
     DeleteDirectory(Path + '\*');
   end;
@@ -1326,7 +1326,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                    Обработка всплывающего меню скина
+//                    РћР±СЂР°Р±РѕС‚РєР° РІСЃРїР»С‹РІР°СЋС‰РµРіРѕ РјРµРЅСЋ СЃРєРёРЅР°
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.SkinPopupMenuPopup(Sender: TObject);
@@ -1360,7 +1360,7 @@ end;
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                      Установка/удаление скинов и плащей
+//                      РЈСЃС‚Р°РЅРѕРІРєР°/СѓРґР°Р»РµРЅРёРµ СЃРєРёРЅРѕРІ Рё РїР»Р°С‰РµР№
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.CheckSkinSystemErrors(Status: SKIN_SYSTEM_STATUS;
@@ -1369,13 +1369,13 @@ begin
   case Status of
     SKIN_SYSTEM_FILE_NOT_EXISTS:
       case ImageType of
-        IMAGE_SKIN  : ShowErrorMessage('Скин ещё не установлен!');
-        IMAGE_CLOAK : ShowErrorMessage('Плащ ещё не установлен!');
+        IMAGE_SKIN  : ShowErrorMessage('РЎРєРёРЅ РµС‰С‘ РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ!');
+        IMAGE_CLOAK : ShowErrorMessage('РџР»Р°С‰ РµС‰С‘ РЅРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅ!');
       end;
-    SKIN_SYSTEM_NOT_PNG                 : ShowErrorMessage('Файл - не PNG!');
-    SKIN_SYSTEM_CONNECTION_ERROR        : ShowErrorMessage('Не удалось подключиться к серверу!');
+    SKIN_SYSTEM_NOT_PNG                 : ShowErrorMessage('Р¤Р°Р№Р» - РЅРµ PNG!');
+    SKIN_SYSTEM_CONNECTION_ERROR        : ShowErrorMessage('РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕРґРєР»СЋС‡РёС‚СЊСЃСЏ Рє СЃРµСЂРІРµСЂСѓ!');
     SKIN_SYSTEM_UNKNOWN_ERROR           : ShowErrorMessage(ErrorReason);
-    SKIN_SYSTEM_UNKNOWN_RESPONSE_FORMAT : ShowErrorMessage('Неизвестный формат ответа!');
+    SKIN_SYSTEM_UNKNOWN_RESPONSE_FORMAT : ShowErrorMessage('РќРµРёР·РІРµСЃС‚РЅС‹Р№ С„РѕСЂРјР°С‚ РѕС‚РІРµС‚Р°!');
   end;
 end;
 
@@ -1397,7 +1397,7 @@ begin
 
   LauncherAPI.UserInfo.SkinBitmap.LoadFromFile(SkinPath);
   DrawSkin(LauncherAPI.UserInfo.SkinBitmap);
-  ShowSuccessMessage('Скин успешно установлен!');
+  ShowSuccessMessage('РЎРєРёРЅ СѓСЃРїРµС€РЅРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅ!');
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1416,7 +1416,7 @@ begin
     Exit;
   end;
 
-  ShowSuccessMessage('Скин сохранён в папку: ' + SkinPath);
+  ShowSuccessMessage('РЎРєРёРЅ СЃРѕС…СЂР°РЅС‘РЅ РІ РїР°РїРєСѓ: ' + SkinPath);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1434,7 +1434,7 @@ begin
   end;
 
   DrawSkin(LauncherAPI.UserInfo.SkinBitmap);
-  ShowSuccessMessage('Скин удалён!');
+  ShowSuccessMessage('РЎРєРёРЅ СѓРґР°Р»С‘РЅ!');
 end;
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
@@ -1454,7 +1454,7 @@ begin
   end;
 
   DrawCloak(LauncherAPI.UserInfo.CloakBitmap);
-  ShowSuccessMessage('Плащ успешно установлен!');
+  ShowSuccessMessage('РџР»Р°С‰ СѓСЃРїРµС€РЅРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅ!');
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1473,7 +1473,7 @@ begin
     Exit;
   end;
 
-  ShowSuccessMessage('Плащ сохранён в папку: ' + CloakPath);
+  ShowSuccessMessage('РџР»Р°С‰ СЃРѕС…СЂР°РЅС‘РЅ РІ РїР°РїРєСѓ: ' + CloakPath);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -1491,14 +1491,14 @@ begin
   end;
 
   DrawCloak(LauncherAPI.UserInfo.CloakBitmap);
-  ShowSuccessMessage('Плащ удалён!');
+  ShowSuccessMessage('РџР»Р°С‰ СѓРґР°Р»С‘РЅ!');
 end;
 
 
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
-//                                3D-скины
+//                                3D-СЃРєРёРЅС‹
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.CreateMaterialSources;
@@ -1573,7 +1573,7 @@ begin
     Viewport3D.BeginUpdate;
     with ModelContainer do
     begin
-      // Поворачиваем скин:
+      // РџРѕРІРѕСЂР°С‡РёРІР°РµРј СЃРєРёРЅ:
       RotationAngle.Y := RotationAngle.Y + DeltaX;
       RotationAngle.X := RotationAngle.X - DeltaY * Cos((Pi * RotationAngle.Y) / 180);
       RotationAngle.Z := RotationAngle.Z - DeltaY * Sin((Pi * RotationAngle.Y) / 180);
@@ -1581,7 +1581,7 @@ begin
 {
     with CameraContainer do
     begin
-      // Поворачиваем камеру:
+      // РџРѕРІРѕСЂР°С‡РёРІР°РµРј РєР°РјРµСЂСѓ:
       RotationAngle.Y := RotationAngle.Y + DeltaX;
       RotationAngle.X := RotationAngle.X - DeltaY * Cos((Pi * RotationAngle.Y) / 180);
       RotationAngle.Z := RotationAngle.Z - DeltaY * Sin((Pi * RotationAngle.Y) / 180);
@@ -1636,16 +1636,16 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Скопировать часть битмапа в другой битмап:
+// РЎРєРѕРїРёСЂРѕРІР°С‚СЊ С‡Р°СЃС‚СЊ Р±РёС‚РјР°РїР° РІ РґСЂСѓРіРѕР№ Р±РёС‚РјР°Рї:
 procedure CopyBitmapToBitmap(
-                              const SrcBitmap    : FMX.Graphics.TBitmap; // Из какого битмапа копируем
-                              const DestBitmap   : FMX.Graphics.TBitmap; // В какой битмап копируем
-                              const SrcRect      : TRectF;               // Какой прямоугольник
-                              const DstRect      : TRectF;               // В какой прямоугольник
-                              ScaleCoeff         : Single  = 1.0;        // Коэффициент масштабирования (DstRect * ScaleCoeff)
-                              Opacity            : Single  = 1.0;        // Коэффициент прозрачности накладываемого изображения
-                              FlushBeforeDrawing : Boolean = True;       // Очищать ли предыдущее содержимое
-                              Interpolate        : Boolean = False       // Интерполировать ли при масштабировании
+                              const SrcBitmap    : FMX.Graphics.TBitmap; // РР· РєР°РєРѕРіРѕ Р±РёС‚РјР°РїР° РєРѕРїРёСЂСѓРµРј
+                              const DestBitmap   : FMX.Graphics.TBitmap; // Р’ РєР°РєРѕР№ Р±РёС‚РјР°Рї РєРѕРїРёСЂСѓРµРј
+                              const SrcRect      : TRectF;               // РљР°РєРѕР№ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє
+                              const DstRect      : TRectF;               // Р’ РєР°РєРѕР№ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє
+                              ScaleCoeff         : Single  = 1.0;        // РљРѕСЌС„С„РёС†РёРµРЅС‚ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ (DstRect * ScaleCoeff)
+                              Opacity            : Single  = 1.0;        // РљРѕСЌС„С„РёС†РёРµРЅС‚ РїСЂРѕР·СЂР°С‡РЅРѕСЃС‚Рё РЅР°РєР»Р°РґС‹РІР°РµРјРѕРіРѕ РёР·РѕР±СЂР°Р¶РµРЅРёСЏ
+                              FlushBeforeDrawing : Boolean = True;       // РћС‡РёС‰Р°С‚СЊ Р»Рё РїСЂРµРґС‹РґСѓС‰РµРµ СЃРѕРґРµСЂР¶РёРјРѕРµ
+                              Interpolate        : Boolean = False       // РРЅС‚РµСЂРїРѕР»РёСЂРѕРІР°С‚СЊ Р»Рё РїСЂРё РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёРё
                              );
 
   function Max(const A, B: Single): Single; inline;
@@ -1682,7 +1682,7 @@ type
   TCubeTexture  = array of TTextureInfo; // Front, Back, Left, Right, Top, Bottom
   TSurfaceArray = array of ^TPlane;
 
-// Индексы элементов в массивах:
+// РРЅРґРµРєСЃС‹ СЌР»РµРјРµРЅС‚РѕРІ РІ РјР°СЃСЃРёРІР°С…:
 const
   iOffsetX = 0;
   iOffsetY = 1;
@@ -1772,7 +1772,7 @@ const
   ScaleCoeff: Single = 10.0;
 
 var
-  // Список поверхностей каждой части модели:
+  // РЎРїРёСЃРѕРє РїРѕРІРµСЂС…РЅРѕСЃС‚РµР№ РєР°Р¶РґРѕР№ С‡Р°СЃС‚Рё РјРѕРґРµР»Рё:
   HeadPlanes     : TSurfaceArray;
   TorsoPlanes    : TSurfaceArray;
   LeftArmPlanes  : TSurfaceArray;
@@ -1781,17 +1781,17 @@ var
   RightLegPlanes : TSurfaceArray;
   HelmetPlanes   : TSurfaceArray;
 
-  // Список частей модели:
+  // РЎРїРёСЃРѕРє С‡Р°СЃС‚РµР№ РјРѕРґРµР»Рё:
   ModelParts: array of ^TSurfaceArray;
 
-  // Список текстур каждой части модели:
+  // РЎРїРёСЃРѕРє С‚РµРєСЃС‚СѓСЂ РєР°Р¶РґРѕР№ С‡Р°СЃС‚Рё РјРѕРґРµР»Рё:
   DefaultTextures: array of ^TCubeTexture;
   ObjectTextures: array of TCubeTexture;
 
-  // Коэффициент масштабирования координат для HD-скинов:
+  // РљРѕСЌС„С„РёС†РёРµРЅС‚ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ РєРѕРѕСЂРґРёРЅР°С‚ РґР»СЏ HD-СЃРєРёРЅРѕРІ:
   CoordScaleCoeffX, CoordScaleCoeffY: Integer;
 
-  // I - счётчик по частям модели, J - счётчик по поверхностям:
+  // I - СЃС‡С‘С‚С‡РёРє РїРѕ С‡Р°СЃС‚СЏРј РјРѕРґРµР»Рё, J - СЃС‡С‘С‚С‡РёРє РїРѕ РїРѕРІРµСЂС…РЅРѕСЃС‚СЏРј:
   I, J: LongWord;
 
 begin
@@ -1799,14 +1799,14 @@ begin
 
   Viewport3D.BeginUpdate;
 
-  // Получаем коэффициенты масштабирования координат:
+  // РџРѕР»СѓС‡Р°РµРј РєРѕСЌС„С„РёС†РёРµРЅС‚С‹ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ РєРѕРѕСЂРґРёРЅР°С‚:
   CoordScaleCoeffX := Bitmap.Width div 64;
   CoordScaleCoeffY := Bitmap.Height div 32;
 
-  // Составляем массив из групп текстур для каждой части модели:
+  // РЎРѕСЃС‚Р°РІР»СЏРµРј РјР°СЃСЃРёРІ РёР· РіСЂСѓРїРї С‚РµРєСЃС‚СѓСЂ РґР»СЏ РєР°Р¶РґРѕР№ С‡Р°СЃС‚Рё РјРѕРґРµР»Рё:
   DefaultTextures := [@HeadTexture, @TorsoTexture, @LeftArmTexture, @RightArmTexture, @LeftLegTexture, @RightLegTexture, @HelmetTexture];
 
-  // Создаём массив отмасштабированных координат:
+  // РЎРѕР·РґР°С‘Рј РјР°СЃСЃРёРІ РѕС‚РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚:
   SetLength(ObjectTextures, Length(DefaultTextures));
   for I := 0 to Length(ObjectTextures) - 1 do
   begin
@@ -1821,7 +1821,7 @@ begin
     end;
   end;
 
-  // Составляем список поверхностей:
+  // РЎРѕСЃС‚Р°РІР»СЏРµРј СЃРїРёСЃРѕРє РїРѕРІРµСЂС…РЅРѕСЃС‚РµР№:
   HeadPlanes     := [@HeadFront    , @HeadBack    , @HeadLeft     , @HeadRight    , @HeadTop    , @HeadBottom    ];
   TorsoPlanes    := [@TorsoFront   , @TorsoBack   , @TorsoLeft    , @TorsoRight   , @TorsoTop   , @TorsoBottom   ];
   LeftArmPlanes  := [@LeftArmFront , @LeftArmBack , @LeftArmRight , @LeftArmLeft  , @LeftArmTop , @LeftArmBottom ];
@@ -1830,16 +1830,16 @@ begin
   RightLegPlanes := [@RightLegFront, @RightLegBack, @RightLegRight, @RightLegLeft , @RightLegTop, @RightLegBottom];
   HelmetPlanes   := [@HelmetFront  , @HelmetBack  , @HelmetLeft   , @HelmetRight  , @HelmetTop  , @HelmetBottom  ];
 
-  // Составляем список частей модели:
+  // РЎРѕСЃС‚Р°РІР»СЏРµРј СЃРїРёСЃРѕРє С‡Р°СЃС‚РµР№ РјРѕРґРµР»Рё:
   ModelParts := [@HeadPlanes, @TorsoPlanes, @LeftArmPlanes, @RightArmPlanes, @LeftLegPlanes, @RightLegPlanes, @HelmetPlanes];
 
-  // Проходимся по каждой части модели (голова, корпус, ...):
+  // РџСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ РєР°Р¶РґРѕР№ С‡Р°СЃС‚Рё РјРѕРґРµР»Рё (РіРѕР»РѕРІР°, РєРѕСЂРїСѓСЃ, ...):
   for I := 0 to High(ModelParts) do
   begin
-    // Проходимся по каждой поверхности модели:
+    // РџСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ РєР°Р¶РґРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё РјРѕРґРµР»Рё:
     for J := 0 to High(ModelParts[I]^) do
     begin
-      // Рисуем текстуру на каждой поверхности:
+      // Р РёСЃСѓРµРј С‚РµРєСЃС‚СѓСЂСѓ РЅР° РєР°Р¶РґРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё:
       with ModelParts[I]^[J]^ do
       begin
         ModelParts[I]^[J]^.BeginUpdate;
@@ -1857,7 +1857,7 @@ begin
                             ScaleCoeff / ((CoordScaleCoeffX + CoordScaleCoeffY) div 2)
                            );
 
-        // Инвертируем текстуры для симметрии:
+        // РРЅРІРµСЂС‚РёСЂСѓРµРј С‚РµРєСЃС‚СѓСЂС‹ РґР»СЏ СЃРёРјРјРµС‚СЂРёРё:
         if (I in [iLeftArm, iLeftLeg]) then
           TTextureMaterialSource(MaterialSource).Texture.FlipHorizontal;
 
@@ -1866,7 +1866,7 @@ begin
     end;
   end;
 
-  // Освобождаем массив отмасштабированных координат:
+  // РћСЃРІРѕР±РѕР¶РґР°РµРј РјР°СЃСЃРёРІ РѕС‚РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚:
   for I := 0 to Length(ObjectTextures) - 1 do
   begin
     for J := 0 to Length(ObjectTextures[I]) - 1 do
@@ -1893,7 +1893,7 @@ type
   TCubeTexture  = array of TTextureInfo; // Front, Back, Left, Right, Top, Bottom
   TSurfaceArray = array of ^TPlane;
 
-// Индексы элементов в массивах:
+// РРЅРґРµРєСЃС‹ СЌР»РµРјРµРЅС‚РѕРІ РІ РјР°СЃСЃРёРІР°С…:
 const
   iOffsetX = 0;
   iOffsetY = 1;
@@ -1922,16 +1922,16 @@ const
   ScaleCoeff: Single = 10.0;
 
 var
-  // Список поверхностей каждой части модели:
+  // РЎРїРёСЃРѕРє РїРѕРІРµСЂС…РЅРѕСЃС‚РµР№ РєР°Р¶РґРѕР№ С‡Р°СЃС‚Рё РјРѕРґРµР»Рё:
   CloakPlanes: TSurfaceArray;
 
-  // Список из текстур каждой поверхности:
+  // РЎРїРёСЃРѕРє РёР· С‚РµРєСЃС‚СѓСЂ РєР°Р¶РґРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё:
   ObjectTexture: TCubeTexture;
 
-  // Коэффициент масштабирования координат для HD-скинов:
+  // РљРѕСЌС„С„РёС†РёРµРЅС‚ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ РєРѕРѕСЂРґРёРЅР°С‚ РґР»СЏ HD-СЃРєРёРЅРѕРІ:
   CoordScaleCoeffX, CoordScaleCoeffY: Integer;
 
-  // I - счётчик по поверхностям:
+  // I - СЃС‡С‘С‚С‡РёРє РїРѕ РїРѕРІРµСЂС…РЅРѕСЃС‚СЏРј:
   I: LongWord;
 
 begin
@@ -1939,11 +1939,11 @@ begin
 
   Viewport3D.BeginUpdate;
 
-  // Получаем коэффициенты масштабирования координат:
+  // РџРѕР»СѓС‡Р°РµРј РєРѕСЌС„С„РёС†РёРµРЅС‚С‹ РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРёСЏ РєРѕРѕСЂРґРёРЅР°С‚:
   CoordScaleCoeffX := Bitmap.Width div 64;
   CoordScaleCoeffY := Bitmap.Height div 32;
 
-  // Создаём массив отмасштабированных координат:
+  // РЎРѕР·РґР°С‘Рј РјР°СЃСЃРёРІ РѕС‚РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚:
   SetLength(ObjectTexture, Length(CloakTexture));
   for I := 0 to Length(ObjectTexture) - 1 do
   begin
@@ -1954,13 +1954,13 @@ begin
     ObjectTexture[I][3] := CloakTexture[I][3] * CoordScaleCoeffY;
   end;
 
-  // Составляем список поверхностей:
+  // РЎРѕСЃС‚Р°РІР»СЏРµРј СЃРїРёСЃРѕРє РїРѕРІРµСЂС…РЅРѕСЃС‚РµР№:
   CloakPlanes := [@CloakFront, @CloakBack, @CloakLeft, @CloakRight, @CloakTop, @CloakBottom];
 
-  // Проходимся по поверхностям плаща:
+  // РџСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ РїРѕРІРµСЂС…РЅРѕСЃС‚СЏРј РїР»Р°С‰Р°:
   for I := 0 to Length(CloakPlanes) - 1 do
   begin
-    // Рисуем текстуру на каждой поверхности:
+    // Р РёСЃСѓРµРј С‚РµРєСЃС‚СѓСЂСѓ РЅР° РєР°Р¶РґРѕР№ РїРѕРІРµСЂС…РЅРѕСЃС‚Рё:
     with CloakPlanes[I]^ do
     begin
       BeginUpdate;
@@ -1981,7 +1981,7 @@ begin
     end;
   end;
 
-  // Освобождаем массив отмасштабированных координат:
+  // РћСЃРІРѕР±РѕР¶РґР°РµРј РјР°СЃСЃРёРІ РѕС‚РјР°СЃС€С‚Р°Р±РёСЂРѕРІР°РЅРЅС‹С… РєРѕРѕСЂРґРёРЅР°С‚:
   for I := 0 to Length(ObjectTexture) - 1 do
   begin
     SetLength(ObjectTexture[I], 0);

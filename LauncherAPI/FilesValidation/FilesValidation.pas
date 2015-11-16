@@ -14,25 +14,25 @@ type
   TValidFilesJSON = TJSONArray;
 
   VALIDATION_STATUS = (
-    VALIDATION_STATUS_SUCCESS,        // Все файлы прошли проверку
-    VALIDATION_STATUS_DELETION_ERROR, // Не получилось удалить несоответствующий файл
-    VALIDATION_STATUS_NEED_UPDATE     // Требуется обновление
+    VALIDATION_STATUS_SUCCESS,        // Р’СЃРµ С„Р°Р№Р»С‹ РїСЂРѕС€Р»Рё РїСЂРѕРІРµСЂРєСѓ
+    VALIDATION_STATUS_DELETION_ERROR, // РќРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ РЅРµСЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ С„Р°Р№Р»
+    VALIDATION_STATUS_NEED_UPDATE     // РўСЂРµР±СѓРµС‚СЃСЏ РѕР±РЅРѕРІР»РµРЅРёРµ
   );
 
-  TCheckingsList = array of TFilesScannerStruct; // Список файлов и папок на проверку
+  TCheckingsList = array of TFilesScannerStruct; // РЎРїРёСЃРѕРє С„Р°Р№Р»РѕРІ Рё РїР°РїРѕРє РЅР° РїСЂРѕРІРµСЂРєСѓ
   TOnFilesMismatching = reference to procedure(const ErrorFiles: TStringList);
 
   TFilesValidator = class
     private
-      FBaseFolder: string;          // Основная папка, относительно которой задаются пути в JSON'е
-      FRelativeWorkingPath: string; // Папка относительно FBaseFolder, в которой лежат все файлы и папки
+      FBaseFolder: string;          // РћСЃРЅРѕРІРЅР°СЏ РїР°РїРєР°, РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РєРѕС‚РѕСЂРѕР№ Р·Р°РґР°СЋС‚СЃСЏ РїСѓС‚Рё РІ JSON'Рµ
+      FRelativeWorkingPath: string; // РџР°РїРєР° РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ FBaseFolder, РІ РєРѕС‚РѕСЂРѕР№ Р»РµР¶Р°С‚ РІСЃРµ С„Р°Р№Р»С‹ Рё РїР°РїРєРё
 
-      FCriticalSection: _RTL_CRITICAL_SECTION; // Критическая секция для многопоточной работы со списками
+      FCriticalSection: _RTL_CRITICAL_SECTION; // РљСЂРёС‚РёС‡РµСЃРєР°СЏ СЃРµРєС†РёСЏ РґР»СЏ РјРЅРѕРіРѕРїРѕС‚РѕС‡РЅРѕР№ СЂР°Р±РѕС‚С‹ СЃРѕ СЃРїРёСЃРєР°РјРё
 
-      FCheckingsList : TCheckingsList;   // Список файлов и папок на проверку
-      FValidFiles    : TValidFiles;      // Список верных файлов
-      FErrorFiles    : TStringList;      // Список файлов, которые не удалось удалить при проверке
-      FAbsentFiles   : TAbsentFilesList; // Список отсутствующих файлов
+      FCheckingsList : TCheckingsList;   // РЎРїРёСЃРѕРє С„Р°Р№Р»РѕРІ Рё РїР°РїРѕРє РЅР° РїСЂРѕРІРµСЂРєСѓ
+      FValidFiles    : TValidFiles;      // РЎРїРёСЃРѕРє РІРµСЂРЅС‹С… С„Р°Р№Р»РѕРІ
+      FErrorFiles    : TStringList;      // РЎРїРёСЃРѕРє С„Р°Р№Р»РѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅРµ СѓРґР°Р»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ РїСЂРё РїСЂРѕРІРµСЂРєРµ
+      FAbsentFiles   : TAbsentFilesList; // РЎРїРёСЃРѕРє РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёС… С„Р°Р№Р»РѕРІ
 
       FLocalFiles: array of TStringList;
 
@@ -75,7 +75,7 @@ implementation
 { TFilesValidator }
 
 
-// Добавляем файл в список файлов, которые не получилось удалить:
+// Р”РѕР±Р°РІР»СЏРµРј С„Р°Р№Р» РІ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ СѓРґР°Р»РёС‚СЊ:
 procedure TFilesValidator.AddToErrorFiles(const FilePath: string);
 begin
   EnterCriticalSection(FCriticalSection);
@@ -85,7 +85,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Добавляем файл в список отсутствующих файлов:
+// Р”РѕР±Р°РІР»СЏРµРј С„Р°Р№Р» РІ СЃРїРёСЃРѕРє РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёС… С„Р°Р№Р»РѕРІ:
 procedure TFilesValidator.AddToAbsentFiles(const FileInfo: TValidFileInfo);
 var
   AbsentFileInfo: TAbsentFileInfo;
@@ -100,7 +100,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Получаем хэш файла:
+// РџРѕР»СѓС‡Р°РµРј С…СЌС€ С„Р°Р№Р»Р°:
 function TFilesValidator.GetFileHash(const FilePath: string): string;
 var
   FilePtr: Pointer;
@@ -115,7 +115,7 @@ end;
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 
-// Получаем списки локальных файлов для каждого элемента в массиве проверок:
+// РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРєРё Р»РѕРєР°Р»СЊРЅС‹С… С„Р°Р№Р»РѕРІ РґР»СЏ РєР°Р¶РґРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РІ РјР°СЃСЃРёРІРµ РїСЂРѕРІРµСЂРѕРє:
 procedure TFilesValidator.FillLocalFilesArray(Multithreading: Boolean);
 var
   CheckingsCount: Integer;
@@ -127,7 +127,7 @@ begin
 
   FixedPath := FixSlashes(FBaseFolder + '\' + FRelativeWorkingPath);
 
-  // Получаем список файлов для каждого элемента в списке проверок:
+  // РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РґР»СЏ РєР°Р¶РґРѕРіРѕ СЌР»РµРјРµРЅС‚Р° РІ СЃРїРёСЃРєРµ РїСЂРѕРІРµСЂРѕРє:
   SetLength(FLocalFiles, CheckingsCount);
   if Multithreading then
   begin
@@ -149,7 +149,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Пробуем удалить, и если не получается - добавляем в список файлов с ошибками:
+// РџСЂРѕР±СѓРµРј СѓРґР°Р»РёС‚СЊ, Рё РµСЃР»Рё РЅРµ РїРѕР»СѓС‡Р°РµС‚СЃСЏ - РґРѕР±Р°РІР»СЏРµРј РІ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ СЃ РѕС€РёР±РєР°РјРё:
 procedure TFilesValidator.TryToDeleteFile(const FilePath: string);
 begin
   if not DeleteFile(FilePath) then AddToErrorFiles(FilePath);
@@ -157,7 +157,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Проверяем файл:
+// РџСЂРѕРІРµСЂСЏРµРј С„Р°Р№Р»:
 procedure TFilesValidator.ValidateFile(const FilePath: string);
 var
   RelativePath  : string;
@@ -166,14 +166,14 @@ var
 begin
   RelativePath := GetRelativePath(FilePath, FBaseFolder + '\');
 
-  // Если файла нет в списке верных файлов - удаляем:
+  // Р•СЃР»Рё С„Р°Р№Р»Р° РЅРµС‚ РІ СЃРїРёСЃРєРµ РІРµСЂРЅС‹С… С„Р°Р№Р»РѕРІ - СѓРґР°Р»СЏРµРј:
   if not FValidFiles.Get(RelativePath, ValidFileInfo) then
   begin
     TryToDeleteFile(FilePath);
     Exit;
   end;
 
-  // Если размер файла не совпадает с верным размером - удаляем:
+  // Р•СЃР»Рё СЂР°Р·РјРµСЂ С„Р°Р№Р»Р° РЅРµ СЃРѕРІРїР°РґР°РµС‚ СЃ РІРµСЂРЅС‹Рј СЂР°Р·РјРµСЂРѕРј - СѓРґР°Р»СЏРµРј:
   FileSize := GetFileSize(FilePath);
   if FileSize <> ValidFileInfo.Size then
   begin
@@ -181,7 +181,7 @@ begin
     Exit;
   end;
 
-  // Если не совпадает хэш - удаляем:
+  // Р•СЃР»Рё РЅРµ СЃРѕРІРїР°РґР°РµС‚ С…СЌС€ - СѓРґР°Р»СЏРµРј:
   if GetFileHash(FilePath) <> LowerCase(ValidFileInfo.Hash) then
   begin
     TryToDeleteFile(FilePath);
@@ -191,7 +191,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Проверяем каждый файл в списке локальных файлов:
+// РџСЂРѕРІРµСЂСЏРµРј РєР°Р¶РґС‹Р№ С„Р°Р№Р» РІ СЃРїРёСЃРєРµ Р»РѕРєР°Р»СЊРЅС‹С… С„Р°Р№Р»РѕРІ:
 procedure TFilesValidator.ValidateFilesList(const FilesList: TStringList; Multithreading: Boolean);
 var
   I: Integer;
@@ -216,7 +216,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Проходимся по всем списка локальных файлов, и проверяем каждый список:
+// РџСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ РІСЃРµРј СЃРїРёСЃРєР° Р»РѕРєР°Р»СЊРЅС‹С… С„Р°Р№Р»РѕРІ, Рё РїСЂРѕРІРµСЂСЏРµРј РєР°Р¶РґС‹Р№ СЃРїРёСЃРѕРє:
 procedure TFilesValidator.ValidateAllFilesLists(Multithreading: Boolean);
 var
   LocalFilesEntriesCount: Integer;
@@ -241,7 +241,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Освобождаем память, занятую под списки локальных файлов:
+// РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ, Р·Р°РЅСЏС‚СѓСЋ РїРѕРґ СЃРїРёСЃРєРё Р»РѕРєР°Р»СЊРЅС‹С… С„Р°Р№Р»РѕРІ:
 procedure TFilesValidator.ClearLocalFilesArray(Multithreading: Boolean);
 var
   LocalFilesEntriesCount: Integer;
@@ -271,7 +271,7 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-// Получаем список отсутствующих файлов:
+// РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє РѕС‚СЃСѓС‚СЃС‚РІСѓСЋС‰РёС… С„Р°Р№Р»РѕРІ:
 procedure TFilesValidator.FillAbsentFilesList(Multithreading: Boolean);
 var
   ValidFilesArray: TArray<TValidFileInfo>;
@@ -344,7 +344,7 @@ begin
       Recursive := GetJSONBooleanValue(CheckingsElement, 'recursive');
     end;
 
-    // Получаем список файлов, исключаемых из проверки:
+    // РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ, РёСЃРєР»СЋС‡Р°РµРјС‹С… РёР· РїСЂРѕРІРµСЂРєРё:
     ExclusivesArray := GetJSONArrayValue(CheckingsElement, 'exclusives');
     if ExclusivesArray = nil then Exit;
     if ExclusivesArray.Count = 0 then Exit;
@@ -373,12 +373,12 @@ begin
   if ValidFilesJSON = nil then Exit;
   if ValidFilesJSON.Count = 0 then Exit;
 
-  // Парсим список верных файлов:
+  // РџР°СЂСЃРёРј СЃРїРёСЃРѕРє РІРµСЂРЅС‹С… С„Р°Р№Р»РѕРІ:
   for I := 0 to ValidFilesJSON.Count - 1 do
   begin
     ValidFileJSON := GetJSONArrayElement(ValidFilesJSON, I);
 
-    // Заполняем хэшмап "относительный путь" -> "информация"
+    // Р—Р°РїРѕР»РЅСЏРµРј С…СЌС€РјР°Рї "РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅС‹Р№ РїСѓС‚СЊ" -> "РёРЅС„РѕСЂРјР°С†РёСЏ"
     ValidFileInfo.Size := GetJSONIntValue   (ValidFileJSON, 'size');
     ValidFileInfo.Hash := GetJSONStringValue(ValidFileJSON, 'hash');
     ValidFileInfo.Link := GetJSONStringValue(ValidFileJSON, 'path');
@@ -396,18 +396,18 @@ begin
   FBaseFolder          := BaseFolder;
   FRelativeWorkingPath := RelativeWorkingFolder;
 
-  // Чистим списки файлов:
+  // Р§РёСЃС‚РёРј СЃРїРёСЃРєРё С„Р°Р№Р»РѕРІ:
   ClearFilesLists;
 
-  // Делаем проверку файлов, удаляем не прошедшие проверку:
-  FillLocalFilesArray(Multithreading);   // Заполняем список локальных файлов в соответствии с проверками
-  ValidateAllFilesLists(Multithreading); // Проходимся по всем спискам локальных файлов и проверяем каждый файл в них
-  ClearLocalFilesArray(Multithreading);  // Освобождаем память, занятую под списки локальных файлов
+  // Р”РµР»Р°РµРј РїСЂРѕРІРµСЂРєСѓ С„Р°Р№Р»РѕРІ, СѓРґР°Р»СЏРµРј РЅРµ РїСЂРѕС€РµРґС€РёРµ РїСЂРѕРІРµСЂРєСѓ:
+  FillLocalFilesArray(Multithreading);   // Р—Р°РїРѕР»РЅСЏРµРј СЃРїРёСЃРѕРє Р»РѕРєР°Р»СЊРЅС‹С… С„Р°Р№Р»РѕРІ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ РїСЂРѕРІРµСЂРєР°РјРё
+  ValidateAllFilesLists(Multithreading); // РџСЂРѕС…РѕРґРёРјСЃСЏ РїРѕ РІСЃРµРј СЃРїРёСЃРєР°Рј Р»РѕРєР°Р»СЊРЅС‹С… С„Р°Р№Р»РѕРІ Рё РїСЂРѕРІРµСЂСЏРµРј РєР°Р¶РґС‹Р№ С„Р°Р№Р» РІ РЅРёС…
+  ClearLocalFilesArray(Multithreading);  // РћСЃРІРѕР±РѕР¶РґР°РµРј РїР°РјСЏС‚СЊ, Р·Р°РЅСЏС‚СѓСЋ РїРѕРґ СЃРїРёСЃРєРё Р»РѕРєР°Р»СЊРЅС‹С… С„Р°Р№Р»РѕРІ
 
-  // Получаем список недостающих файлов:
+  // РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє РЅРµРґРѕСЃС‚Р°СЋС‰РёС… С„Р°Р№Р»РѕРІ:
   FillAbsentFilesList(Multithreading);
 
-  // Возвращаем результат:
+  // Р’РѕР·РІСЂР°С‰Р°РµРј СЂРµР·СѓР»СЊС‚Р°С‚:
   if FErrorFiles.Count  > 0 then Exit(VALIDATION_STATUS_DELETION_ERROR);
   if FAbsentFiles.Count > 0 then Exit(VALIDATION_STATUS_NEED_UPDATE);
   Result := VALIDATION_STATUS_SUCCESS;

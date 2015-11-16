@@ -5,7 +5,7 @@ interface
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 type
-  // Óñðåäíÿåò ñ ïðåäûäóùèì ñðåäíèì:
+  // Ð£ÑÑ€ÐµÐ´Ð½ÑÐµÑ‚ Ñ Ð¿Ñ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰Ð¸Ð¼ ÑÑ€ÐµÐ´Ð½Ð¸Ð¼:
   TAverageOverLastAveragedValue = class
     private
       FFirstTime: Boolean;
@@ -24,7 +24,7 @@ type
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
-  // Óñðåäíÿåò ïî îïðåäåë¸ííîìó êîëè÷åñòâó ïðåäûäóùèõ çíà÷åíèé:
+  // Ð£ÑÑ€ÐµÐ´Ð½ÑÐµÑ‚ Ð¿Ð¾ Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»Ñ‘Ð½Ð½Ð¾Ð¼Ñƒ ÐºÐ¾Ð»Ð¸Ñ‡ÐµÑÑ‚Ð²Ñƒ Ð¿Ñ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰Ð¸Ñ… Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ð¹:
   TLastValues = array of Single;
   TAverageOverLastValues = class
     private
@@ -48,7 +48,7 @@ type
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
-  // Óñðåäíÿåò ñî âñåìè ïðåäûäóùèìè çíà÷åíèÿìè:
+  // Ð£ÑÑ€ÐµÐ´Ð½ÑÐµÑ‚ ÑÐ¾ Ð²ÑÐµÐ¼Ð¸ Ð¿Ñ€ÐµÐ´Ñ‹Ð´ÑƒÑ‰Ð¸Ð¼Ð¸ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸ÑÐ¼Ð¸:
   TAverageOverAllLastValues = class
     private
       FAveragingSize: Integer;
@@ -142,7 +142,7 @@ begin
   end
   else
   begin
-    // Çàïèñûâàåì ïåðâîå çíà÷åíèå (êðàéíåå ïðàâîå):
+    // Ð—Ð°Ð¿Ð¸ÑÑ‹Ð²Ð°ÐµÐ¼ Ð¿ÐµÑ€Ð²Ð¾Ðµ Ð·Ð½Ð°Ñ‡ÐµÐ½Ð¸Ðµ (ÐºÑ€Ð°Ð¹Ð½ÐµÐµ Ð¿Ñ€Ð°Ð²Ð¾Ðµ):
     if (FAveragingSize > 0) then FLastValues[FAveragingSize - 1] := Value;
     FLastAverage := Value;
     if FNotInitializedCount > 0 then Dec(FNotInitializedCount);
