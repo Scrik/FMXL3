@@ -1,4 +1,4 @@
-unit LauncherSettings;
+﻿unit LauncherSettings;
 
 interface
 
@@ -20,7 +20,6 @@ const
 
   // Версия лаунчера:
   LauncherVersion: Integer = 2;
-
 
 
 implementation

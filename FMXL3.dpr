@@ -1,4 +1,6 @@
-program FMXL3;
+﻿program FMXL3;
+
+{$I Definitions.inc}
 
 uses
   System.StartUpCopy,
@@ -53,13 +55,25 @@ uses
   StackCapacitor in 'AuxUtils\StackCapacitor.pas',
   FilesNotifier in 'HoShiMin''s API\FilesNotifier.pas',
   HookAPI in 'HoShiMin''s API\HookAPI.pas',
-  MicroDAsm in 'HoShiMin''s API\MicroDAsm.pas';
+  MicroDAsm in 'HoShiMin''s API\MicroDAsm.pas',
+  CPUIDInfo in 'HoShiMin''s API\CPUIDInfo.pas',
+  ssl_openssl in 'Synapse\ssl_openssl.pas',
+  ssl_openssl_lib in 'Synapse\ssl_openssl_lib.pas',
+  ResUnpacker in 'AuxUtils\ResUnpacker.pas';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 {$R *.res}
 {$R Fonts.res}
 {$R DefaultImages.res}
+
+{$IFDEF USE_SSL}
+  {$IFDEF CPUX64}
+    {$R OpenSSL64.res}
+  {$ELSE}
+    {$R OpenSSL32.res}
+  {$ENDIF}
+{$ENDIF}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

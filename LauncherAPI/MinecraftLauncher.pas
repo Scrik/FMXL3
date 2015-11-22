@@ -8,7 +8,7 @@ uses
   CodepageAPI, StringsAPI, FileAPI, JSONUtils, TimeManagement,
   DownloadHelper, HTTPUtils, HTTPMultiLoader,
   JavaInformation, UserInformation, FilesValidation, JNIWrapper, ServerQuery,
-  AuxUtils;
+  AuxUtils, CPUIDInfo;
 
 type
   TClientInfo = TJSONObject;
@@ -317,10 +317,41 @@ begin
   JVMParams.Text := ReplaceParam(JavaInfo.JavaParameters.Arguments, ' ', #13#10);
   JVMParams.Add('-Xms' + IntToStr(RAM) + 'm');
   JVMParams.Add('-Xmx' + IntToStr(RAM) + 'm');
+  JVMParams.Add('-XX:UseSSE=4');
+  JVMParams.Add('-XX:UseAVX=1');
   JVMParams.Add(NativesPath);
   JVMParams.Add(ClassPath);
   JVMParams.Add('-Dfml.ignoreInvalidMinecraftCertificates=true');
   JVMParams.Add('-Dfml.ignorePatchDiscrepancies=true');
+
+  if CPUInfo.CPUFeatures.SSE.SSE41 or CPUInfo.CPUFeatures.SSE.SSE42 then JVMParams.Add('-XX:UseSSE=4')
+  else if CPUInfo.CPUFeatures.SSE.SSE3 then JVMParams.Add('-XX:UseSSE=3')
+  else if CPUInfo.CPUFeatures.SSE.SSE2 then JVMParams.Add('-XX:UseSSE=2')
+  else if CPUInfo.CPUFeatures.SSE.SSE1 then JVMParams.Add('-XX:UseSSE=1');
+
+  if CPUInfo.CPUFeatures.SSE.SSE2 then
+  begin
+    JVMParams.Add('-XX:+UseXmmI2D');
+    JVMParams.Add('-XX:+UseXmmI2F');
+    JVMParams.Add('-XX:+UseUnalignedLoadStores');
+  end;
+
+  if CPUInfo.CPUFeatures.SSE.SSE42 then JVMParams.Add('-XX:+UseSSE42Intrinsics');
+  if CPUInfo.CPUFeatures.AVX       then JVMParams.Add('-XX:UseAVX=2');
+
+  if CPUInfo.CPUFeatures.AES then
+  begin
+    JVMParams.Add('-XX:+UseAES');
+    JVMParams.Add('-XX:+UseAESIntrinsics');
+  end;
+
+  JVMParams.Add('-XX:+UnlockDiagnosticVMOptions');
+
+  JVMParams.Add('-XX:+UseIncDec');
+  JVMParams.Add('-XX:+UseNewLongLShift');
+  JVMParams.Add('-XX:+UseFastStosb');
+
+  JVMParams.Add('-XX:+DisableAttachMechanism');
 
   // Собираем список аргументов клиента:
   Arguments := TStringList.Create;

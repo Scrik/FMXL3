@@ -1,4 +1,4 @@
- unit Authorization;
+﻿unit Authorization;
 
 interface
 

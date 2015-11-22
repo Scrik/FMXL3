@@ -1,4 +1,4 @@
-unit FilesScanner;
+﻿unit FilesScanner;
 
 interface
 

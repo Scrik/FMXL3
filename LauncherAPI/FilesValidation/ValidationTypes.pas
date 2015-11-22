@@ -1,4 +1,4 @@
-unit ValidationTypes;
+﻿unit ValidationTypes;
 
 interface
 
@@ -6,22 +6,22 @@ uses
   SysUtils, Generics.Collections, StringsAPI;
 
 type
-  // »нформаци¤ о верном файле из JSON'а:
+  // Информация о верном файле из JSON'а:
   TValidFileInfo = record
     Size: Integer;
     Hash: string;
-    Link: string; // ѕуть относительно основных рабочих папок на сервере и на локальной машине
+    Link: string; // путь относительно основных рабочих папок на сервере и на локальной машине
   end;
   TValidFilesHashmap = TDictionary<string, TValidFileInfo>;
 
-  // »нформаци¤ о файле, который нужно обновить:
+  // Информация о файле, который нужно обновить:
   TAbsentFileInfo = record
     Size: Integer;
     Link: string;
   end;
   TAbsentFilesList = TList<TAbsentFileInfo>;
 
-  // ’эшмап верных файлов:
+  // Хэшмап верных файлов:
   TValidFiles = class
     private
       FValidFilesHashmap: TValidFilesHashmap;

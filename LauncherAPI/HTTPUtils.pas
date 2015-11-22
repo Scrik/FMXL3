@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, SysUtils, Classes, ZLib,
-  HTTPSend, synautil, blcksock,
+  HTTPSend, synautil, blcksock, ssl_openssl,
   FileAPI, StringsAPI, CodepageAPI;
 
 type

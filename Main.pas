@@ -1,4 +1,4 @@
-unit Main;
+﻿unit Main;
 
 interface
 
@@ -24,8 +24,11 @@ uses
   LauncherAPI, Authorization, Registration, FilesValidation, ServerQuery,
   MinecraftLauncher, SkinSystem, JNIWrapper, AuxUtils,
 
+  // Synapse/OpenSSL:
+  blcksock, ssl_openssl, ssl_openssl_lib,
+
   // AUX Modules:
-  LauncherSettings, PopupManager, ServerPanel, StackCapacitor;
+  LauncherSettings, PopupManager, ServerPanel, StackCapacitor, ResUnpacker;
 
 type
   TMainForm = class(TForm)
@@ -169,10 +172,10 @@ type
     RegLabel: TLabel;
     AutoLoginCheckbox: TCheckBox;
 
-    procedure ShowErrorMessage(Text: string);
-    procedure ShowSuccessMessage(Text: string);
-    procedure ShowNullErrorMessage(Text: string);
-    procedure ShowNullSuccessMessage(Text: string);
+    procedure ShowErrorMessage(const Text: string);
+    procedure ShowSuccessMessage(const Text: string);
+    procedure ShowNullErrorMessage(const Text: string);
+    procedure ShowNullSuccessMessage(const Text: string);
 
     procedure CloseImageClick(Sender: TObject);
     procedure HideImageClick(Sender: TObject);
@@ -269,6 +272,8 @@ var
 implementation
 
 {$R *.fmx}
+
+
 
 procedure TMainForm.PlotGridPaint(Sender: TObject; Canvas: TCanvas;
   const [Ref] ARect: TRectF);
@@ -418,28 +423,29 @@ end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-procedure TMainForm.ShowNullErrorMessage(Text: string);
+procedure TMainForm.ShowNullErrorMessage(const Text: string);
 begin
   MessageBox(0, PChar(Text), 'Ошибка!', MB_ICONERROR);
+  ExitProcess(0);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-procedure TMainForm.ShowNullSuccessMessage(Text: string);
+procedure TMainForm.ShowNullSuccessMessage(const Text: string);
 begin
   MessageBox(0, PChar(Text), 'Успешно!', MB_ICONASTERISK);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-procedure TMainForm.ShowErrorMessage(Text: string);
+procedure TMainForm.ShowErrorMessage(const Text: string);
 begin
   MessageBox(GetFmxWND(Handle), PChar(Text), 'Ошибка!', MB_ICONERROR);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-procedure TMainForm.ShowSuccessMessage(Text: string);
+procedure TMainForm.ShowSuccessMessage(const Text: string);
 begin
   MessageBox(GetFmxWND(Handle), PChar(Text), 'Успешно!', MB_ICONASTERISK);
 end;
@@ -508,7 +514,7 @@ end;
 
 procedure TMainForm.SaveSettings(AutoLogin, ExternalJava: Boolean);
 begin
-  SaveStringToRegistry(RegistryPath, 'Login'   , LoginEdit.Text);
+  SaveStringToRegistry(RegistryPath, 'Login', LoginEdit.Text);
 
   if AutoLogin then
     SaveStringToRegistry(RegistryPath, 'Password', PasswordEdit.Text)
@@ -684,6 +690,9 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  // Чистим папку от временных файлов:
+  DeleteDirectory('*.old', True);
+
   // Запускаем системный мониторинг:
   FCPUStack := TStackCapacitor<Single>.Create(StacksCapacity, 0);
   FRAMStack := TStackCapacitor<Single>.Create(StacksCapacity, 0);
@@ -713,6 +722,22 @@ begin
   LauncherAPI := TLauncherAPI.Create(GetSpecialFolderPath(CSIDL_APPDATA) + '\' + LocalWorkingFolder, ServerWorkingFolder);
   LauncherAPI.EncryptionKey := EncryptionKey;
   LauncherAPI.LauncherInfo.LauncherVersion := LauncherVersion;
+
+  // Распаковываем необходимые ресурсы:
+  {$IFDEF USE_SSL}
+    {$IFDEF CPUX64}
+      UnpackRes('LIBEAY64', LauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\libeay32.dll');
+      UnpackRes('SSLEAY64', LauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\ssleay32.dll');
+      SetDllDirectory(PChar(LauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\'));
+    {$ELSE}
+      UnpackRes('LIBEAY32', LauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\libeay32.dll');
+      UnpackRes('SSLEAY32', LauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\ssleay32.dll');
+      SetDllDirectory(PChar(LauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\'));
+    {$ENDIF}
+
+    if InitSSLInterface then
+      SSLImplementation := TSSLOpenSSL;
+  {$ENDIF}
 
   // Загружаем настройки:
   LoadSettings;
@@ -1025,6 +1050,7 @@ begin
 
   // Запускаем игру:
   Status := LauncherAPI.LaunchClient(ClientNumber, StrToInt(RAMEdit.Text));
+  if Status <> JNIWRAPPER_SUCCESS then RunThreads;
   case Status of
     JNIWRAPPER_UNKNOWN_ERROR       : ShowNullErrorMessage('Неизвестная ошибка в JVM!');
     JNIWRAPPER_JNI_INVALID_VERSION : ShowNullErrorMessage('Неверная версия JNI!');
@@ -1388,7 +1414,7 @@ var
 begin
   if not ShowOpenDialog(SkinPath, '*.png|*.png') then Exit;
 
-  Status := LauncherAPI.SetupSkin(LoginEdit.Text, PasswordEdit.Text, SkinPath);
+  Status := LauncherAPI.SetupSkin(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, SkinPath);
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
     CheckSkinSystemErrors(Status, IMAGE_SKIN, LauncherAPI.SkinSystem.ErrorReason);
@@ -1407,9 +1433,9 @@ var
   SkinPath: string;
   Status: SKIN_SYSTEM_STATUS;
 begin
-  if not ShowSaveDialog(SkinPath, '*.png|*.png', LoginEdit.Text + '.png') then Exit;
+  if not ShowSaveDialog(SkinPath, '*.png|*.png', LauncherAPI.UserInfo.UserLogonData.Login + '.png') then Exit;
 
-  Status := LauncherAPI.DownloadSkin(LoginEdit.Text, PasswordEdit.Text, SkinPath);
+  Status := LauncherAPI.DownloadSkin(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, SkinPath);
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
     CheckSkinSystemErrors(Status, IMAGE_SKIN, LauncherAPI.SkinSystem.ErrorReason);
@@ -1425,7 +1451,7 @@ procedure TMainForm.DeletSkinItemClick(Sender: TObject);
 var
   Status: SKIN_SYSTEM_STATUS;
 begin
-  Status := LauncherAPI.DeleteSkin(LoginEdit.Text, PasswordEdit.Text);
+  Status := LauncherAPI.DeleteSkin(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text);
 
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
@@ -1446,7 +1472,7 @@ var
 begin
   if not ShowOpenDialog(CloakPath) then Exit;
 
-  Status := LauncherAPI.SetupCloak(LoginEdit.Text, PasswordEdit.Text, CloakPath);
+  Status := LauncherAPI.SetupCloak(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, CloakPath);
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
     CheckSkinSystemErrors(Status, IMAGE_CLOAK, LauncherAPI.SkinSystem.ErrorReason);
@@ -1464,9 +1490,9 @@ var
   CloakPath: string;
   Status: SKIN_SYSTEM_STATUS;
 begin
-  if not ShowSaveDialog(CloakPath, '*.png|*.png', LoginEdit.Text + '_cloak.png') then Exit;
+  if not ShowSaveDialog(CloakPath, '*.png|*.png', LauncherAPI.UserInfo.UserLogonData.Login + '_cloak.png') then Exit;
 
-  Status := LauncherAPI.DownloadCloak(LoginEdit.Text, PasswordEdit.Text, CloakPath);
+  Status := LauncherAPI.DownloadCloak(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, CloakPath);
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
     CheckSkinSystemErrors(Status, IMAGE_CLOAK, LauncherAPI.SkinSystem.ErrorReason);
@@ -1482,7 +1508,7 @@ procedure TMainForm.DeleteCloakItemClick(Sender: TObject);
 var
   Status: SKIN_SYSTEM_STATUS;
 begin
-  Status := LauncherAPI.DeleteCloak(LoginEdit.Text, PasswordEdit.Text);
+  Status := LauncherAPI.DeleteCloak(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text);
 
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin

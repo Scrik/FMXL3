@@ -1,9 +1,9 @@
-unit TimeManagement;
+﻿unit TimeManagement;
 
 interface
 
 uses
-  Windows;
+  Windows, CPUIDInfo;
   
 function NtQueryPerformanceCounter(Counter, Frequency: PInt64): LongWord; stdcall; external 'ntdll.dll';
 function NtDelayExecution(Alertable: Boolean; Delay: PInt64): LongWord; stdcall; external 'ntdll.dll';
@@ -249,33 +249,8 @@ end;
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 
-function CPUID(FunctionNumber: LongWord = 0): UInt64; register;
-asm
-{$IFDEF CPUX64}
-  xor rax, rax
-  mov eax, ecx
-{$ENDIF}
-  cpuid
-{$IFDEF CPUX64}
-  shl rdx, 32
-  or rax, rdx
-{$ENDIF}
-end;
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-function IsRdtscpPresent: Boolean;
-var
-  CPUIDValue: UInt64;
-begin
-  CPUIDValue := CPUID($80000001);
-  Result := (CPUIDValue and $800000000000000) <> 0; // 27й бит в старшей части EDX:EAX
-end;
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
 initialization
-  if IsRdtscpPresent then
+  if CPUInfo.CPUFeatures.RDTSCP then
   begin
     RDTSC      := _RDTSCP;
     GetLowTSC  := _GetLowTSCP;
