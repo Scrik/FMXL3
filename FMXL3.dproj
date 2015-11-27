@@ -5,7 +5,7 @@
         <FrameworkType>FMX</FrameworkType>
         <MainSource>FMXL3.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -82,7 +82,6 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_UsePackage>DBXSqliteDriver;bindcompdbx;fmxase;DBXDb2Driver;DBXInterBaseDriver;vcl;DBXSybaseASEDriver;vclactnband;IndyIPCommon;vclFireDAC;IndySystem;IndyIPServer;FireDACDb2Driver;RESTComponents;emsclientfiredac;DataSnapFireDAC;svnui;tethering;dsnapcon;FireDACADSDriver;FireDACMSAccDriver;fmxFireDAC;DBXMSSQLDriver;vclimg;FireDACInfxDriver;DatasnapConnectorsFreePascal;FireDAC;FireDACMSSQLDriver;vcltouch;vcldb;bindcompfmx;svn;FireDACSqliteDriver;FireDACPgDriver;DBXOracleDriver;FireDACASADriver;inetdb;DBXOdbcDriver;FireDACTDataDriver;soaprtl;DbxCommonDriver;FireDACIBDriver;fmx;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;fmxdae;vclwinx;rtl;FireDACDSDriver;DbxClientDriver;DBXSybaseASADriver;CustomIPTransport;vcldsnap;dbexpress;IndyCore;FireDACDBXDriver;vclx;bindcomp;appanalytics;dsnap;DataSnapCommon;DBXInformixDriver;FireDACCommon;IndyIPClient;emsclient;bindcompvcl;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;vclribbon;dbxcds;VclSmp;soapserver;adortl;FireDACODBCDriver;DataSnapIndy10ServerTransport;vclie;bindengine;DBXMySQLDriver;FireDACOracleDriver;dsnapxml;FireDACMySQLDriver;dbrtl;inetdbxpress;DBXFirebirdDriver;DataSnapProviderClient;FireDACMongoDBDriver;IndyProtocols;FireDACCommonDriver;CloudService;DataSnapClient;inet;DataSnapServerMidas;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <AppEnableHighDPI>true</AppEnableHighDPI>
@@ -93,7 +92,6 @@
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_UsePackage>DBXSqliteDriver;bindcompdbx;fmxase;DBXDb2Driver;DBXInterBaseDriver;vcl;DBXSybaseASEDriver;vclactnband;IndyIPCommon;vclFireDAC;IndySystem;IndyIPServer;FireDACDb2Driver;RESTComponents;emsclientfiredac;DataSnapFireDAC;tethering;dsnapcon;FireDACADSDriver;FireDACMSAccDriver;fmxFireDAC;DBXMSSQLDriver;vclimg;FireDACInfxDriver;DatasnapConnectorsFreePascal;FireDAC;FireDACMSSQLDriver;vcltouch;vcldb;bindcompfmx;FireDACSqliteDriver;FireDACPgDriver;DBXOracleDriver;FireDACASADriver;inetdb;DBXOdbcDriver;FireDACTDataDriver;soaprtl;DbxCommonDriver;FireDACIBDriver;fmx;DataSnapServer;xmlrtl;soapmidas;DataSnapNativeClient;fmxobj;fmxdae;vclwinx;rtl;FireDACDSDriver;DbxClientDriver;DBXSybaseASADriver;CustomIPTransport;vcldsnap;dbexpress;IndyCore;FireDACDBXDriver;vclx;bindcomp;appanalytics;dsnap;DataSnapCommon;DBXInformixDriver;FireDACCommon;IndyIPClient;emsclient;bindcompvcl;RESTBackendComponents;DataSnapConnectors;VCLRESTComponents;vclribbon;dbxcds;VclSmp;soapserver;adortl;FireDACODBCDriver;DataSnapIndy10ServerTransport;vclie;bindengine;DBXMySQLDriver;FireDACOracleDriver;dsnapxml;FireDACMySQLDriver;dbrtl;inetdbxpress;DBXFirebirdDriver;DataSnapProviderClient;FireDACMongoDBDriver;IndyProtocols;FireDACCommonDriver;CloudService;DataSnapClient;inet;DataSnapServerMidas;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_RangeChecking>true</DCC_RangeChecking>
@@ -240,9 +238,9 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="2">
-                <DeployFile LocalName="Win32\Debug\FMXL3.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="Definitions.inc" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
-                        <RemoteName>FMXL3.exe</RemoteName>
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -279,14 +277,14 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Definitions.inc" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win64">
-                        <RemoteDir>.\</RemoteDir>
+                <DeployFile LocalName="Win32\Debug\FMXL3.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>FMXL3.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="Definitions.inc" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
+                    <Platform Name="Win64">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>

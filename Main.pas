@@ -1,4 +1,4 @@
-unit Main;
+﻿unit Main;
 
 interface
 
@@ -229,7 +229,6 @@ type
     procedure Viewport3DMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Single);
     procedure RegLabelClick(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
   private type
     TABS = (
       AUTH_TAB,
@@ -332,14 +331,8 @@ end;
 
 procedure TMainForm.HardwareMonitoringTimer(Sender: TObject);
   function GetFreqString(Freq: ULONGLONG): string; inline;
-  var
-    MHz: Single;
   begin
-    MHz := Freq;
-    if MHz >= 1024 then
-      Result := FormatFloat('0.0', MHz / 1024) + ' ГГц'
-    else
-      Result := FormatFloat('0.0', MHz) + ' МГц';
+    Result := FormatFloat('0.0', Freq / 1024) + ' ГГц'
   end;
 
   function GetMemString(Memory: ULONGLONG): string; inline;
@@ -360,6 +353,8 @@ var
 begin
   if FSparsingCounter = SparsingCoeff then
   begin
+    MainTabControl.Tabs[Byte(SETTINGS_TAB)].BeginUpdate;
+
     // Загруженность ЦП:
     TThread.GetSystemTimes(CurrentCPUTimes);
     CPUUsage := TThread.GetCPUUsage(FLastCPUTimes);
@@ -400,10 +395,12 @@ begin
     FreeRAMLabel.Text := GetMemString(MemoryStatusEx.ullAvailPhys);
     FRAMStack.Add(MemoryStatusEx.dwMemoryLoad);
     case MemoryStatusEx.dwMemoryLoad of
-      0..55   : CPULoadingLabel.FontColor := $FFFFFFFF;
-      56..75  : CPULoadingLabel.FontColor := $FFDFA402;
-      76..100 : CPULoadingLabel.FontColor := $FFFF0000;
+      0..55   : FreeRAMLabel.FontColor := $FFFFFFFF;
+      56..75  : FreeRAMLabel.FontColor := $FFDFA402;
+      76..100 : FreeRAMLabel.FontColor := $FFFF0000;
     end;
+
+    MainTabControl.Tabs[Byte(SETTINGS_TAB)].EndUpdate;
 
     FSparsingCounter := 0;
   end
@@ -696,6 +693,8 @@ end;
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
+
+
 procedure TMainForm.FormCreate(Sender: TObject);
 {$IFDEF USE_RATIBOR}
 var
@@ -802,10 +801,6 @@ begin
 end;
 
 
-procedure TMainForm.FormDestroy(Sender: TObject);
-begin
-
-end;
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 //                         Авторизация/Регистрация
@@ -1582,8 +1577,6 @@ begin
 end;
 
 
-
-
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 //                                3D-скины
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
@@ -1628,6 +1621,11 @@ procedure TMainForm.Viewport3DMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Single);
 begin
   ScrollBox.BeginUpdate;
+  if Button = TMouseButton.mbMiddle then
+  begin
+    ModelContainer.ResetRotationAngle;
+    ModelContainer.RotationAngle.Y  := 25;
+  end;
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
