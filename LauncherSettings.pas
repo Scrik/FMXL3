@@ -1,4 +1,4 @@
-﻿unit LauncherSettings;
+unit LauncherSettings;
 
 interface
 
@@ -19,7 +19,7 @@ const
   MonitoringInterval: Integer = 450;
 
   // Версия лаунчера:
-  LauncherVersion: Integer = 2;
+  LauncherVersion: Integer = 3;
 
 
 implementation

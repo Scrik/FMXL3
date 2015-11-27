@@ -1,4 +1,4 @@
-﻿unit Main;
+unit Main;
 
 interface
 
@@ -26,6 +26,10 @@ uses
 
   // Synapse/OpenSSL:
   blcksock, ssl_openssl, ssl_openssl_lib,
+
+  {$IFDEF USE_RATIBOR}
+    Ratibor,
+  {$ENDIF}
 
   // AUX Modules:
   LauncherSettings, PopupManager, ServerPanel, StackCapacitor, ResUnpacker;
@@ -225,6 +229,7 @@ type
     procedure Viewport3DMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Single);
     procedure RegLabelClick(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private type
     TABS = (
       AUTH_TAB,
@@ -268,6 +273,9 @@ type
 var
   MainForm: TMainForm;
   LauncherAPI: TLauncherAPI;
+{$IFDEF USE_RATIBOR}
+  RatiborWrapper: TRatibor;
+{$ENDIF}
 
 implementation
 
@@ -689,6 +697,10 @@ end;
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.FormCreate(Sender: TObject);
+{$IFDEF USE_RATIBOR}
+var
+  DefencePath: string;
+{$ENDIF}
 begin
   // Чистим папку от временных файлов:
   DeleteDirectory('*.old', True);
@@ -739,12 +751,61 @@ begin
       SSLImplementation := TSSLOpenSSL;
   {$ENDIF}
 
+  // Запускаем защиту:
+  {$IFDEF USE_RATIBOR}
+    RatiborWrapper := TRatibor.Create;
+
+    if RatiborWrapper.IsRatiborMappingExists then
+    begin
+      ShowErrorMessage('Допускается запуск только одной копии лаунчера!'); // И это правда!
+      ExitProcess(0);
+    end;
+
+    if not RatiborWrapper.CreateRatiborMapping then
+    begin
+      ShowErrorMessage('Не получилось создать файловое отображение!');
+      ExitProcess(0);
+    end;
+
+    RatiborWrapper.SetProtectedProcess(GetCurrentProcessID);
+
+    DefencePath := LauncherAPI.LocalWorkingFolder + '\Defence';
+    CreatePath(DefencePath);
+
+    if Is64BitWindows then
+    begin
+      if not (RatiborWrapper.Extract32(DefencePath) and RatiborWrapper.Extract64(DefencePath)) then
+      begin
+        ShowErrorMessage('Не получилось распаковать файлы защиты! Возможно, файлы заняты другими процессами!');
+        ExitProcess(0);
+      end;
+
+      RatiborWrapper.Run32(DefencePath);
+      RatiborWrapper.Run64(DefencePath);
+    end
+    else
+    begin
+      if not RatiborWrapper.Extract32(DefencePath) then
+      begin
+        ShowErrorMessage('Не получилось распаковать файлы защиты!');
+        ExitProcess(0);
+      end;
+
+      RatiborWrapper.Run32(DefencePath);
+    end;
+  {$ENDIF}
+
   // Загружаем настройки:
   LoadSettings;
   if FIsAutoLogin then
     AuthButton.OnClick(Self);
 end;
 
+
+procedure TMainForm.FormDestroy(Sender: TObject);
+begin
+
+end;
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 //                         Авторизация/Регистрация

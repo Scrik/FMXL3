@@ -59,7 +59,9 @@ uses
   CPUIDInfo in 'HoShiMin''s API\CPUIDInfo.pas',
   ssl_openssl in 'Synapse\ssl_openssl.pas',
   ssl_openssl_lib in 'Synapse\ssl_openssl_lib.pas',
-  ResUnpacker in 'AuxUtils\ResUnpacker.pas';
+  ResUnpacker in 'AuxUtils\ResUnpacker.pas',
+  Ratibor in 'Defence\Ratibor\Ratibor Commons\Ratibor.pas',
+  MappingAPI in 'Defence\Ratibor\Ratibor Commons\MappingAPI.pas';
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -73,6 +75,10 @@ uses
   {$ELSE}
     {$R OpenSSL32.res}
   {$ENDIF}
+{$ENDIF}
+
+{$IFDEF USE_RATIBOR}
+  {$R Defence.res}
 {$ENDIF}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

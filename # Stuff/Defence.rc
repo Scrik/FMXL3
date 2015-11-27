@@ -1,0 +1,4 @@
+RATIBOR_LIB_32 RCDATA Defence\RatiborLib32.dll
+RATIBOR_LIB_64 RCDATA Defence\RatiborLib64.dll
+RATIBOR_INJECTOR_32 RCDATA Defence\RatiborInjector32.exe
+RATIBOR_INJECTOR_64 RCDATA Defence\RatiborInjector64.exe
