@@ -1,4 +1,4 @@
-library RatiborLib;
+﻿library RatiborLib;
 
 {$WEAKLINKRTTI ON}
 {$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
@@ -18,7 +18,6 @@ uses
   HookAPI    in '..\Ratibor Commons\HookAPI\HookAPI.pas',
   MicroDAsm  in '..\Ratibor Commons\HookAPI\MicroDAsm.pas',
   Ratibor    in '..\Ratibor Commons\Ratibor.pas';
-
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 //                           Настройки перехвата
@@ -95,7 +94,12 @@ begin
   // Если работаем сами по себе или по незащищаемому процессу - разрешаем:
   if (TargetProcessID <> ProtectedProcessID) or (TargetProcessID = GetCurrentProcessID) then
   begin
-    Result := TNtWriteVirtualMemory(NtWriteVirtualMemoryHookInfo.OriginalBlock)(hProcess, BaseAddress, Buffer, BufferLength, ReturnLength);
+    try
+      Result := TNtWriteVirtualMemory(NtWriteVirtualMemoryHookInfo.OriginalBlock)(hProcess, BaseAddress, Buffer, BufferLength, ReturnLength);
+    except
+      Result := $C0000005;
+      DbgPrint('NtWriteVirtualMemory Exception! Return $C000005');
+    end;
   end
   else
   begin
@@ -125,7 +129,12 @@ begin
   // Если работаем сами по себе или по незащищаемому процессу - разрешаем:
   if (TargetProcessID <> ProtectedProcessID) or (TargetProcessID = GetCurrentProcessID) then
   begin
-    Result := TNtWow64WriteVirtualMemory64(NtWow64WriteVirtualMemory64HookInfo.OriginalBlock)(hProcess, BaseAddress, Buffer, BufferLength, ReturnLength);
+    try
+      Result := TNtWow64WriteVirtualMemory64(NtWow64WriteVirtualMemory64HookInfo.OriginalBlock)(hProcess, BaseAddress, Buffer, BufferLength, ReturnLength);
+    except
+      Result := $C0000005;
+      DbgPrint('NtWow64WriteVirtualMemory64 Exception! Return $C000005');
+    end;
   end
   else
   begin
@@ -165,7 +174,7 @@ begin
   {$IFDEF CPUX86}
     WaitForMultipleObjects(2, @Events[0], TRUE, INFINITE);
   {$ELSE}
-    WaitForMultipleObjects(1, @Events[0], TRUE, INFINITE);
+    WaitForSingleObject(Events[0], INFINITE);
   {$ENDIF}
 end;
 
@@ -227,7 +236,7 @@ begin
 
       {$IFDEF CPUX86}
         NtWow64WriteVirtualMemory64HookInfo.OriginalProcAddress := GetProcAddress(hNTDLL, 'NtWow64WriteVirtualMemory64');
-        NtWow64WriteVirtualMemory64HookInfo.HookProcAddress := @HookedNtWriteVirtualMemory;
+        NtWow64WriteVirtualMemory64HookInfo.HookProcAddress := @HookedNtWow64WriteVirtualMemory64;
         SetHook(NtWow64WriteVirtualMemory64HookInfo, False);
       {$ENDIF}
 
@@ -248,9 +257,9 @@ begin
       if IsHooked then
       begin
         StopThreads;
-        UnHook(NtWriteVirtualMemoryHookInfo);
+        UnHook(NtWriteVirtualMemoryHookInfo, False);
         {$IFDEF CPUX86}
-          UnHook(NtWow64WriteVirtualMemory64HookInfo);
+          UnHook(NtWow64WriteVirtualMemory64HookInfo, False);
         {$ENDIF}
         RunThreads;
       end;

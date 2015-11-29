@@ -1,4 +1,4 @@
-// Таблицы позаимствованы из проекта libsplice (автор - Vol4ok)
+﻿// Таблицы позаимствованы из проекта libsplice (автор - Vol4ok)
 
 const
   OP_NONE             = $00;
@@ -275,8 +275,8 @@ const
 	(* F3 *)	OP_PREFIX,
 	(* F4 *)	OP_NONE,
 	(* F5 *)	OP_NONE,
-	(* F6 *)	OP_MODRM,
-	(* F7 *)	OP_MODRM,
+	(* F6 *)	OP_MODRM or OP_DATA_I8,
+	(* F7 *)	OP_MODRM or OP_DATA_I16_I32_I64,
 	(* F8 *)	OP_NONE,
 	(* F9 *)	OP_NONE,
 	(* FA *)	OP_NONE,
