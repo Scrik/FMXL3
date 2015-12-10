@@ -10,7 +10,7 @@ uses
 const
   JNI_VERSION_1_6 = $00010006; // Java 6, Java 7
   JNI_VERSION_1_8 = $00010008; // Java 8
-  JNI_VERSION_1_9 = $00010009; // Java 9 // На будущее
+  JNI_VERSION_1_9 = $00010009; // Java 9 // РќР° Р±СѓРґСѓС‰РµРµ
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -30,11 +30,11 @@ type
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 function LaunchJavaApplet(
-                           JVMPath: string;               // Путь к jvm.dll
-                           JNIVersion: Integer;           // Версия JNI
-                           const JVMOptions: TStringList; // Параметры JVM (память, флаги JVM, ClassPath, LibraryPath)
-                           MainClass: string;             // Главный класс
-                           const Arguments: TStringList   // Аргументы клиента (логин, сессия, ...)
+                           JVMPath: string;               // РџСѓС‚СЊ Рє jvm.dll
+                           JNIVersion: Integer;           // Р’РµСЂСЃРёСЏ JNI
+                           const JVMOptions: TStringList; // РџР°СЂР°РјРµС‚СЂС‹ JVM (РїР°РјСЏС‚СЊ, С„Р»Р°РіРё JVM, ClassPath, LibraryPath)
+                           MainClass: string;             // Р“Р»Р°РІРЅС‹Р№ РєР»Р°СЃСЃ
+                           const Arguments: TStringList   // РђСЂРіСѓРјРµРЅС‚С‹ РєР»РёРµРЅС‚Р° (Р»РѕРіРёРЅ, СЃРµСЃСЃРёСЏ, ...)
                           ): JNI_RETURN_VALUES;
 
 
@@ -94,16 +94,18 @@ begin
 end;
 }
 
+{
 type
   TRegisterNatives = function(Env: PJNIEnv; AClass: JClass; const Methods: PJNINativeMethod; NMethods: JInt): JInt; stdcall;
 
 var
   RegisterNativesHookInfo: THookInfo;
+}
 
 function SetExitHook(JNIEnv: PJNIEnv): Boolean;
   procedure ExitHook(JNIEnv: PJNIEnv; Code: JInt); stdcall;
   begin
-    MessageBox(0, 'JVM завершила работу!', 'Внимание!', MB_ICONINFORMATION);
+    MessageBox(0, 'JVM Р·Р°РІРµСЂС€РёР»Р° СЂР°Р±РѕС‚Сѓ!', 'Р’РЅРёРјР°РЅРёРµ!', MB_ICONINFORMATION);
     Exit;
   end;
 const
@@ -124,6 +126,7 @@ begin
   Result := RegisterStatus >= 0;
 end;
 
+{
 function HookedRegisterNatives(Env: PJNIEnv; AClass: JClass; const Methods: PJNINativeMethod; NMethods: JInt): JInt; stdcall;
 var
   WideMethodName: string;
@@ -135,6 +138,7 @@ begin
   else
     Result := 0;
 end;
+}
 
 procedure JVMThread(LibraryStruct: PLibraryStruct); stdcall;
 var
@@ -159,7 +163,7 @@ begin
 
   with LocalLibraryStruct do
   begin
-    // Создаём хранилища строковых данных:
+    // РЎРѕР·РґР°С‘Рј С…СЂР°РЅРёР»РёС‰Р° СЃС‚СЂРѕРєРѕРІС‹С… РґР°РЅРЅС‹С…:
     JVMOptionsStorage.Size := JVMOptions.Count;
     SetLength(JVMOptionsStorage.Strings, JVMOptionsStorage.Size);
     SetLength(JVMOptionsStorage.Pointers, JVMOptionsStorage.Size);
@@ -168,7 +172,7 @@ begin
     SetLength(ArgumentsStorage.Strings, ArgumentsStorage.Size);
     SetLength(ArgumentsStorage.Pointers, ArgumentsStorage.Size);
 
-    // Параметры JVM - в ANSI-хранилище:
+    // РџР°СЂР°РјРµС‚СЂС‹ JVM - РІ ANSI-С…СЂР°РЅРёР»РёС‰Рµ:
     if JVMOptions.Count > 0 then
       for I := 0 to JVMOptions.Count - 1 do
       begin
@@ -176,7 +180,7 @@ begin
         JVMOptionsStorage.Pointers[I] := PAnsiChar(JVMOptionsStorage.Strings[I]);
       end;
 
-    // Аргументы клиента - в Unicode-хранилище:
+    // РђСЂРіСѓРјРµРЅС‚С‹ РєР»РёРµРЅС‚Р° - РІ Unicode-С…СЂР°РЅРёР»РёС‰Рµ:
     if Arguments.Count > 0 then
       for I := 0 to Arguments.Count - 1 do
       begin
@@ -186,21 +190,21 @@ begin
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    // Загружаем JVM:
+    // Р—Р°РіСЂСѓР¶Р°РµРј JVM:
     JVM := TJavaVM.Create(JNIVersion, JVMPath);
 
-    // Формируем опции: путь к *.jar, *.dll, аргументы JVM:
+    // Р¤РѕСЂРјРёСЂСѓРµРј РѕРїС†РёРё: РїСѓС‚СЊ Рє *.jar, *.dll, Р°СЂРіСѓРјРµРЅС‚С‹ JVM:
     SetLength(Options, JVMOptions.Count);
     for I := 0 to JVMOptions.Count - 1 do
       Options[I].optionString := JVMOptionsStorage.Pointers[I];
 
-    // Заполняем структуру аргументов:
+    // Р—Р°РїРѕР»РЅСЏРµРј СЃС‚СЂСѓРєС‚СѓСЂСѓ Р°СЂРіСѓРјРµРЅС‚РѕРІ:
     Args.version  := JNIVersion;
     Args.nOptions := JVMOptions.Count;
     Args.options  := @Options[0];
     Args.ignoreUnrecognized := 0;
 
-    // Запускаем JVM:
+    // Р—Р°РїСѓСЃРєР°РµРј JVM:
     JNIResult := JVM.LoadVM(Args);
     if JNIResult <> JNI_OK then
     begin
@@ -215,17 +219,17 @@ begin
       ReleaseSemaphore(LibraryStruct.Semaphore, 1, nil);
       Exit;
     end;
-
-    // Регистрируем фильтр:
+{
+    // Р РµРіРёСЃС‚СЂРёСЂСѓРµРј С„РёР»СЊС‚СЂ:
     RegisterNativesHookInfo.OriginalProcAddress := @JVM.Env^.RegisterNatives;
     RegisterNativesHookInfo.HookProcAddress := @HookedRegisterNatives;
     SetHook(RegisterNativesHookInfo);
-
+}
     {$IFDEF DEBUG}
       SetExitHook(JVM.Env);
     {$ENDIF}
 
-    // Ищем нужный класс:
+    // РС‰РµРј РЅСѓР¶РЅС‹Р№ РєР»Р°СЃСЃ:
     LaunchClass := JVM.Env^.FindClass(JVM.Env, PAnsiChar(MainClass));
     if LaunchClass = nil then
     begin
@@ -236,7 +240,7 @@ begin
       Exit;
     end;
 
-    // В нужном классе - нужный метод:
+    // Р’ РЅСѓР¶РЅРѕРј РєР»Р°СЃСЃРµ - РЅСѓР¶РЅС‹Р№ РјРµС‚РѕРґ:
     MethodID := JVM.Env^.GetStaticMethodID(JVM.Env, LaunchClass, 'main', '([Ljava/lang/String;)V');
     if LaunchClass = nil then
     begin
@@ -247,10 +251,10 @@ begin
       Exit;
     end;
 
-    // Создаём массив для аргументов:
+    // РЎРѕР·РґР°С‘Рј РјР°СЃСЃРёРІ РґР»СЏ Р°СЂРіСѓРјРµРЅС‚РѕРІ:
     JavaObjectArray := JVM.Env^.NewObjectArray(JVM.Env, Arguments.Count, JVM.Env^.FindClass(JVM.Env, 'java/lang/String'), JVM.Env^.NewString(JVM.Env, nil, 0));
 
-    // Заполняем аргументы (логин, сессия и т.д.):
+    // Р—Р°РїРѕР»РЅСЏРµРј Р°СЂРіСѓРјРµРЅС‚С‹ (Р»РѕРіРёРЅ, СЃРµСЃСЃРёСЏ Рё С‚.Рґ.):
     if Arguments.Count > 0 then
       for I := 0 to Arguments.Count - 1 do
         JVM.Env^.SetObjectArrayElement(JVM.Env, JavaObjectArray, I, JVM.Env^.NewString(JVM.Env, PJChar(ArgumentsStorage.Pointers[I]), Length(ArgumentsStorage.Strings[I])));
@@ -258,7 +262,7 @@ begin
     Response^ := JNIWRAPPER_SUCCESS;
     ReleaseSemaphore(LibraryStruct.Semaphore, 1, nil);
 
-    // Вызываем метод:
+    // Р’С‹Р·С‹РІР°РµРј РјРµС‚РѕРґ:
     JVM.Env^.CallStaticVoidMethodA(JVM.Env, LaunchClass, MethodID, @JavaObjectArray);
 
     JVM.DestroyJavaVM;
