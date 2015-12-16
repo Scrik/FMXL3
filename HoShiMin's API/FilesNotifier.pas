@@ -1,4 +1,4 @@
-﻿unit FilesNotifier;
+unit FilesNotifier;
 
 interface
 
@@ -200,7 +200,7 @@ end;
 
 procedure TFilesNotifier.StopWatching;
 begin
-  //if (FDirHandle <> 0) and (FDirHandle <> INVALID_HANDLE_VALUE) then CancelIoEx(FDirHandle, nil);
+  if (FDirHandle <> 0) and (FDirHandle <> INVALID_HANDLE_VALUE) then CancelIoEx(FDirHandle, nil);
   WaitForSingleObject(FWatcherHandle, INFINITE);
   FWatcherHandle := 0;
 end;
