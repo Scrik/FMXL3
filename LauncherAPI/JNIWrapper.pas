@@ -1,4 +1,4 @@
-unit JNIWrapper;
+﻿unit JNIWrapper;
 
 interface
 
@@ -43,7 +43,7 @@ function LaunchJavaApplet(
 implementation
 
 uses
-  JNI, HookAPI, ShlwAPI;
+  JNI{, HookAPI, ShlwAPI};
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 

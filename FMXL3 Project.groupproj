@@ -6,12 +6,6 @@
         <Projects Include="FMXL3.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Defence\Ratibor\RatiborInjector\RatiborInjector.dproj">
-            <Dependencies/>
-        </Projects>
-        <Projects Include="Defence\Ratibor\RatiborLib\RatiborLib.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -29,32 +23,14 @@
     <Target Name="FMXL3:Make">
         <MSBuild Projects="FMXL3.dproj" Targets="Make"/>
     </Target>
-    <Target Name="RatiborInjector">
-        <MSBuild Projects="Defence\Ratibor\RatiborInjector\RatiborInjector.dproj"/>
-    </Target>
-    <Target Name="RatiborInjector:Clean">
-        <MSBuild Projects="Defence\Ratibor\RatiborInjector\RatiborInjector.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="RatiborInjector:Make">
-        <MSBuild Projects="Defence\Ratibor\RatiborInjector\RatiborInjector.dproj" Targets="Make"/>
-    </Target>
-    <Target Name="RatiborLib">
-        <MSBuild Projects="Defence\Ratibor\RatiborLib\RatiborLib.dproj"/>
-    </Target>
-    <Target Name="RatiborLib:Clean">
-        <MSBuild Projects="Defence\Ratibor\RatiborLib\RatiborLib.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="RatiborLib:Make">
-        <MSBuild Projects="Defence\Ratibor\RatiborLib\RatiborLib.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="FMXL3;RatiborInjector;RatiborLib"/>
+        <CallTarget Targets="FMXL3"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="FMXL3:Clean;RatiborInjector:Clean;RatiborLib:Clean"/>
+        <CallTarget Targets="FMXL3:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="FMXL3:Make;RatiborInjector:Make;RatiborLib:Make"/>
+        <CallTarget Targets="FMXL3:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
