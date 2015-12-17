@@ -9,7 +9,8 @@ uses
   Windows, Messages, ShellAPI, PsAPI,
 
   // Delphi RTL:
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Math.Vectors, System.Math,
+  System.SysUtils, System.Types, System.UITypes, System.Classes,
+  System.Math.Vectors, System.Math, System.NetEncoding,
 
   // FireMonkey:
   FMX.Platform.Win, FMX.Types    , FMX.Controls, FMX.Forms   , FMX.Graphics, FMX.Dialogs,
@@ -22,7 +23,7 @@ uses
 
   // LauncherAPI:
   LauncherAPI, Authorization, Registration, FilesValidation, ServerQuery,
-  MinecraftLauncher, SkinSystem, JNIWrapper, AuxUtils,
+  MinecraftLauncher, SkinSystem, JNIWrapper, AuxUtils, Encryption,
 
   // Synapse/OpenSSL:
   blcksock, ssl_openssl, ssl_openssl_lib,
@@ -265,20 +266,41 @@ type
     procedure LaunchClient(ClientNumber: Integer);
     procedure SaveSettings(AutoLogin, ExternalJava: Boolean);
     procedure LoadSettings;
+    function EncryptPassword(const Password: string): string;
+    function DecryptPassword(const PasswordBase64: string): string;
   end;
 
 var
   MainForm: TMainForm;
   LauncherAPI: TLauncherAPI;
-{$IFDEF USE_RATIBOR}
-  RatiborWrapper: TRatibor;
-{$ENDIF}
 
 implementation
 
 {$R *.fmx}
 
+//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
+function TMainForm.EncryptPassword(const Password: string): string;
+begin
+  Result := Password;
+  EncryptDecryptVerrnam(Result, PAnsiChar(PasswordKey), Length(PasswordKey));
+  Result := TNetEncoding.Base64.Encode(Result);
+end;
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+function TMainForm.DecryptPassword(const PasswordBase64: string): string;
+begin
+  Result := PasswordBase64;
+  try
+    Result := TNetEncoding.Base64.Decode(Result);
+    EncryptDecryptVerrnam(Result, PAnsiChar(PasswordKey), Length(PasswordKey));
+  except
+    Result := '';
+  end;
+end;
+
+//HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
 procedure TMainForm.PlotGridPaint(Sender: TObject; Canvas: TCanvas;
   const [Ref] ARect: TRectF);
@@ -529,7 +551,7 @@ begin
   SaveStringToRegistry(RegistryPath, 'Login', LoginEdit.Text);
 
   if AutoLogin then
-    SaveStringToRegistry(RegistryPath, 'Password', PasswordEdit.Text)
+    SaveStringToRegistry(RegistryPath, 'Password', EncryptPassword(PasswordEdit.Text))
   else
     SaveStringToRegistry(RegistryPath, 'Password', '');
 
@@ -569,7 +591,7 @@ begin
   JavaVersion := GetJavaLowVersion(JavaVersion);
 
   LoginEdit.Text    := ReadStringFromRegistry(RegistryPath, 'Login'   , LoginEdit.Text);
-  PasswordEdit.Text := ReadStringFromRegistry(RegistryPath, 'Password', '');
+  PasswordEdit.Text := DecryptPassword(ReadStringFromRegistry(RegistryPath, 'Password', ''));
   {$IFDEF CPUX64}
     RAMEdit.Text         := ReadStringFromRegistry(RegistryPath, 'RAM64'        , RAMEdit.Text);
     JavaVersionEdit.Text := ReadStringFromRegistry(RegistryPath, 'JavaVersion64', JavaVersion);
@@ -703,10 +725,6 @@ end;
 
 
 procedure TMainForm.FormCreate(Sender: TObject);
-{$IFDEF USE_RATIBOR}
-var
-  DefencePath: string;
-{$ENDIF}
 begin
   // Чистим папку от временных файлов:
   DeleteDirectory('*.old', True);
@@ -1399,7 +1417,6 @@ begin
   FDrawWireframe := not FDrawWireframe;
   Viewport3D.Repaint;
 end;
-
 
 
 

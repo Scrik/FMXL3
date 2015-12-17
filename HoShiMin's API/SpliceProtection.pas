@@ -54,17 +54,17 @@ var
 begin
   if IsProtectionEnabled then
   begin
-    // Получаем информацию о регионе памяти:
+    // РџРѕР»СѓС‡Р°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЂРµРіРёРѕРЅРµ РїР°РјСЏС‚Рё:
     Status := NtQueryVirtualMemory(hProcess, BaseAddress, MemoryBasicInformation, @MemoryInfo, SizeOf(MEMORY_BASIC_INFORMATION), @ReturnLength);
     if Status = STATUS_SUCCESS then
     begin
-      // Если там исполняемая память - не даём сменить атрибуты, выходим:
+      // Р•СЃР»Рё С‚Р°Рј РёСЃРїРѕР»РЅСЏРµРјР°СЏ РїР°РјСЏС‚СЊ - РЅРµ РґР°С‘Рј СЃРјРµРЅРёС‚СЊ Р°С‚СЂРёР±СѓС‚С‹, РІС‹С…РѕРґРёРј:
       if IsProtectReadableExecutable(MemoryInfo.Protect) and IsProtectWriteable(NewProtect) then
         Exit(STATUS_SUCCESS);
     end;
   end;
 
-  // Если ни одно из этих условий - меняем атрибуты:
+  // Р•СЃР»Рё РЅРё РѕРґРЅРѕ РёР· СЌС‚РёС… СѓСЃР»РѕРІРёР№ - РјРµРЅСЏРµРј Р°С‚СЂРёР±СѓС‚С‹:
   Result := NtProtectVirtualMemory(hProcess, @BaseAddress, @Size, NewProtect, OldProtect);
 end;
 

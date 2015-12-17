@@ -1,4 +1,4 @@
-unit LauncherSettings;
+﻿unit LauncherSettings;
 
 interface
 
@@ -14,6 +14,9 @@ const
 
   // Ключ шифрования (должен совпадать с ключом в веб-части!):
   EncryptionKey: AnsiString = 'FMXL3';
+
+  // Ключ шифрования пароля в реестре:
+  PasswordKey: AnsiString = 'The best choise - use XOR, man!';
 
   // Интервал между обновлением данных мониторинга в миллисекундах:
   MonitoringInterval: Integer = 450;
