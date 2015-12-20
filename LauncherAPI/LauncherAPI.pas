@@ -33,32 +33,32 @@ type
 
   TLauncherAPI = class
     private const
-      // Адреса скриптов и папок относительно FServerBaseAddress:
+      // РђРґСЂРµСЃР° СЃРєСЂРёРїС‚РѕРІ Рё РїР°РїРѕРє РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ FServerBaseAddress:
       RegScriptName        : string = 'reg.php';
       AuthScriptName       : string = 'auth.php';
       SkinSystemScriptName : string = 'skinsUtils.php';
     private
-      // Глобальные настройки:
-      FBaseFolder        : string; // Рабочая папка на локальном компьютере
-      FServerBaseAddress : string; // Адрес рабочей папки на сервере
-      FEncryptionKey     : AnsiString; // Ключ шифрования
+      // Р“Р»РѕР±Р°Р»СЊРЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё:
+      FBaseFolder        : string; // Р Р°Р±РѕС‡Р°СЏ РїР°РїРєР° РЅР° Р»РѕРєР°Р»СЊРЅРѕРј РєРѕРјРїСЊСЋС‚РµСЂРµ
+      FServerBaseAddress : string; // РђРґСЂРµСЃ СЂР°Р±РѕС‡РµР№ РїР°РїРєРё РЅР° СЃРµСЂРІРµСЂРµ
+      FEncryptionKey     : AnsiString; // РљР»СЋС‡ С€РёС„СЂРѕРІР°РЅРёСЏ
 
-      // Заполняются при авторизации:
+      // Р—Р°РїРѕР»РЅСЏСЋС‚СЃСЏ РїСЂРё Р°РІС‚РѕСЂРёР·Р°С†РёРё:
       FLauncherInfo : TLauncherInfo;
       FUserInfo     : TUserInfo;
       FClients      : TClients;
       FJavaInfo     : TJavaInfo;
 
-      // Регистрация:
+      // Р РµРіРёСЃС‚СЂР°С†РёСЏ:
       FRegResponse : TRegResponse;
       FRegWorker   : TRegWorker;
 
-      // Авторизация:
+      // РђРІС‚РѕСЂРёР·Р°С†РёСЏ:
       FAuthResponse : TAuthResponse;
       FAuthWorker   : TAuthWorker;
       FIsAuthorized : Boolean;
 
-      // Система скинов:
+      // РЎРёСЃС‚РµРјР° СЃРєРёРЅРѕРІ:
       FSkinSystem: TSkinSystemWrapper;
 
       function EncryptData(const Data: string): string;
@@ -83,19 +83,19 @@ type
       constructor Create(const LocalBaseFolder, ServerBaseFolder: string);
       destructor Destroy; override;
 
-      // Авторизация, работа с файлами, запуск клиента:
+      // РђРІС‚РѕСЂРёР·Р°С†РёСЏ, СЂР°Р±РѕС‚Р° СЃ С„Р°Р№Р»Р°РјРё, Р·Р°РїСѓСЃРє РєР»РёРµРЅС‚Р°:
       procedure RegisterPlayer(const Login, Password: string; SendHWID: Boolean; OnReg: TOnReg);
       procedure Authorize(const Login, Password: string; SendHWID: Boolean; OnAuth: TOnAuth);
       procedure GetValidFilesList(ClientNumber: Integer; OnQuery: TOnQuery);
       function ValidateClient(ClientNumber: Integer; Multithreading: Boolean; OnValidate: TOnValidate): Boolean;
       function UpdateClient(ClientNumber: Integer; Multithreading: Boolean; OnUpdate: TOnUpdate): Boolean;
-      function LaunchClient(ClientNumber, RAM: Integer): JNI_RETURN_VALUES;
+      function LaunchClient(ClientNumber, RAM: Integer; OptimizeJVM, ExperimentalOptimization: Boolean): JNI_RETURN_VALUES;
 
-      // Проверка клиента во время игры:
+      // РџСЂРѕРІРµСЂРєР° РєР»РёРµРЅС‚Р° РІРѕ РІСЂРµРјСЏ РёРіСЂС‹:
       procedure StartInGameChecking(ClientNumber: Integer; OnFilesMismatching: TOnFilesMismatching);
       procedure StopInGameChecking(ClientNumber: Integer);
 
-      // Система скинов:
+      // РЎРёСЃС‚РµРјР° СЃРєРёРЅРѕРІ:
       function SetupSkin (const Login, Password, SkinPath: string): SKIN_SYSTEM_STATUS;
       function SetupCloak(const Login, Password, CloakPath: string): SKIN_SYSTEM_STATUS;
       function DeleteSkin (const Login, Password: string): SKIN_SYSTEM_STATUS;
@@ -103,11 +103,11 @@ type
       function DownloadSkin (const Login, Password, Destination: string): SKIN_SYSTEM_STATUS;
       function DownloadCloak(const Login, Password, Destination: string): SKIN_SYSTEM_STATUS;
 
-      // Мониторинг:
+      // РњРѕРЅРёС‚РѕСЂРёРЅРі:
       procedure StartMonitoring(Interval: Integer; OnMonitoring: TOnMonitoring);
       procedure StopMonitoring;
 
-      // Глобальная очистка, отмена всех операций:
+      // Р“Р»РѕР±Р°Р»СЊРЅР°СЏ РѕС‡РёСЃС‚РєР°, РѕС‚РјРµРЅР° РІСЃРµС… РѕРїРµСЂР°С†РёР№:
       procedure Deauthorize;
       procedure Clear;
   end;
@@ -139,7 +139,7 @@ var
 begin
   if FClients.Count > 0 then
   begin
-    // Отменяем все загрузки:
+    // РћС‚РјРµРЅСЏРµРј РІСЃРµ Р·Р°РіСЂСѓР·РєРё:
     SetLength(DownloadingEvents, FClients.Count);
     for I := 0 to FClients.Count - 1 do
     begin
@@ -147,7 +147,7 @@ begin
       DownloadingEvents[I] := FClients.ClientsArray[I].MultiLoader.DownloadingEvent;
     end;
 
-    // Ждём, пока все загрузки завершатся, чтобы безопасно освободить ресурсы:
+    // Р–РґС‘Рј, РїРѕРєР° РІСЃРµ Р·Р°РіСЂСѓР·РєРё Р·Р°РІРµСЂС€Р°С‚СЃСЏ, С‡С‚РѕР±С‹ Р±РµР·РѕРїР°СЃРЅРѕ РѕСЃРІРѕР±РѕРґРёС‚СЊ СЂРµСЃСѓСЂСЃС‹:
     WaitForMultipleObjects(FClients.Count, @DownloadingEvents[0], True, INFINITE);
     SetLength(DownloadingEvents, 0);
   end;
@@ -181,7 +181,7 @@ begin
   RegData.Password := EncryptData(Password);
   RegData.SendHWID := SendHWID;
 
-  // Создаём поток регистрации:
+  // РЎРѕР·РґР°С‘Рј РїРѕС‚РѕРє СЂРµРіРёСЃС‚СЂР°С†РёРё:
   FRegWorker := TRegWorker.Create(True);
   FRegWorker.EncryptionKey := FEncryptionKey;
   FRegWorker.RegisterPlayer(
@@ -206,7 +206,7 @@ begin
   AuthData.Password := EncryptData(Password);
   AuthData.SendHWID := SendHWID;
 
-  // Создаём поток авторизации:
+  // РЎРѕР·РґР°С‘Рј РїРѕС‚РѕРє Р°РІС‚РѕСЂРёР·Р°С†РёРё:
   FAuthWorker := TAuthWorker.Create(True);
   FAuthWorker.EncryptionKey := FEncryptionKey;
   FAuthWorker.Authorize(
@@ -219,21 +219,21 @@ begin
                          begin
                            if AuthStatus.StatusCode = AUTH_STATUS_SUCCESS then
                            begin
-                             // Получаем информацию о лаунчере:
+                             // РџРѕР»СѓС‡Р°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ Р»Р°СѓРЅС‡РµСЂРµ:
                              if not FLauncherInfo.ExtractLauncherInfo(FAuthResponse) then
                              begin
                                GlobalAuthStatus.StatusCode := AUTH_STATUS_UNKNOWN_ERROR;
-                               GlobalAuthStatus.StatusString := 'Не удалось получить информацию о лаунчере!';
+                               GlobalAuthStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ Р»Р°СѓРЅС‡РµСЂРµ!';
                                if Assigned(OnAuth) then OnAuth(GlobalAuthStatus);
                                FreeAndNil(FAuthResponse);
                                Exit;
                              end;
 
-                             // Получаем информацию о пользователе:
+                             // РџРѕР»СѓС‡Р°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РїРѕР»СЊР·РѕРІР°С‚РµР»Рµ:
                              if not FUserInfo.ExtractUserInfo(FAuthResponse) then
                              begin
                                GlobalAuthStatus.StatusCode := AUTH_STATUS_UNKNOWN_ERROR;
-                               GlobalAuthStatus.StatusString := 'Не удалось получить авторизационные данные игрока!';
+                               GlobalAuthStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ Р°РІС‚РѕСЂРёР·Р°С†РёРѕРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ РёРіСЂРѕРєР°!';
                                if Assigned(OnAuth) then OnAuth(GlobalAuthStatus);
                                FreeAndNil(FAuthResponse);
                                Exit;
@@ -241,17 +241,17 @@ begin
 
                              ServersInfo := GetJSONObjectValue(FAuthResponse, 'servers_info');
 
-                             // Получаем информацию о серверах:
+                             // РџРѕР»СѓС‡Р°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃРµСЂРІРµСЂР°С…:
                              if not FClients.ExtractServersInfo(ServersInfo, FServerBaseAddress) then
                              begin
                                GlobalAuthStatus.StatusCode := AUTH_STATUS_UNKNOWN_ERROR;
-                               GlobalAuthStatus.StatusString := 'Не удалось получить информацию о серверах!';
+                               GlobalAuthStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃРµСЂРІРµСЂР°С…!';
                                if Assigned(OnAuth) then OnAuth(GlobalAuthStatus);
                                FreeAndNil(FAuthResponse);
                                Exit;
                              end;
 
-                             // Получаем информацию о джаве:
+                             // РџРѕР»СѓС‡Р°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РґР¶Р°РІРµ:
                              FJavaInfo.ExtractJavaInfo(ServersInfo);
 
                              FIsAuthorized := True;
@@ -322,7 +322,7 @@ begin
   DownloadEvents.Client := CreateEvent(nil, True, True, nil);
   DownloadEvents.Java   := CreateEvent(nil, True, True, nil);
 
-  // Скачиваем список файлов выбранного клиента:
+  // РЎРєР°С‡РёРІР°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РІС‹Р±СЂР°РЅРЅРѕРіРѕ РєР»РёРµРЅС‚Р°:
   ClientLink := FixSlashes(FServerBaseAddress + '/' + FClients.ClientsArray[ClientNumber].ServerInfo.ClientFolder + '.json', True);
   ResetEvent(DownloadEvents.Client);
   TThread.CreateAnonymousThread(procedure()
@@ -332,7 +332,7 @@ begin
   end).Start;
 
 
-  // Если надо - скачиваем список файлов джавы:
+  // Р•СЃР»Рё РЅР°РґРѕ - СЃРєР°С‡РёРІР°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РґР¶Р°РІС‹:
   if not FJavaInfo.ExternalJava then
   begin
     JavaLink := FixSlashes(FServerBaseAddress + '/' + FJavaInfo.JavaParameters.JavaFolder + '.json', True);
@@ -352,9 +352,9 @@ begin
   begin
     QueryStatus.StatusCode := ClientQueryStatus;
     case ClientQueryStatus of
-      QUERY_STATUS_DOWNLOAD_ERROR: QueryStatus.StatusString := 'Не удалось загрузить список файлов клиента!' + #13#10 + ClientLink;
-      QUERY_STATUS_UNKNOWN_FORMAT: QueryStatus.StatusString := 'Неизвестный формат списка файлов клиента!' + #13#10 + ClientLink;
-      QUERY_STATUS_DECODING_ERROR: QueryStatus.StatusString := 'Не получилось декодировать список файлов клиента! Проверьте ключи шифрования и наличие файла на сервере!' + #13#10 + ClientLink;
+      QUERY_STATUS_DOWNLOAD_ERROR: QueryStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РєР»РёРµРЅС‚Р°!' + #13#10 + ClientLink;
+      QUERY_STATUS_UNKNOWN_FORMAT: QueryStatus.StatusString := 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С„РѕСЂРјР°С‚ СЃРїРёСЃРєР° С„Р°Р№Р»РѕРІ РєР»РёРµРЅС‚Р°!' + #13#10 + ClientLink;
+      QUERY_STATUS_DECODING_ERROR: QueryStatus.StatusString := 'РќРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ РґРµРєРѕРґРёСЂРѕРІР°С‚СЊ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РєР»РёРµРЅС‚Р°! РџСЂРѕРІРµСЂСЊС‚Рµ РєР»СЋС‡Рё С€РёС„СЂРѕРІР°РЅРёСЏ Рё РЅР°Р»РёС‡РёРµ С„Р°Р№Р»Р° РЅР° СЃРµСЂРІРµСЂРµ!' + #13#10 + ClientLink;
     end;
     Exit;
   end;
@@ -363,15 +363,15 @@ begin
   begin
     QueryStatus.StatusCode := JavaQueryStatus;
     case JavaQueryStatus of
-      QUERY_STATUS_DOWNLOAD_ERROR: QueryStatus.StatusString := 'Не удалось загрузить список файлов Java!' + #13#10 + JavaLink;
-      QUERY_STATUS_UNKNOWN_FORMAT: QueryStatus.StatusString := 'Неизвестный формат списка файлов Java!' + #13#10 + JavaLink;
-      QUERY_STATUS_DECODING_ERROR: QueryStatus.StatusString := 'Не получилось декодировать список файлов Java! Проверьте ключи шифрования и наличие файла на сервере!' + #13#10 + JavaLink;
+      QUERY_STATUS_DOWNLOAD_ERROR: QueryStatus.StatusString := 'РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ Java!' + #13#10 + JavaLink;
+      QUERY_STATUS_UNKNOWN_FORMAT: QueryStatus.StatusString := 'РќРµРёР·РІРµСЃС‚РЅС‹Р№ С„РѕСЂРјР°С‚ СЃРїРёСЃРєР° С„Р°Р№Р»РѕРІ Java!' + #13#10 + JavaLink;
+      QUERY_STATUS_DECODING_ERROR: QueryStatus.StatusString := 'РќРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ РґРµРєРѕРґРёСЂРѕРІР°С‚СЊ СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ Java! РџСЂРѕРІРµСЂСЊС‚Рµ РєР»СЋС‡Рё С€РёС„СЂРѕРІР°РЅРёСЏ Рё РЅР°Р»РёС‡РёРµ С„Р°Р№Р»Р° РЅР° СЃРµСЂРІРµСЂРµ!' + #13#10 + JavaLink;
     end;
     Exit;
   end;
 
   QueryStatus.StatusCode := QUERY_STATUS_SUCCESS;
-  QueryStatus.StatusString := 'Списки файлов успешно получены!';
+  QueryStatus.StatusString := 'РЎРїРёСЃРєРё С„Р°Р№Р»РѕРІ СѓСЃРїРµС€РЅРѕ РїРѕР»СѓС‡РµРЅС‹!';
 end;
 
 
@@ -462,7 +462,7 @@ begin
                               DownloadInfo.CurrentDownloadInfo := CurrentDownloadInfo;
                               DownloadInfo.HTTPSender := HTTPSender;
 
-                              // Когда всё загрузили - снимаем флажок загрузки и очищаем списки файлов:
+                              // РљРѕРіРґР° РІСЃС‘ Р·Р°РіСЂСѓР·РёР»Рё - СЃРЅРёРјР°РµРј С„Р»Р°Р¶РѕРє Р·Р°РіСЂСѓР·РєРё Рё РѕС‡РёС‰Р°РµРј СЃРїРёСЃРєРё С„Р°Р№Р»РѕРІ:
                               if DownloadInfo.SummaryDownloadInfo.IsFinished then
                               begin
                                 FClients.ClientsArray[ClientNumber].SetValidationStatus(False);
@@ -515,7 +515,7 @@ begin
   if Client.GetValidationStatus then Exit;
   Client.SetValidationStatus(True);
 
-  // Проверяем, нужно ли загружать джаву, и, в зависимости от этого, формируем список файлов на загрузку:
+  // РџСЂРѕРІРµСЂСЏРµРј, РЅСѓР¶РЅРѕ Р»Рё Р·Р°РіСЂСѓР¶Р°С‚СЊ РґР¶Р°РІСѓ, Рё, РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ СЌС‚РѕРіРѕ, С„РѕСЂРјРёСЂСѓРµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РЅР° Р·Р°РіСЂСѓР·РєСѓ:
   DownloadList := TDownloadList.Create;
   DownloadList.Clear;
   if not (FJavaInfo.GetValidationStatus or FJavaInfo.ExternalJava) then
@@ -541,10 +541,10 @@ begin
 end;
 
 
-function TLauncherAPI.LaunchClient(ClientNumber, RAM: Integer): JNI_RETURN_VALUES;
+function TLauncherAPI.LaunchClient(ClientNumber, RAM: Integer; OptimizeJVM, ExperimentalOptimization: Boolean): JNI_RETURN_VALUES;
 begin
   if (ClientNumber < 0) or (ClientNumber >= FClients.Count) then Exit(JNIWRAPPER_UNKNOWN_ERROR);
-  Result := FClients.ClientsArray[ClientNumber].Launch(FBaseFolder, FUserInfo, FJavaInfo, RAM);
+  Result := FClients.ClientsArray[ClientNumber].Launch(FBaseFolder, FUserInfo, FJavaInfo, RAM, OptimizeJVM, ExperimentalOptimization);
 end;
 
 

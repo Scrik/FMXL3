@@ -1085,7 +1085,13 @@ begin
   {$ENDIF}
 
   // Запускаем игру:
-  Status := LauncherAPI.LaunchClient(ClientNumber, StrToInt(RAMEdit.Text));
+  Status := LauncherAPI.LaunchClient(
+                                      ClientNumber,
+                                      StrToInt(RAMEdit.Text),
+                                      {$IFDEF USE_JVM_OPTIMIZATION}True{$ELSE}False{$ENDIF},
+                                      {$IFDEF USE_JVM_EXPERIMENTAL_FEATURES}True{$ELSE}False{$ENDIF}
+                                     );
+
   if Status <> JNIWRAPPER_SUCCESS then RunThreads;
   case Status of
     JNIWRAPPER_UNKNOWN_ERROR       : ShowNullErrorMessage('Неизвестная ошибка в JVM!');

@@ -1,8 +1,6 @@
-unit MinecraftLauncher;
+﻿unit MinecraftLauncher;
 
 interface
-
-{$I Definitions.inc}
 
 uses
   Windows, Classes, SysUtils,
@@ -72,7 +70,14 @@ type
       function GetValidationStatus: Boolean;
 
       procedure FillParams(const BaseFolder: string; const UserInfo: TUserInfo; const JavaInfo: TJavaInfo);
-      function Launch(const BaseFolder: string; const UserInfo: TUserInfo; const JavaInfo: TJavaInfo; RAM: Integer): JNI_RETURN_VALUES;
+      function Launch(
+                       const BaseFolder: string;
+                       const UserInfo: TUserInfo;
+                       const JavaInfo: TJavaInfo;
+                       RAM: Integer;
+                       OptimizeJVM: Boolean;
+                       ExperimentalOptimization: Boolean
+                      ): JNI_RETURN_VALUES;
 
       procedure Clear;
 
@@ -269,7 +274,7 @@ begin
 end;
 
 function TMinecraftLauncher.Launch(const BaseFolder: string;
-  const UserInfo: TUserInfo; const JavaInfo: TJavaInfo; RAM: Integer): JNI_RETURN_VALUES;
+  const UserInfo: TUserInfo; const JavaInfo: TJavaInfo; RAM: Integer; OptimizeJVM: Boolean; ExperimentalOptimization: Boolean): JNI_RETURN_VALUES;
 var
   WorkingFolder, NativesPath, ClassPath, JVMPath: string;
   JarsList, ScanningFolder: string;
@@ -324,37 +329,40 @@ begin
   JVMParams.Add('-Dfml.ignoreInvalidMinecraftCertificates=true');
   JVMParams.Add('-Dfml.ignorePatchDiscrepancies=true');
 
-{$IFDEF USE_JVM_OPTIMIZATION}
-  if CPUInfo.CPUFeatures.SSE.SSE41 or CPUInfo.CPUFeatures.SSE.SSE42 then JVMParams.Add('-XX:UseSSE=4')
-  else if CPUInfo.CPUFeatures.SSE.SSE3 then JVMParams.Add('-XX:UseSSE=3')
-  else if CPUInfo.CPUFeatures.SSE.SSE2 then JVMParams.Add('-XX:UseSSE=2')
-  else if CPUInfo.CPUFeatures.SSE.SSE1 then JVMParams.Add('-XX:UseSSE=1');
-
-  if CPUInfo.CPUFeatures.SSE.SSE2 then
+  if OptimizeJVM then
   begin
-    JVMParams.Add('-XX:+UseXmmI2D');
-    JVMParams.Add('-XX:+UseXmmI2F');
-    JVMParams.Add('-XX:+UseUnalignedLoadStores');
+    if CPUInfo.CPUFeatures.SSE.SSE41 or CPUInfo.CPUFeatures.SSE.SSE42 then JVMParams.Add('-XX:UseSSE=4')
+    else if CPUInfo.CPUFeatures.SSE.SSE3 then JVMParams.Add('-XX:UseSSE=3')
+    else if CPUInfo.CPUFeatures.SSE.SSE2 then JVMParams.Add('-XX:UseSSE=2')
+    else if CPUInfo.CPUFeatures.SSE.SSE1 then JVMParams.Add('-XX:UseSSE=1');
+
+    if CPUInfo.CPUFeatures.SSE.SSE2 then
+    begin
+      JVMParams.Add('-XX:+UseXmmI2D');
+      JVMParams.Add('-XX:+UseXmmI2F');
+      JVMParams.Add('-XX:+UseUnalignedLoadStores');
+    end;
+
+    if CPUInfo.CPUFeatures.SSE.SSE42 then JVMParams.Add('-XX:+UseSSE42Intrinsics');
+    if CPUInfo.CPUFeatures.AVX       then JVMParams.Add('-XX:UseAVX=2');
+
+    if CPUInfo.CPUFeatures.AES then
+    begin
+      JVMParams.Add('-XX:+UseAES');
+      JVMParams.Add('-XX:+UseAESIntrinsics');
+    end;
   end;
 
-  if CPUInfo.CPUFeatures.SSE.SSE42 then JVMParams.Add('-XX:+UseSSE42Intrinsics');
-  if CPUInfo.CPUFeatures.AVX       then JVMParams.Add('-XX:UseAVX=2');
-
-  if CPUInfo.CPUFeatures.AES then
+  if ExperimentalOptimization then
   begin
-    JVMParams.Add('-XX:+UseAES');
-    JVMParams.Add('-XX:+UseAESIntrinsics');
+    JVMParams.Add('-XX:+UnlockDiagnosticVMOptions');
+
+    JVMParams.Add('-XX:+UseIncDec');
+    JVMParams.Add('-XX:+UseNewLongLShift');
+    JVMParams.Add('-XX:+UseFastStosb');
+
+    JVMParams.Add('-XX:+DisableAttachMechanism');
   end;
-{$ENDIF}
-{$IFDEF USE_JVM_EXPERIMENTAL_FEATURES}
-  JVMParams.Add('-XX:+UnlockDiagnosticVMOptions');
-
-  JVMParams.Add('-XX:+UseIncDec');
-  JVMParams.Add('-XX:+UseNewLongLShift');
-  JVMParams.Add('-XX:+UseFastStosb');
-
-  JVMParams.Add('-XX:+DisableAttachMechanism');
-{$ENDIF}
 
   // Собираем список аргументов клиента:
   Arguments := TStringList.Create;
