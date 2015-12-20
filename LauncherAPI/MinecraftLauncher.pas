@@ -2,6 +2,8 @@ unit MinecraftLauncher;
 
 interface
 
+{$I Definitions.inc}
+
 uses
   Windows, Classes, SysUtils,
   System.JSON, System.Threading, FMX.Graphics,
@@ -19,22 +21,22 @@ type
 
 
   TServerInfo = record
-    // Название и описание:
+    // РќР°Р·РІР°РЅРёРµ Рё РѕРїРёСЃР°РЅРёРµ:
     Name : string;
     Info : string;
 
-    // Сетевые параметры:
+    // РЎРµС‚РµРІС‹Рµ РїР°СЂР°РјРµС‚СЂС‹:
     IP   : string;
     Port : string;
 
-    // Файлы и папки:
-    ClientFolder  : string; // Базовая папка, относительно которой берутся все остальные
+    // Р¤Р°Р№Р»С‹ Рё РїР°РїРєРё:
+    ClientFolder  : string; // Р‘Р°Р·РѕРІР°СЏ РїР°РїРєР°, РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РєРѕС‚РѕСЂРѕР№ Р±РµСЂСѓС‚СЃСЏ РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ
     JarFolders    : TStringArray;
     NativesFolder : string;
     AssetsFolder  : string;
     AssetIndex    : string;
 
-    // Параметры запуска:
+    // РџР°СЂР°РјРµС‚СЂС‹ Р·Р°РїСѓСЃРєР°:
     Version   : string;
     MainClass : string;
     Arguments : string;
@@ -115,7 +117,7 @@ begin
   Clear;
   if ClientInfo = nil then Exit;
 
-  // Ставим на загрузку превьюшку, пока будем парсить JSON:
+  // РЎС‚Р°РІРёРј РЅР° Р·Р°РіСЂСѓР·РєСѓ РїСЂРµРІСЊСЋС€РєСѓ, РїРѕРєР° Р±СѓРґРµРј РїР°СЂСЃРёС‚СЊ JSON:
   DownloadEvent := CreateEvent(nil, True, False, nil);
   if GetJSONStringValue(ClientInfo, 'preview', PreviewLink) then
   begin
@@ -138,7 +140,7 @@ begin
 
   with FServerInfo do
   begin
-    // Получаем параметры клиента:
+    // РџРѕР»СѓС‡Р°РµРј РїР°СЂР°РјРµС‚СЂС‹ РєР»РёРµРЅС‚Р°:
     Name  := GetJSONStringValue(ClientInfo, 'name');
     Info  := GetJSONStringValue(ClientInfo, 'info');
     IP    := GetJSONStringValue(ClientInfo, 'ip');
@@ -152,7 +154,7 @@ begin
     Arguments     := GetJSONStringValue(ClientInfo, 'arguments');
   end;
 
-  // Получаем список папок с джарниками (относительно ClientFolder):
+  // РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє РїР°РїРѕРє СЃ РґР¶Р°СЂРЅРёРєР°РјРё (РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ ClientFolder):
   JarFoldersArray := GetJSONArrayValue(ClientInfo, 'jars');
   if JarFoldersArray <> nil then
   begin
@@ -166,11 +168,11 @@ begin
     end;
   end;
 
-  // Получаем список файлов и папок на проверку:
+  // РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ Рё РїР°РїРѕРє РЅР° РїСЂРѕРІРµСЂРєСѓ:
   CheckedFoldersArray := GetJSONArrayValue(ClientInfo, 'checked_folders');
   FFilesValidator.ExtractCheckingsInfo(CheckedFoldersArray);
 
-  // Ждём, пока не загрузится превьюшка:
+  // Р–РґС‘Рј, РїРѕРєР° РЅРµ Р·Р°РіСЂСѓР·РёС‚СЃСЏ РїСЂРµРІСЊСЋС€РєР°:
   WaitForSingleObject(DownloadEvent, INFINITE);
   CloseHandle(DownloadEvent);
 end;
@@ -276,54 +278,53 @@ var
 begin
   WorkingFolder := FixSlashes(BaseFolder + '\' + FServerInfo.ClientFolder);
 
-  // Подставляем аргументы в параметризованные данные:
+  // РџРѕРґСЃС‚Р°РІР»СЏРµРј Р°СЂРіСѓРјРµРЅС‚С‹ РІ РїР°СЂР°РјРµС‚СЂРёР·РѕРІР°РЅРЅС‹Рµ РґР°РЅРЅС‹Рµ:
   FillParams(BaseFolder, UserInfo, JavaInfo);
 
-  // Получаем путь к джаве:
+  // РџРѕР»СѓС‡Р°РµРј РїСѓС‚СЊ Рє РґР¶Р°РІРµ:
   if JavaInfo.ExternalJava then
     JVMPath := JavaInfo.JavaParameters.JVMPath
   else
     JVMPath := BaseFolder + '\' + JavaInfo.JavaParameters.JavaFolder + '\' + JavaInfo.JavaParameters.JVMPath;
 
-  // Готовим файловую систему:
+  // Р“РѕС‚РѕРІРёРј С„Р°Р№Р»РѕРІСѓСЋ СЃРёСЃС‚РµРјСѓ:
   SetCurrentDirectory(PChar(WorkingFolder));
   SetDllDirectory(PChar(ExtractFileDir(ExtractFileDir(FixSlashes(JVMPath)))));
   DeleteDirectory(WorkingFolder + '\assets\skins', True);
 
-  // Получаем список файлов в соответствии со списком jars:
+  // РџРѕР»СѓС‡Р°РµРј СЃРїРёСЃРѕРє С„Р°Р№Р»РѕРІ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃРѕ СЃРїРёСЃРєРѕРј jars:
   JarsList := '';
   JarFoldersCount := Length(FServerInfo.JarFolders);
   if JarFoldersCount = 0 then Exit(JNIWRAPPER_INVALID_ARGUMENTS);
   for I := 0 to JarFoldersCount - 1 do
   begin
   {
-    // Если в jars указываем папки ("name" : "folder"):
+    // Р•СЃР»Рё РІ jars СѓРєР°Р·С‹РІР°РµРј РїР°РїРєРё ("name" : "folder"):
     ScanningFolder := FixSlashes(WorkingFolder + '\' + FServerInfo.JarFolders[I]);
     GetFilesList(ScanningFolder, '*.jar', ';', JarsList);
     GetFilesList(ScanningFolder, '*.zip', ';', JarsList);
   }
-    // Если в jars указываем маски\имена ("name" : "folder/*.jar"):
+    // Р•СЃР»Рё РІ jars СѓРєР°Р·С‹РІР°РµРј РјР°СЃРєРё\РёРјРµРЅР° ("name" : "folder/*.jar"):
     ScanningFolder := FixSlashes(WorkingFolder + '\' + FileAPI.ExtractFileDir(FServerInfo.JarFolders[I]));
     GetFilesList(ScanningFolder, FileAPI.ExtractFileName(FServerInfo.JarFolders[I]), ';', JarsList);
   end;
 
-  // Формируем строки с аргументами:
+  // Р¤РѕСЂРјРёСЂСѓРµРј СЃС‚СЂРѕРєРё СЃ Р°СЂРіСѓРјРµРЅС‚Р°РјРё:
   ClassPath   := '-Djava.class.path=' + JarsList;
   NativesPath := '-Djava.library.path=' + WorkingFolder + '\' + FServerInfo.NativesFolder;
 
-  // Собираем весь список JVM-аргументов:
+  // РЎРѕР±РёСЂР°РµРј РІРµСЃСЊ СЃРїРёСЃРѕРє JVM-Р°СЂРіСѓРјРµРЅС‚РѕРІ:
   JVMParams := TStringList.Create;
   JVMParams.Clear;
   JVMParams.Text := ReplaceParam(JavaInfo.JavaParameters.Arguments, ' ', #13#10);
   JVMParams.Add('-Xms' + IntToStr(RAM) + 'm');
   JVMParams.Add('-Xmx' + IntToStr(RAM) + 'm');
-  JVMParams.Add('-XX:UseSSE=4');
-  JVMParams.Add('-XX:UseAVX=1');
   JVMParams.Add(NativesPath);
   JVMParams.Add(ClassPath);
   JVMParams.Add('-Dfml.ignoreInvalidMinecraftCertificates=true');
   JVMParams.Add('-Dfml.ignorePatchDiscrepancies=true');
 
+{$IFDEF USE_JVM_OPTIMIZATION}
   if CPUInfo.CPUFeatures.SSE.SSE41 or CPUInfo.CPUFeatures.SSE.SSE42 then JVMParams.Add('-XX:UseSSE=4')
   else if CPUInfo.CPUFeatures.SSE.SSE3 then JVMParams.Add('-XX:UseSSE=3')
   else if CPUInfo.CPUFeatures.SSE.SSE2 then JVMParams.Add('-XX:UseSSE=2')
@@ -344,7 +345,8 @@ begin
     JVMParams.Add('-XX:+UseAES');
     JVMParams.Add('-XX:+UseAESIntrinsics');
   end;
-
+{$ENDIF}
+{$IFDEF USE_JVM_EXPERIMENTAL_FEATURES}
   JVMParams.Add('-XX:+UnlockDiagnosticVMOptions');
 
   JVMParams.Add('-XX:+UseIncDec');
@@ -352,8 +354,9 @@ begin
   JVMParams.Add('-XX:+UseFastStosb');
 
   JVMParams.Add('-XX:+DisableAttachMechanism');
+{$ENDIF}
 
-  // Собираем список аргументов клиента:
+  // РЎРѕР±РёСЂР°РµРј СЃРїРёСЃРѕРє Р°СЂРіСѓРјРµРЅС‚РѕРІ РєР»РёРµРЅС‚Р°:
   Arguments := TStringList.Create;
   Arguments.Clear;
   Arguments.Text := ReplaceParam(FServerInfo.Arguments, ' ', #13#10);
@@ -361,7 +364,7 @@ begin
 
   StopThreads;
 
-  // Запускаем игру:
+  // Р—Р°РїСѓСЃРєР°РµРј РёРіСЂСѓ:
   Result := LaunchJavaApplet(
                               JVMPath,
                               JavaInfo.JavaParameters.JNIVersion,
