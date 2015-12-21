@@ -14,17 +14,21 @@
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{$DEFINE ENABLE_EXECUTABLE_MEMORY_DEFENCE} // Защита от инъекций
+//{$DEFINE ENABLE_EXECUTABLE_MEMORY_DEFENCE} // Защита от инъекций
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{$DEFINE USE_JVM_OPTIMIZATION} // Оптимизировать флаги JVM под архитектуру игрока (SSE, AVX, AES, SIMD-интринсики)
-{$DEFINE USE_JVM_EXPERIMENTAL_FEATURES} // Использовать экспериментальные флаги оптимизации
+//{$DEFINE USE_NVIDIA_OPTIMUS} // Включить рендеринг на дискретной видеокарте
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-{$DEFINE FLUSH_JVM_FLAGS} // Очищать внешние переменные окружения для защиты
-{$DEFINE INGAME_FILES_MONITORING} // Проверка файлов во время игры
+//{$DEFINE USE_JVM_OPTIMIZATION} // Оптимизировать флаги JVM под архитектуру игрока (SSE, AVX, AES, SIMD-интринсики)
+//{$DEFINE USE_JVM_EXPERIMENTAL_FEATURES} // Использовать экспериментальные флаги оптимизации
+
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+//{$DEFINE FLUSH_JVM_FLAGS} // Очищать внешние переменные окружения для защиты
+//{$DEFINE INGAME_FILES_MONITORING} // Проверка файлов во время игры
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

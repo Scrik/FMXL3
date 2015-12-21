@@ -58,11 +58,13 @@ uses
   ssl_openssl in 'Synapse\ssl_openssl.pas',
   ssl_openssl_lib in 'Synapse\ssl_openssl_lib.pas',
   ResUnpacker in 'AuxUtils\ResUnpacker.pas'
+(*
 {$IFDEF ENABLE_EXECUTABLE_MEMORY_DEFENCE},
   HookAPI in 'HoShiMin''s API\HookAPI\HookAPI.pas',
   MicroDAsm in 'HoShiMin''s API\HookAPI\MicroDAsm.pas',
   SpliceProtection in 'HoShiMin''s API\SpliceProtection.pas'
-{$ENDIF};
+{$ENDIF}
+*);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -124,6 +126,7 @@ end;
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 
+{$IFDEF USE_NVIDIA_OPTIMUS}
 // Включаем технологию nVidia Optimus:
 function NvOptimusEnablement: LongWord; export;
 begin
@@ -131,6 +134,7 @@ begin
 end;
 
 exports NvOptimusEnablement;
+{$ENDIF}
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 

@@ -1091,8 +1091,6 @@ begin
                                       {$IFDEF USE_JVM_OPTIMIZATION}True{$ELSE}False{$ENDIF},
                                       {$IFDEF USE_JVM_EXPERIMENTAL_FEATURES}True{$ELSE}False{$ENDIF}
                                      );
-
-  if Status <> JNIWRAPPER_SUCCESS then RunThreads;
   case Status of
     JNIWRAPPER_UNKNOWN_ERROR       : ShowNullErrorMessage('Неизвестная ошибка в JVM!');
     JNIWRAPPER_JNI_INVALID_VERSION : ShowNullErrorMessage('Неверная версия JNI!');
@@ -1120,12 +1118,6 @@ begin
         ExitProcess(0);
       end);
     {$ENDIF}
-
-    // Освобождаем ресурсы, они нам больше не понадобятся:
-    DestroyComponents;
-    DestroyHandle;
-    Self.Destroy;
-    EmptyWorkingSet(GetCurrentProcess);
   end;
 end;
 

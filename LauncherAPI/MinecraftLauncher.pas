@@ -280,6 +280,9 @@ var
   JarsList, ScanningFolder: string;
   I, JarFoldersCount: Integer;
   JVMParams, Arguments: TStringList;
+{$IFDEF DEBUG}
+  DebugLog: TStringList;
+{$ENDIF}
 begin
   WorkingFolder := FixSlashes(BaseFolder + '\' + FServerInfo.ClientFolder);
 
@@ -370,7 +373,24 @@ begin
   Arguments.Text := ReplaceParam(FServerInfo.Arguments, ' ', #13#10);
   Arguments.Text := ReplaceParam(Arguments.Text, '%20', ' ');
 
-  StopThreads;
+  {$IFDEF DEBUG}
+    DebugLog := TStringList.Create;
+    DebugLog.Clear;
+    DebugLog.Add('=== Client arguments ===');
+    DebugLog.Add(#13#10);
+    DebugLog.Add(Arguments.Text);
+    DebugLog.Add(#13#10);
+    DebugLog.Add('Main class: ' + FServerInfo.MainClass);
+    DebugLog.Add(#13#10);
+    DebugLog.Add('=== JVM Arguments ===');
+    DebugLog.Add(#13#10);
+    DebugLog.Add(JVMParams.Text);
+    DebugLog.Add(#13#10);
+    DebugLog.Add('JVM Path: ' + JVMPath);
+    DebugLog.Add('JNI Version: ' + IntToStr(JavaInfo.JavaParameters.JNIVersion));
+    DebugLog.SaveToFile('DebugLog.txt');
+    FreeAndNil(DebugLog);
+  {$ENDIF}
 
   // Запускаем игру:
   Result := LaunchJavaApplet(
