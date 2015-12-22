@@ -295,11 +295,6 @@ begin
   else
     JVMPath := BaseFolder + '\' + JavaInfo.JavaParameters.JavaFolder + '\' + JavaInfo.JavaParameters.JVMPath;
 
-  // Готовим файловую систему:
-  SetCurrentDirectory(PChar(WorkingFolder));
-  SetDllDirectory(PChar(ExtractFileDir(ExtractFileDir(FixSlashes(JVMPath)))));
-  DeleteDirectory(WorkingFolder + '\assets\skins', True);
-
   // Получаем список файлов в соответствии со списком jars:
   JarsList := '';
   JarFoldersCount := Length(FServerInfo.JarFolders);
@@ -391,6 +386,11 @@ begin
     DebugLog.SaveToFile('DebugLog.txt');
     FreeAndNil(DebugLog);
   {$ENDIF}
+
+  // Готовим файловую систему:
+  SetCurrentDirectory(PChar(WorkingFolder));
+  SetDllDirectory(PChar(ExtractFileDir(ExtractFileDir(FixSlashes(JVMPath)))));
+  DeleteDirectory(WorkingFolder + '\assets\skins', True);
 
   // Запускаем игру:
   Result := LaunchJavaApplet(

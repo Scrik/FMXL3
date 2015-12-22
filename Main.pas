@@ -21,7 +21,7 @@ uses
   // HoShiMin's API:
   FileAPI, FormatPE, PowerUP, RegistryUtils,
 
-  // LauncherAPI:
+  // FLauncherAPI:
   LauncherAPI, Authorization, Registration, FilesValidation, ServerQuery,
   MinecraftLauncher, SkinSystem, JNIWrapper, AuxUtils, Encryption,
 
@@ -172,6 +172,8 @@ type
     CameraRotator: TFloatAnimation;
     RegLabel: TLabel;
     AutoLoginCheckbox: TCheckBox;
+    WorkingFolderEdit: TEdit;
+    Label6: TLabel;
 
     procedure ShowErrorMessage(const Text: string);
     procedure ShowSuccessMessage(const Text: string);
@@ -228,6 +230,7 @@ type
     procedure RegLabelClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; var KeyChar: Char;
       Shift: TShiftState);
+    procedure WorkingFolderEditChangeTracking(Sender: TObject);
   private type
     TABS = (
       AUTH_TAB,
@@ -238,6 +241,7 @@ type
     StacksCapacity: Integer = 300;
     SparsingCoeff: Integer = 5;
   private
+    FLauncherAPI   : TLauncherAPI;
     FLastFrequency : ULONG;
     FIsAutoLogin   : Boolean;
     FIsRegPanel    : Boolean;
@@ -272,7 +276,7 @@ type
 
 var
   MainForm: TMainForm;
-  LauncherAPI: TLauncherAPI;
+
 
 implementation
 
@@ -506,13 +510,13 @@ procedure TMainForm.SelectClient(ClientNumber: Integer; SelectToPlay: Boolean = 
 var
   I: Integer;
 begin
-  if (ClientNumber < 0) or (LauncherAPI.Clients.Count = 0) or (ClientNumber >= LauncherAPI.Clients.Count) then Exit;
+  if (ClientNumber < 0) or (FLauncherAPI.Clients.Count = 0) or (ClientNumber >= FLauncherAPI.Clients.Count) then Exit;
 
   FSelectedClientNumber := ClientNumber;
   if SelectToPlay then FSelectedToPlayClientNumber := ClientNumber;
 
   ScrollBox.BeginUpdate;
-  for I := 0 to LauncherAPI.Clients.Count - 1 do
+  for I := 0 to FLauncherAPI.Clients.Count - 1 do
   begin
     if I <> ClientNumber then
     begin
@@ -541,6 +545,18 @@ begin
   end;
 end;
 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+procedure TMainForm.WorkingFolderEditChangeTracking(Sender: TObject);
+begin
+  if Assigned(FLauncherAPI) then
+  begin
+    FLauncherAPI.LocalWorkingFolder := WorkingFolderEdit.Text;
+    SaveSettings(AutoLoginCheckbox.IsChecked, FLauncherAPI.JavaInfo.ExternalJava);
+    if not FLauncherAPI.JavaInfo.ExternalJava then
+      JVMPathEdit.Text := FLauncherAPI.LocalWorkingFolder + '\' + FLauncherAPI.JavaInfo.JavaParameters.JavaFolder + '\' + FLauncherAPI.JavaInfo.JavaParameters.JVMPath;
+  end;
+end;
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 //                          Сохранение настроек
@@ -567,6 +583,7 @@ begin
   end;
   SaveStringToRegistry(RegistryPath, {$IFDEF CPUX64}'RAM64'{$ELSE}'RAM32'{$ENDIF}, RAMEdit.Text);
   SaveBooleanToRegistry(RegistryPath, 'AutoLogin', AutoLogin);
+  SaveStringToRegistry(RegistryPath, 'WorkingFolder', WorkingFolderEdit.Text);
 end;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -602,6 +619,7 @@ begin
     JVMPathEdit.Text     := ReadStringFromRegistry(RegistryPath, 'JVMPath32'    , LibPath);
   {$ENDIF}
   FIsAutoLogin := ReadBooleanFromRegistry(RegistryPath, 'AutoLogin', False);
+  WorkingFolderEdit.Text := ReadStringFromRegistry(RegistryPath, 'WorkingFolder', GetSpecialFolderPath(CSIDL_APPDATA) + '\' + LocalWorkingFolder);
   AutoLoginCheckbox.IsChecked := FIsAutoLogin;
 end;
 
@@ -668,12 +686,12 @@ begin
   // Сохраняем настройки:
   FIsAutoLogin := False;
   AutoLoginCheckbox.IsChecked := FIsAutoLogin;
-  SaveSettings(FIsAutoLogin, LauncherAPI.JavaInfo.ExternalJava);
+  SaveSettings(FIsAutoLogin, FLauncherAPI.JavaInfo.ExternalJava);
 
   MainFormLayout.BeginUpdate;
 
   DestroyMaterialSources;
-  LauncherAPI.Deauthorize;
+  FLauncherAPI.Deauthorize;
 
   // Чистим список панелек серверов:
   ServerPanelsCount := Length(FServerPanels);
@@ -698,7 +716,7 @@ end;
 
 procedure TMainForm.SettingsImageClick(Sender: TObject);
 begin
-  if not LauncherAPI.IsAuthorized then
+  if not FLauncherAPI.IsAuthorized then
   begin
     ShowErrorMessage('Авторизуйтесь для доступа к настройкам!');
     Exit;
@@ -741,6 +759,9 @@ begin
   FIsRegPanel := False;
   SwitchTab(AUTH_TAB);
 
+  // Загружаем настройки:
+  LoadSettings;
+
   // Настраиваем камеру:
 {
   // Если камера вне контейнера ModelContainer:
@@ -754,29 +775,27 @@ begin
   Camera.RotationCenter.Y := - Camera.Position.Y;
   Camera.RotationCenter.Z := - Camera.Position.Z;
 }
-  // Создаём объект LauncherAPI:
-  LauncherAPI := TLauncherAPI.Create(GetSpecialFolderPath(CSIDL_APPDATA) + '\' + LocalWorkingFolder, ServerWorkingFolder);
-  LauncherAPI.EncryptionKey := EncryptionKey;
-  LauncherAPI.LauncherInfo.LauncherVersion := LauncherVersion;
+  // Создаём объект FLauncherAPI:
+  FLauncherAPI := TLauncherAPI.Create(WorkingFolderEdit.Text, ServerWorkingFolder);
+  FLauncherAPI.EncryptionKey := EncryptionKey;
+  FLauncherAPI.LauncherInfo.LauncherVersion := LauncherVersion;
 
   // Распаковываем необходимые ресурсы:
   {$IFDEF USE_SSL}
     {$IFDEF CPUX64}
-      UnpackRes('LIBEAY64', LauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\libeay32.dll');
-      UnpackRes('SSLEAY64', LauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\ssleay32.dll');
-      SetDllDirectory(PChar(LauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\'));
+      UnpackRes('LIBEAY64', FLauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\libeay32.dll');
+      UnpackRes('SSLEAY64', FLauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\ssleay32.dll');
+      SetDllDirectory(PChar(FLauncherAPI.LocalWorkingFolder + '\OpenSSL\x64\'));
     {$ELSE}
-      UnpackRes('LIBEAY32', LauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\libeay32.dll');
-      UnpackRes('SSLEAY32', LauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\ssleay32.dll');
-      SetDllDirectory(PChar(LauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\'));
+      UnpackRes('LIBEAY32', FLauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\libeay32.dll');
+      UnpackRes('SSLEAY32', FLauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\ssleay32.dll');
+      SetDllDirectory(PChar(FLauncherAPI.LocalWorkingFolder + '\OpenSSL\x32\'));
     {$ENDIF}
 
     if InitSSLInterface then
       SSLImplementation := TSSLOpenSSL;
   {$ENDIF}
 
-  // Загружаем настройки:
-  LoadSettings;
   if FIsAutoLogin then
     AuthButton.OnClick(Self);
 end;
@@ -822,7 +841,7 @@ begin
   SetAuthTabActiveState(False);
   if not FIsRegPanel then
   begin
-    LauncherAPI.Authorize(
+    FLauncherAPI.Authorize(
                             LoginEdit.Text,
                             PasswordEdit.Text,
                             True,
@@ -843,7 +862,7 @@ begin
   end
   else
   begin
-    LauncherAPI.RegisterPlayer(LoginEdit.Text, PasswordEdit.Text, True, procedure(const RegStatus: REG_STATUS)
+    FLauncherAPI.RegisterPlayer(LoginEdit.Text, PasswordEdit.Text, True, procedure(const RegStatus: REG_STATUS)
     begin
       SetAuthTabActiveState(True);
       if RegStatus.StatusCode = REG_STATUS_SUCCESS then
@@ -871,14 +890,14 @@ var
 begin
   // Сохраняем настройки:
   FIsAutoLogin := AutoLoginCheckbox.IsChecked;
-  SaveSettings(FIsAutoLogin, LauncherAPI.JavaInfo.ExternalJava);
+  SaveSettings(FIsAutoLogin, FLauncherAPI.JavaInfo.ExternalJava);
 
   // Проверяем версию лаунчера:
-  if not LauncherAPI.LauncherInfo.IsLauncherValid(False) then
+  if not FLauncherAPI.LauncherInfo.IsLauncherValid(False) then
   begin
     if MessageBox(GetFmxWND(MainForm.Handle), 'Требуется обновление лаунчера! Обновить сейчас?', 'Внимание!', MB_ICONQUESTION + MB_YESNO) = ID_YES then
     begin
-      if not LauncherAPI.LauncherInfo.UpdateLauncher then
+      if not FLauncherAPI.LauncherInfo.UpdateLauncher then
       begin
         ShowErrorMessage('Не получилось обновить лаунчер!');
         ExitProcess(0);
@@ -918,12 +937,12 @@ begin
   {$ENDIF}
 
   // Создаём список серверов, привязываем события:
-  if LauncherAPI.Clients.Count > 0 then
+  if FLauncherAPI.Clients.Count > 0 then
   begin
-    SetLength(FServerPanels, LauncherAPI.Clients.Count);
-    for I := 0 to LauncherAPI.Clients.Count - 1 do
+    SetLength(FServerPanels, FLauncherAPI.Clients.Count);
+    for I := 0 to FLauncherAPI.Clients.Count - 1 do
     begin
-      Client := LauncherAPI.Clients.ClientsArray[I];
+      Client := FLauncherAPI.Clients.ClientsArray[I];
 
       // Создаём панельку сервера:
       FServerPanels[I] := TServerPanel.Create(ScrollBox, ServerPanelSample, I);
@@ -948,12 +967,12 @@ begin
       begin
         if Sender.ResumeState then
         begin
-          LauncherAPI.Clients.ClientsArray[Sender.Number].MultiLoader.Resume;
+          FLauncherAPI.Clients.ClientsArray[Sender.Number].MultiLoader.Resume;
           Sender.ShowPauseButton;
         end
         else
         begin
-          LauncherAPI.Clients.ClientsArray[Sender.Number].MultiLoader.Pause;
+          FLauncherAPI.Clients.ClientsArray[Sender.Number].MultiLoader.Pause;
           Sender.Content.ServerPanel.BeginUpdate;
           Sender.Content.InfoLabel.Text := 'Загрузка приостановлена';
           Sender.ShowResumeButton;
@@ -964,7 +983,7 @@ begin
 
       ServerPanel.OnStopClick := procedure(const Sender: TServerPanel)
       begin
-        LauncherAPI.Clients.ClientsArray[Sender.Number].MultiLoader.Cancel;
+        FLauncherAPI.Clients.ClientsArray[Sender.Number].MultiLoader.Cancel;
         Sender.Content.ServerPanel.BeginUpdate;
         Sender.Content.InfoLabel.Text := 'Остановка загрузки...';
         Sender.ShowPauseButton;
@@ -993,14 +1012,14 @@ begin
 
   // Рисуем скин и плащ:
   CreateMaterialSources;
-  DrawSkin(LauncherAPI.UserInfo.SkinBitmap);
-  DrawCloak(LauncherAPI.UserInfo.CloakBitmap);
+  DrawSkin(FLauncherAPI.UserInfo.SkinBitmap);
+  DrawCloak(FLauncherAPI.UserInfo.CloakBitmap);
 
   // Выставляем панель настроек:
-  if not LauncherAPI.JavaInfo.ExternalJava then
+  if not FLauncherAPI.JavaInfo.ExternalJava then
   begin
-    JVMPathEdit.Text     := LauncherAPI.LocalWorkingFolder + '\' + LauncherAPI.JavaInfo.JavaParameters.JavaFolder + '\' + LauncherAPI.JavaInfo.JavaParameters.JVMPath;
-    JavaVersionEdit.Text := LauncherAPI.JavaInfo.JavaParameters.JavaVersion.ToString;
+    JVMPathEdit.Text     := FLauncherAPI.LocalWorkingFolder + '\' + FLauncherAPI.JavaInfo.JavaParameters.JavaFolder + '\' + FLauncherAPI.JavaInfo.JavaParameters.JVMPath;
+    JavaVersionEdit.Text := FLauncherAPI.JavaInfo.JavaParameters.JavaVersion.ToString;
     JVMPathEdit.Enabled     := False;
     JavaVersionEdit.Enabled := False;
   end;
@@ -1010,7 +1029,7 @@ begin
 
   // Запускаем мониторинг:
   {$IFDEF USE_MONITORING}
-    LauncherAPI.StartMonitoring(MonitoringInterval, OnMonitoring);
+    FLauncherAPI.StartMonitoring(MonitoringInterval, OnMonitoring);
   {$ENDIF}
 end;
 
@@ -1029,16 +1048,16 @@ begin
   PlayButton.Enabled := True;
 
   // Получаем путь к джаве:
-  if LauncherAPI.JavaInfo.ExternalJava then
+  if FLauncherAPI.JavaInfo.ExternalJava then
   begin
     JVMPath := JVMPathEdit.Text;
-    LauncherAPI.JavaInfo.SetJVMPath(JVMPath, StrToInt(JavaVersionEdit.Text));
+    FLauncherAPI.JavaInfo.SetJVMPath(JVMPath, StrToInt(JavaVersionEdit.Text));
   end
   else
   begin
-    JVMPath := LauncherAPI.LocalWorkingFolder + '\' +
-               LauncherAPI.JavaInfo.JavaParameters.JavaFolder + '\' +
-               LauncherAPI.JavaInfo.JavaParameters.JVMPath;
+    JVMPath := FLauncherAPI.LocalWorkingFolder + '\' +
+               FLauncherAPI.JavaInfo.JavaParameters.JavaFolder + '\' +
+               FLauncherAPI.JavaInfo.JavaParameters.JVMPath;
   end;
 
   // Проверяем, что путь верный:
@@ -1070,10 +1089,10 @@ begin
   end;
 
   // Сохраняем настройки:
-  SaveSettings(FIsAutoLogin, LauncherAPI.JavaInfo.ExternalJava);
+  SaveSettings(FIsAutoLogin, FLauncherAPI.JavaInfo.ExternalJava);
 
   HardwareMonitoring.Enabled := False; // Отключаем системный мониторинг
-  LauncherAPI.StopMonitoring; // Отключаем мониторинг
+  FLauncherAPI.StopMonitoring; // Отключаем мониторинг
 
   // Скрываем форму лаунчера:
   ShowWindow(GetFmxWND(MainForm.Handle), SW_HIDE);
@@ -1085,7 +1104,7 @@ begin
   {$ENDIF}
 
   // Запускаем игру:
-  Status := LauncherAPI.LaunchClient(
+  Status := FLauncherAPI.LaunchClient(
                                       ClientNumber,
                                       StrToInt(RAMEdit.Text),
                                       {$IFDEF USE_JVM_OPTIMIZATION}True{$ELSE}False{$ENDIF},
@@ -1101,7 +1120,7 @@ begin
     JNIWRAPPER_METHOD_NOT_FOUND    : ShowNullErrorMessage('Метод не найден!');
   else
     {$IFDEF INGAME_FILES_MONITORING}
-      LauncherAPI.StartInGameChecking(ClientNumber, procedure(const ErrorFiles: TStringList)
+      FLauncherAPI.StartInGameChecking(ClientNumber, procedure(const ErrorFiles: TStringList)
       begin
         ErrorFiles.SaveToFile('ErrorFiles.txt');
         MessageBoxTimeout(
@@ -1126,36 +1145,36 @@ end;
 procedure TMainForm.ValidateClient(ClientNumber: Integer;
   PlayAfterValidation: Boolean);
 begin
-  if (ClientNumber < 0) or (LauncherAPI.Clients.Count = 0) or (ClientNumber > LauncherAPI.Clients.Count - 1) then
+  if (ClientNumber < 0) or (FLauncherAPI.Clients.Count = 0) or (ClientNumber > FLauncherAPI.Clients.Count - 1) then
   begin
     ShowErrorMessage('Неверный выбранный клиент!');
     PlayButton.Enabled := True;
     Exit;
   end;
 
-  if LauncherAPI.Clients.ClientsArray[ClientNumber].GetValidationStatus then
+  if FLauncherAPI.Clients.ClientsArray[ClientNumber].GetValidationStatus then
   begin
     if not PlayAfterValidation then ShowErrorMessage('Клиент уже обновляется! Дождитесь завершения и попробуйте снова!');
     Exit;
   end;
 
   FServerPanels[ClientNumber].Content.InfoLabel.Text := 'Получаем список файлов...';
-  LauncherAPI.GetValidFilesList(ClientNumber, procedure(ClientNumber: Integer; QueryStatus: QUERY_STATUS)
+  FLauncherAPI.GetValidFilesList(ClientNumber, procedure(ClientNumber: Integer; QueryStatus: QUERY_STATUS)
   begin
     if QueryStatus.StatusCode <> QUERY_STATUS_SUCCESS then
     begin
       ShowErrorMessage('[Код ошибки ' + IntToStr(Integer(QueryStatus.StatusCode)) + '] ' + QueryStatus.StatusString);
-      FServerPanels[ClientNumber].Content.InfoLabel.Text := LauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
+      FServerPanels[ClientNumber].Content.InfoLabel.Text := FLauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
       PlayButton.Enabled := True;
       Exit;
     end;
 
     FServerPanels[ClientNumber].Content.InfoLabel.Text := 'Проверяем файлы...';
-    LauncherAPI.ValidateClient(ClientNumber, True, procedure(ClientNumber: Integer; ClientValidationStatus, JavaValidationStatus: VALIDATION_STATUS)
+    FLauncherAPI.ValidateClient(ClientNumber, True, procedure(ClientNumber: Integer; ClientValidationStatus, JavaValidationStatus: VALIDATION_STATUS)
     begin
       if (ClientValidationStatus = VALIDATION_STATUS_SUCCESS) and (JavaValidationStatus = VALIDATION_STATUS_SUCCESS) then
       begin
-        FServerPanels[ClientNumber].Content.InfoLabel.Text := LauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
+        FServerPanels[ClientNumber].Content.InfoLabel.Text := FLauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
         if PlayAfterValidation then LaunchClient(ClientNumber);
         Exit;
       end;
@@ -1164,10 +1183,10 @@ begin
       begin
         ShowErrorMessage(
                           'Не получилось удалить следующие файлы:' + #13#10 +
-                          LauncherAPI.Clients.ClientsArray[ClientNumber].FilesValidator.ErrorFiles.Text + #13#10 +
-                          LauncherAPI.JavaInfo.FilesValidator.ErrorFiles.Text
+                          FLauncherAPI.Clients.ClientsArray[ClientNumber].FilesValidator.ErrorFiles.Text + #13#10 +
+                          FLauncherAPI.JavaInfo.FilesValidator.ErrorFiles.Text
                          );
-        FServerPanels[ClientNumber].Content.InfoLabel.Text := LauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
+        FServerPanels[ClientNumber].Content.InfoLabel.Text := FLauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
         PlayButton.Enabled := True;
         Exit;
       end;
@@ -1176,7 +1195,7 @@ begin
       begin
         FServerPanels[ClientNumber].Content.InfoLabel.Text := 'Начинаем загрузку...';
         FServerPanels[ClientNumber].ShowDownloadPanel;
-        LauncherAPI.UpdateClient(ClientNumber, {$IFDEF SINGLE_THREAD_DOWNLOADING}False{$ELSE}True{$ENDIF}, OnDownload);
+        FLauncherAPI.UpdateClient(ClientNumber, {$IFDEF SINGLE_THREAD_DOWNLOADING}False{$ELSE}True{$ENDIF}, OnDownload);
       end;
     end);
   end);
@@ -1194,7 +1213,7 @@ var
   I: Integer;
 begin
   // Проверяем валидность номера клиента:
-  if (LauncherAPI.Clients.Count = 0) or (FSelectedClientNumber < 0) or (FSelectedClientNumber >= LauncherAPI.Clients.Count) then
+  if (FLauncherAPI.Clients.Count = 0) or (FSelectedClientNumber < 0) or (FSelectedClientNumber >= FLauncherAPI.Clients.Count) then
   begin
     ShowErrorMessage('Клиент не выбран!');
     Exit;
@@ -1215,12 +1234,12 @@ begin
   // Делаем все панельки, кроме выбранной, неактивными:
   ScrollBox.BeginUpdate;
   FSelectedToPlayClientNumber := FSelectedClientNumber;
-  for I := 0 to LauncherAPI.Clients.Count - 1 do
+  for I := 0 to FLauncherAPI.Clients.Count - 1 do
   begin
     if I <> FSelectedToPlayClientNumber then
     begin
       FServerPanels[I].SetDisabledView;
-      LauncherAPI.Clients.ClientsArray[I].MultiLoader.Cancel; // Останавливаем все загрузки
+      FLauncherAPI.Clients.ClientsArray[I].MultiLoader.Cancel; // Останавливаем все загрузки
     end;
   end;
   FServerPanels[FSelectedToPlayClientNumber].SetSelectedView;
@@ -1228,6 +1247,7 @@ begin
   ScrollBox.Repaint;
 
   PlayButton.Enabled := False;
+  WorkingFolderEdit.Enabled := False;
 
   // Запускаем проверку клиента:
   ValidateClient(FSelectedClientNumber, True);
@@ -1302,8 +1322,8 @@ begin
     ServerPanel.HideDownloadPanel;
     ServerPanel.EnableDownloadButtons;
     ServerPanel.Content.ProgressBar.Value := 0;
-    ServerPanel.Content.NameLabel.Text := LauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Name;
-    ServerPanel.Content.InfoLabel.Text := LauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
+    ServerPanel.Content.NameLabel.Text := FLauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Name;
+    ServerPanel.Content.InfoLabel.Text := FLauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Info;
     ServerPanel.Content.ServerPanel.EndUpdate;
     ServerPanel.Content.ServerPanel.Repaint;
 
@@ -1323,7 +1343,7 @@ begin
 
       ServerPanel.Content.ServerPanel.BeginUpdate;
       ServerPanel.Content.ProgressBar.Value := 100 * DownloadInfo.SummaryDownloadInfo.Downloaded / DownloadInfo.SummaryDownloadInfo.FullSize;
-      ServerPanel.Content.NameLabel.Text := LauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Name + ' (' +
+      ServerPanel.Content.NameLabel.Text := FLauncherAPI.Clients.ClientsArray[ClientNumber].ServerInfo.Name + ' (' +
                                             DownloadInfo.SummaryDownloadInfo.FilesDownloaded.ToString + '/' +
                                             DownloadInfo.SummaryDownloadInfo.FilesCount.ToString + ')';
       ServerPanel.Content.InfoLabel.Text := SpeedStr + ', ' + TimeStr;
@@ -1352,8 +1372,8 @@ var
   Client: TMinecraftLauncher;
   Path: string;
 begin
-  Client := LauncherAPI.Clients.ClientsArray[TControl(Sender).Tag];
-  Path := LauncherAPI.LocalWorkingFolder + '\' + Client.ServerInfo.ClientFolder;
+  Client := FLauncherAPI.Clients.ClientsArray[TControl(Sender).Tag];
+  Path := FLauncherAPI.LocalWorkingFolder + '\' + Client.ServerInfo.ClientFolder;
   CreatePath(Path);
   ShellExecute(GetFmxWND(Handle), nil, PChar(Path), nil, nil, SW_SHOWNORMAL);
 end;
@@ -1372,8 +1392,8 @@ var
   Client: TMinecraftLauncher;
   Path: string;
 begin
-  Client := LauncherAPI.Clients.ClientsArray[TControl(Sender).Tag];
-  Path := LauncherAPI.LocalWorkingFolder + '\' + Client.ServerInfo.ClientFolder;
+  Client := FLauncherAPI.Clients.ClientsArray[TControl(Sender).Tag];
+  Path := FLauncherAPI.LocalWorkingFolder + '\' + Client.ServerInfo.ClientFolder;
   if MessageBox(GetFmxWND(Handle), 'Вы действительно хотите стереть все файлы из папки с клиентом?', 'Внимание!', MB_ICONQUESTION + MB_YESNO) = ID_YES then
   begin
     DeleteDirectory(Path + '\*');
@@ -1447,15 +1467,15 @@ var
 begin
   if not ShowOpenDialog(SkinPath, '*.png|*.png') then Exit;
 
-  Status := LauncherAPI.SetupSkin(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, SkinPath);
+  Status := FLauncherAPI.SetupSkin(FLauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, SkinPath);
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
-    CheckSkinSystemErrors(Status, IMAGE_SKIN, LauncherAPI.SkinSystem.ErrorReason);
+    CheckSkinSystemErrors(Status, IMAGE_SKIN, FLauncherAPI.SkinSystem.ErrorReason);
     Exit;
   end;
 
-  LauncherAPI.UserInfo.SkinBitmap.LoadFromFile(SkinPath);
-  DrawSkin(LauncherAPI.UserInfo.SkinBitmap);
+  FLauncherAPI.UserInfo.SkinBitmap.LoadFromFile(SkinPath);
+  DrawSkin(FLauncherAPI.UserInfo.SkinBitmap);
   ShowSuccessMessage('Скин успешно установлен!');
 end;
 
@@ -1466,12 +1486,12 @@ var
   SkinPath: string;
   Status: SKIN_SYSTEM_STATUS;
 begin
-  if not ShowSaveDialog(SkinPath, '*.png|*.png', LauncherAPI.UserInfo.UserLogonData.Login + '.png') then Exit;
+  if not ShowSaveDialog(SkinPath, '*.png|*.png', FLauncherAPI.UserInfo.UserLogonData.Login + '.png') then Exit;
 
-  Status := LauncherAPI.DownloadSkin(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, SkinPath);
+  Status := FLauncherAPI.DownloadSkin(FLauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, SkinPath);
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
-    CheckSkinSystemErrors(Status, IMAGE_SKIN, LauncherAPI.SkinSystem.ErrorReason);
+    CheckSkinSystemErrors(Status, IMAGE_SKIN, FLauncherAPI.SkinSystem.ErrorReason);
     Exit;
   end;
 
@@ -1484,15 +1504,15 @@ procedure TMainForm.DeletSkinItemClick(Sender: TObject);
 var
   Status: SKIN_SYSTEM_STATUS;
 begin
-  Status := LauncherAPI.DeleteSkin(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text);
+  Status := FLauncherAPI.DeleteSkin(FLauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text);
 
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
-    CheckSkinSystemErrors(Status, IMAGE_SKIN, LauncherAPI.SkinSystem.ErrorReason);
+    CheckSkinSystemErrors(Status, IMAGE_SKIN, FLauncherAPI.SkinSystem.ErrorReason);
     Exit;
   end;
 
-  DrawSkin(LauncherAPI.UserInfo.SkinBitmap);
+  DrawSkin(FLauncherAPI.UserInfo.SkinBitmap);
   ShowSuccessMessage('Скин удалён!');
 end;
 
@@ -1505,14 +1525,14 @@ var
 begin
   if not ShowOpenDialog(CloakPath) then Exit;
 
-  Status := LauncherAPI.SetupCloak(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, CloakPath);
+  Status := FLauncherAPI.SetupCloak(FLauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, CloakPath);
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
-    CheckSkinSystemErrors(Status, IMAGE_CLOAK, LauncherAPI.SkinSystem.ErrorReason);
+    CheckSkinSystemErrors(Status, IMAGE_CLOAK, FLauncherAPI.SkinSystem.ErrorReason);
     Exit;
   end;
 
-  DrawCloak(LauncherAPI.UserInfo.CloakBitmap);
+  DrawCloak(FLauncherAPI.UserInfo.CloakBitmap);
   ShowSuccessMessage('Плащ успешно установлен!');
 end;
 
@@ -1523,12 +1543,12 @@ var
   CloakPath: string;
   Status: SKIN_SYSTEM_STATUS;
 begin
-  if not ShowSaveDialog(CloakPath, '*.png|*.png', LauncherAPI.UserInfo.UserLogonData.Login + '_cloak.png') then Exit;
+  if not ShowSaveDialog(CloakPath, '*.png|*.png', FLauncherAPI.UserInfo.UserLogonData.Login + '_cloak.png') then Exit;
 
-  Status := LauncherAPI.DownloadCloak(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, CloakPath);
+  Status := FLauncherAPI.DownloadCloak(FLauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text, CloakPath);
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
-    CheckSkinSystemErrors(Status, IMAGE_CLOAK, LauncherAPI.SkinSystem.ErrorReason);
+    CheckSkinSystemErrors(Status, IMAGE_CLOAK, FLauncherAPI.SkinSystem.ErrorReason);
     Exit;
   end;
 
@@ -1541,15 +1561,15 @@ procedure TMainForm.DeleteCloakItemClick(Sender: TObject);
 var
   Status: SKIN_SYSTEM_STATUS;
 begin
-  Status := LauncherAPI.DeleteCloak(LauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text);
+  Status := FLauncherAPI.DeleteCloak(FLauncherAPI.UserInfo.UserLogonData.Login, PasswordEdit.Text);
 
   if Status <> SKIN_SYSTEM_SUCCESS then
   begin
-    CheckSkinSystemErrors(Status, IMAGE_CLOAK, LauncherAPI.SkinSystem.ErrorReason);
+    CheckSkinSystemErrors(Status, IMAGE_CLOAK, FLauncherAPI.SkinSystem.ErrorReason);
     Exit;
   end;
 
-  DrawCloak(LauncherAPI.UserInfo.CloakBitmap);
+  DrawCloak(FLauncherAPI.UserInfo.CloakBitmap);
   ShowSuccessMessage('Плащ удалён!');
 end;
 

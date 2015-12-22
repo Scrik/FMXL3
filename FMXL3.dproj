@@ -5,7 +5,7 @@
         <FrameworkType>FMX</FrameworkType>
         <MainSource>FMXL3.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -211,8 +211,7 @@
 {$IFDEF ENABLE_EXECUTABLE_MEMORY_DEFENCE},
   HookAPI in &apos;HoShiMin&apos;&apos;s API\HookAPI\HookAPI.pas&apos;,
   MicroDAsm in &apos;HoShiMin&apos;&apos;s API\HookAPI\MicroDAsm.pas&apos;,
-  SpliceProtection in &apos;HoShiMin&apos;&apos;s API\SpliceProtection.pas&apos;
-{$ENDIF}
+  SpliceProtection in &apos;HoShiMin&apos;&apos;s API\SpliceProtection.pas&apos;{$ENDIF}
 ;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -265,7 +264,7 @@
             </Delphi.Personality>
             <Deployment Version="2">
                 <DeployFile LocalName="Definitions.inc" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win64">
+                    <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -315,15 +314,15 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Definitions.inc" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\FMXL3.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>FMXL3.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="Definitions.inc" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win64">
+                        <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

@@ -1,4 +1,4 @@
-unit LauncherAPI;
+﻿unit LauncherAPI;
 
 interface
 
@@ -67,8 +67,8 @@ type
       procedure StartDownloader(const DownloadList: TDownloadList; const MultiLoader: THTTPMultiLoader; ClientNumber: Integer; Multithreading: Boolean; OnUpdate: TOnUpdate);
       procedure MergeDownloadLists(const List1, List2, ResultList: TDownloadList);
     public
-      property LocalWorkingFolder: string read FBaseFolder;
-      property ServerWorkingFolder: string read FServerBaseAddress;
+      property LocalWorkingFolder: string read FBaseFolder write FBaseFolder;
+      property ServerWorkingFolder: string read FServerBaseAddress write FServerBaseAddress;
       property EncryptionKey: AnsiString read FEncryptionKey write FEncryptionKey;
 
       property IsAuthorized: Boolean read FIsAuthorized;
