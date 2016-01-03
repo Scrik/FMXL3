@@ -320,7 +320,7 @@ begin
   JVMParams := TStringList.Create;
   JVMParams.Clear;
   JVMParams.Text := ReplaceParam(JavaInfo.JavaParameters.Arguments, ' ', #13#10);
-  JVMParams.Add('-Xms' + IntToStr(RAM) + 'm');
+  JVMParams.Add('-Xms96m');
   JVMParams.Add('-Xmx' + IntToStr(RAM) + 'm');
   JVMParams.Add(NativesPath);
   JVMParams.Add(ClassPath);
