@@ -390,6 +390,11 @@ end;
 
 function TFilesValidator.Validate(const BaseFolder,
   RelativeWorkingFolder: string; Multithreading: Boolean): VALIDATION_STATUS;
+{$IFDEF DEBUG}
+var
+  I: Integer;
+  AbsentFilesList: TStringList;
+{$ENDIF}
 begin
   if FValidFiles.ValidFilesHashmap.Count = 0 then Exit(VALIDATION_STATUS_SUCCESS);
 
@@ -406,6 +411,19 @@ begin
 
   // Получаем список недостающих файлов:
   FillAbsentFilesList(Multithreading);
+
+  {$IFDEF DEBUG}
+    if FErrorFiles.Count > 0 then FErrorFiles.SaveToFile('ErrorFiles.txt');
+
+    if FAbsentFiles.Count > 0 then
+    begin
+      AbsentFilesList := TStringList.Create;
+      AbsentFilesList.Clear;
+      for I := 0 to FAbsentFiles.Count - 1 do
+        AbsentFilesList.Add(FAbsentFiles[I].Link);
+      FreeAndNil(AbsentFilesList);
+    end;
+  {$ENDIF}
 
   // Возвращаем результат:
   if FErrorFiles.Count  > 0 then Exit(VALIDATION_STATUS_DELETION_ERROR);
