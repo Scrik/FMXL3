@@ -1211,6 +1211,7 @@ end;
 procedure TMainForm.AttemptToLaunchClient;
 var
   I: Integer;
+  CurrentRAM, Delta: Int64;
   MemoryStatusEx: _MEMORYSTATUSEX;
 begin
   // Проверяем валидность номера клиента:
@@ -1234,7 +1235,9 @@ begin
 
   MemoryStatusEx.dwLength := SizeOf(MemoryStatusEx);
   GlobalMemoryStatusEx(MemoryStatusEx);
-  if ((MemoryStatusEx.ullAvailVirtual div 1048576) - StrToInt(RAMEdit.Text)) < 80 then
+  CurrentRAM := StrToInt(RAMEdit.Text);
+  Delta := (Int64(MemoryStatusEx.ullAvailPhys) div 1048576) - CurrentRAM;
+  if Delta < 80 then
   begin
     ShowErrorMessage('Недостаточно памяти для запуска игры!' + #13#10 + 'Уменьшите количество памяти в настройках!');
     Exit;
