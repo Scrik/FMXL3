@@ -1211,6 +1211,7 @@ end;
 procedure TMainForm.AttemptToLaunchClient;
 var
   I: Integer;
+  MemoryStatusEx: _MEMORYSTATUSEX;
 begin
   // Проверяем валидность номера клиента:
   if (FLauncherAPI.Clients.Count = 0) or (FSelectedClientNumber < 0) or (FSelectedClientNumber >= FLauncherAPI.Clients.Count) then
@@ -1228,6 +1229,14 @@ begin
   if Length(RAMEdit.Text) = 0 then
   begin
     ShowErrorMessage('Введите корректную величину RAM!');
+    Exit;
+  end;
+
+  MemoryStatusEx.dwLength := SizeOf(MemoryStatusEx);
+  GlobalMemoryStatusEx(MemoryStatusEx);
+  if ((MemoryStatusEx.ullAvailVirtual div 1048576) - StrToInt(RAMEdit.Text)) < 80 then
+  begin
+    ShowErrorMessage('Недостаточно памяти для запуска игры!' + #13#10 + 'Уменьшите количество памяти в настройках!');
     Exit;
   end;
 

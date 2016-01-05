@@ -421,6 +421,7 @@ begin
       AbsentFilesList.Clear;
       for I := 0 to FAbsentFiles.Count - 1 do
         AbsentFilesList.Add(FAbsentFiles[I].Link);
+      AbsentFilesList.SaveToFile('AbsentFiles.txt');
       FreeAndNil(AbsentFilesList);
     end;
   {$ENDIF}
