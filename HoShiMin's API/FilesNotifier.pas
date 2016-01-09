@@ -38,6 +38,7 @@ type
     private const
       BufferSize = 8192;
     private
+      FIsActive: Boolean;
       FBaseFolder: string;
       FFilesTypes: TStringArray;
       FExclusivesTypes: TStringArray;
@@ -127,11 +128,15 @@ begin
     I, J: Integer;
     NeedToAdd: Boolean;
   begin
+    FIsActive := True;
+
     GetMem(Buffer, BufferSize);
     FillChar(Buffer^, BufferSize, #0);
 
     while ReadDirectoryChanges(FDirHandle, Buffer, BufferSize, WatchSubfolders, NotifyFilter, @BytesReturned, nil, nil) do
     begin
+      if not FIsActive then Break;
+
       FileNotifyInformation := Buffer;
 
       NotifyStruct.ChangesCount := 0;
@@ -200,6 +205,7 @@ end;
 
 procedure TFilesNotifier.StopWatching;
 begin
+  FIsActive := False;
   //if (FDirHandle <> 0) and (FDirHandle <> INVALID_HANDLE_VALUE) then CancelIoEx(FDirHandle, nil);
   WaitForSingleObject(FWatcherHandle, INFINITE);
   FWatcherHandle := 0;

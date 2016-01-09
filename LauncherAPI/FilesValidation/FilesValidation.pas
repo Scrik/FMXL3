@@ -465,7 +465,8 @@ begin
       if NotifyStruct.ChangesCount = 0 then Exit;
 
       for I := 0 to NotifyStruct.ChangesCount - 1 do
-        ValidateFile(FilesNotifier.BaseFolder + '\' + NotifyStruct.Changes[I].FileName);
+        if NotifyStruct.Changes[I].Action <> FILE_ACTION_REMOVED then
+          ValidateFile(FilesNotifier.BaseFolder + '\' + NotifyStruct.Changes[I].FileName);
 
       if FErrorFiles.Count > 0 then
         if Assigned(OnFilesMismatching) then

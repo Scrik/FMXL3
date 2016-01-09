@@ -1136,6 +1136,15 @@ begin
                           );
         ExitProcess(0);
       end);
+
+      FLauncherAPI.ValidateClient(ClientNumber, True, procedure(ClientNumber: Integer; ClientValidationStatus, JavaValidationStatus: VALIDATION_STATUS)
+      begin
+        if (ClientValidationStatus <> VALIDATION_STATUS_SUCCESS) or (JavaValidationStatus <> VALIDATION_STATUS_SUCCESS) then
+        begin
+          MessageBoxTimeout(0, 'Обнаружено изменение клиента!', 'Внимание!', MB_ICONERROR, 0, 5000);
+          ExitProcess(0);
+        end;
+      end);
     {$ENDIF}
   end;
 end;
@@ -1202,8 +1211,6 @@ begin
 end;
 
 
-
-
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
 //                             Запуск игры
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
@@ -1237,7 +1244,7 @@ begin
   GlobalMemoryStatusEx(MemoryStatusEx);
   CurrentRAM := StrToInt(RAMEdit.Text);
   Delta := (Int64(MemoryStatusEx.ullAvailPhys) div 1048576) - CurrentRAM;
-  if Delta < 80 then
+  if Delta < 128 then
   begin
     ShowErrorMessage('Недостаточно памяти для запуска игры!' + #13#10 + 'Уменьшите количество памяти в настройках!');
     Exit;
@@ -1584,6 +1591,7 @@ begin
   DrawCloak(FLauncherAPI.UserInfo.CloakBitmap);
   ShowSuccessMessage('Плащ удалён!');
 end;
+
 
 
 //HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
