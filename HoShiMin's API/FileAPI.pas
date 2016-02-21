@@ -1,4 +1,4 @@
-unit FileAPI;
+﻿unit FileAPI;
 
 interface
 
@@ -208,7 +208,7 @@ function GetFileSize(const FileName: string): LongWord; overload;
 var
   hFile: THandle;
 begin
-  hFile := CreateFile(FileName);
+  hFile := CreateFile(FileName, OPEN_EXISTING, GENERIC_READ, FILE_SHARE_READ, False);
   Result := Windows.GetFileSize(hFile, nil);
   CloseHandle(hFile);
 end;
